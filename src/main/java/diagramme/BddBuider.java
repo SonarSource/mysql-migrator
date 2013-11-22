@@ -12,7 +12,7 @@ import java.util.Arrays;
 public class BddBuider {
 
 
-    SonarBDD sonarBDD=null;
+    protected SonarBDD sonarBDD=null;
 
     public BddBuider (){
         sonarBDD = new SonarBDD("sonar");
@@ -20,7 +20,7 @@ public class BddBuider {
     }
 
     public void addtableToBDD (){
-        sonarBDD.tables_of_bdd = Arrays.asList(
+        sonarBDD.setBddTables(Arrays.asList(
                 new SonarTable("action_plans"),
                 new SonarTable("active_dashboards"),
                 new SonarTable("active_rule_changes"),
@@ -74,7 +74,7 @@ public class BddBuider {
                 new SonarTable("users"),
                 new SonarTable("widget_properties"),
                 new SonarTable("widgets")
-        );
+        ));
 
     }
 

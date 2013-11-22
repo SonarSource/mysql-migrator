@@ -1,9 +1,6 @@
 package diagramme;
 
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 /**
  * Created with IntelliJ IDEA.
@@ -25,7 +22,9 @@ public class MyApp {
     /* DO COPY */
         BddDataReproducer bddDataReproducer = new BddDataReproducer(bddConnecter,bddBuider);
 
+    /* DO VERIFYING */
 
-
+    /* DO CLOSE CONNECTION */
+        bddConnecter.closeConnections();
     }
 }

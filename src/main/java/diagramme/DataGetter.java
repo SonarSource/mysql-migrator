@@ -1,11 +1,6 @@
 package diagramme;
 
-import javax.swing.text.html.parser.DTD;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
+import java.sql.*;
 import java.util.List;
 
 /**
@@ -17,53 +12,62 @@ import java.util.List;
  */
 public class DataGetter {
 
-    //protected DataRecorder dataRecorder;
-    public ResultSet resultSet;
-    public SonarColumn sonarColumnToSet;
-    public DataGetter(){
-        //dataRecorder = new DataRecorder();
-        System.out.println("### DEBUG ### in DataGetter");
+    private Statement statement;
+    private SonarBDD sonarBDD;
+    private ResultSet resultSet;
+    protected SonarColumn sonarColumnToSet;
 
+    public DataGetter(Statement statement, SonarBDD sonarBDD){
+        this.statement = statement;
+        this.sonarBDD = sonarBDD;
     }
 
-    public void doRequest(Statement statement, SonarBDD sonarBDD) throws SQLException {
-                                                                                                System.out.println("### DEBUG ### in DataGetter : doRequest");
+    public void doRequest() throws SQLException {
 
-        List <SonarTable> tables_of_bdd = sonarBDD.tables_of_bdd;
+        List <SonarTable> tables_of_bdd = sonarBDD.getBDDTables();
 
-                                                                                                System.out.println("### DEBUG ### in DataGetter : doRequest after table_of_bdd");
         for(int tableIndex=0;tableIndex<tables_of_bdd.size();tableIndex++){
             SonarTable sonarTable= tables_of_bdd.get(tableIndex);
-            String sonarTableName = sonarTable.tableName;
-            System.out.println("### DEBUG ### in DataGetter : recordData  TABLE= "+sonarTableName);
+            String sonarTableName = sonarTable.getTableName();
 
             resultSet =  statement.executeQuery("SELECT * FROM " + sonarTable.getTableName());
-                                                                                               System.out.println("### DEBUG ### in DataGetter : recordData");
+
+            /* GET NUMBER OF TABLE ROWS */
+            int  nbRowsInTable = resultSet.last() ? resultSet.getRow() : 0;
+            resultSet.beforeFirst();
+            sonarTable.setNbRows(nbRowsInTable);
 
             /* GET THE METADATA OF THIS TABLE */
             ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
             int columnNb = resultSetMetaData.getColumnCount();
-                                                                                                System.out.println("### DEBUG ### in DataGetter : metadata");
-            /* ADD THE COLUMN NAME OF THE TABLE TO SET  */
+
+
+            /* GET DATA FROM RESULTSET AND RECORD THEM IN SonarBDD */
             for(int columnIndex=1;columnIndex<=columnNb;columnIndex++){
-                                                                                                System.out.println("### DEBUG ### in DataGetter : loop for column creations ");
+
+                /* ADD THE COLUMN NAME AND COLUMN TYPE OF THE TABLE TO SET  */
                 String columnName = resultSetMetaData.getColumnName(columnIndex);
+                String  columnType = resultSetMetaData.getColumnTypeName(columnIndex);
+
                 sonarColumnToSet = sonarTable.addOneColumnToTable(columnName,sonarTableName);
-                                                                                                System.out.println("### DEBUG ### in DataGetter : after addOneCol...NAME= "+sonarColumnToSet.getName());
+                sonarColumnToSet.addColumnType(columnType);
+
+                /* GET EACH LINE OF THE CURRENT COLUMN */
+                while (resultSet.next()) {
+                        Object objectGetted =  resultSet.getObject(columnIndex);
+                        sonarColumnToSet.addDataObjectInTable(objectGetted);
+                    /*
+                    if (columnType.equals("timestamp")){
+                        System.out.println(objectGetted.toString());
+                    }
+                    */
+                }
+                /* REPLACE CURSOR AT THE BEGINNING OF RESULTSET */
+                resultSet.beforeFirst();
             }
-
-            while (resultSet.next()) {
-                                                                                                System.out.println("### DEBUG ### in DataGetter : into the while BEGINNING");
-                    Object objectGetted =  resultSet.getObject(1);
-                    System.out.println("### DEBUG ### in DataGetter : into the while : "+objectGetted.toString());
-                    sonarColumnToSet.addDataObjectInTable(objectGetted);
-                    System.out.println("### DEBUG ### in DataGetter : into the while END");
-
-            }
-            resultSet.beforeFirst();
-
         }
-
-        new DebugTableContent(sonarBDD);
+        /* DEBUG AFFICHAGE sonarBDD */
+        DebugTableContent debug = new DebugTableContent(sonarBDD);
+        debug.AfficheColumnsAndRows();
     }
 }

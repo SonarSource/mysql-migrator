@@ -1,8 +1,6 @@
 package diagramme;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,47 +13,62 @@ import java.util.List;
 public class SonarColumn {
 
     /* ATTRIBUTS */
-    protected String columnName;
-    protected String typeOfColumn;
-    protected int sizeOfType;
-    protected boolean canBeNull;
-    protected boolean anIndexIsPresent;
-    protected SonarSequence sequence_if_id = null;
-    protected List<Object> objectTableData;
-
-
+    private String columnName;
+    private String columnType;
+    private int sizeOfType;
+    private boolean canBeNull;
+    private boolean anIndexIsPresent;
+    private SonarSequence sequence_if_id = null;
+    private List<Object> objectTableData;
 
     /* CONSTRUCTEUR */
-
     public SonarColumn (String columnName , String tableName){
 
         this.columnName = columnName;
+        objectTableData = new ArrayList<Object>();
+        /*
         if (columnName.equals("id")){
             this.sequence_if_id = new SonarSequence("seq_"+tableName);
-        }
+        } */
     }
 
     /* METHODES */
-    public void addCharacteristicOfColumn(String type, int size, boolean canBeNull, boolean anIndexIsPresent){
-        this.typeOfColumn = type;
-        this.sizeOfType = size;
-        this.canBeNull = canBeNull;
-        this.anIndexIsPresent = anIndexIsPresent;
+
+    /* GETTERS */
+    public List<Object> getDataList(){
+        return this.objectTableData;
+    }
+    public Object getDataWithIndex(int index){
+        return objectTableData.get(index);
+    }
+    public String getColumnName(){
+        return this.columnName;
+    }
+    public String getColumnType(){
+        return this.columnType;
     }
 
+    /* SETTERS */
+    public void setColumnName(String columnName){
+        this.columnName = columnName;
+    }
+    public void setColumnType(String columnType){
+        this.columnType = columnType;
+    }
     public void addSequenceOnId(String tableName){
         this.sequence_if_id = new SonarSequence(tableName+"_id_seq");
     }
 
-
+    public void addColumnType(String type){
+        this.columnType = type;
+    }
     public void addDataObjectInTable(Object object){
         this.objectTableData.add(object);
     }
-
-    public Object getData(int index){
-        return objectTableData.get(index);
-    }
-    public String getName(){
-        return this.columnName;
+    public void addCharacteristicOfColumn(String type, int size, boolean canBeNull, boolean anIndexIsPresent){
+        this.columnType = type;
+        this.sizeOfType = size;
+        this.canBeNull = canBeNull;
+        this.anIndexIsPresent = anIndexIsPresent;
     }
 }

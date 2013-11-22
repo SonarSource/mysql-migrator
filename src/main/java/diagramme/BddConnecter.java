@@ -12,12 +12,11 @@ import java.sql.Statement;
  */
 public class BddConnecter {
 
-    public ConnectionParameters sourceConnectionParameters,destConnectionParameters;
-    public Statement sourceStatement,destStatement;
+    private ConnectionParameters sourceConnectionParameters,destConnectionParameters;
+    protected Statement sourceStatement,destStatement;
 
-
-    public SimpleConnection sourceConnection;
-    public SimpleConnection destConnection;
+    private SimpleConnection sourceConnection;
+    private SimpleConnection destConnection;
 
     public BddConnecter(){
         sourceConnectionParameters = new ConnectionParameters("source");

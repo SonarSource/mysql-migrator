@@ -1,8 +1,6 @@
 package diagramme;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,26 +12,21 @@ import java.util.List;
 public class BddDataReproducer {
 
     protected DataGetter dataGetter;
-    protected DataRecorder dataRecorder;
     protected DataPutInBase dataPutInBase;
-    private List<ResultSet> resultSets;
 
 
     public BddDataReproducer(BddConnecter bddConnecter,BddBuider bddBuider) throws SQLException {
-        System.out.println("### DEBUG ### in BddDataReproducer");
 
         try{
-        dataGetter = new DataGetter();
-        dataGetter.doRequest(bddConnecter.sourceStatement, bddBuider.sonarBDD);
-        /*
-        dataRecorder = new DataRecorder();
-        dataRecorder.recordData(resultSets,bddBuider.sonarBDD);
-System.out.println("### DEBUG ### in BddDataReproducer datarecorder done");
-          */
+            dataGetter = new DataGetter(bddConnecter.sourceStatement, bddBuider.sonarBDD);
+            dataGetter.doRequest();
 
-            //dataPutInBase = new DataPutInBase(bddConnecter.destStatement);
-      }
-      catch (Exception e){}
+
+            dataPutInBase = new DataPutInBase(bddConnecter.destStatement, bddBuider.sonarBDD);
+            dataPutInBase.doInsertInto();
+
+        }
+        catch (Exception e){e.getStackTrace();}
 
     }
 

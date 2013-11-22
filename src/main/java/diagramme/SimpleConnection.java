@@ -10,19 +10,19 @@ import java.sql.*;
  * To change this template use File | Settings | File Templates.
  */
 public class SimpleConnection {
-    protected String user = "sonar";
-    protected String password = "sonar";
-    protected String bddName = "sonar";
-    protected String classForNameString;
-    protected String urlComplete;
-    protected Connection connection;
-    protected Statement statement;
+    private String user = "sonar";
+    private String password = "sonar";
+    private String bddName = "sonar";
+    private String classForNameString;
+    private String urlComplete;
+    private Connection connection;
+    private Statement statement;
 
     public SimpleConnection(ConnectionParameters connParam) throws SQLException, ClassNotFoundException {
         addParamConnection(connParam);
     }
 
-    protected Statement doConnection() throws ClassNotFoundException, SQLException {
+    public Statement doConnection() throws ClassNotFoundException, SQLException {
         Class.forName(classForNameString);
         connection =DriverManager.getConnection(urlComplete, user, password);
         statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_UPDATABLE, ResultSet.HOLD_CURSORS_OVER_COMMIT);
@@ -30,7 +30,7 @@ public class SimpleConnection {
         return statement;
     }
 
-    private void addParamConnection(ConnectionParameters connParam){
+    public void addParamConnection(ConnectionParameters connParam){
         switch (connParam.bdd){
             case 1: classForNameString="org.XXXX.Driver";
                     urlComplete ="jdbc:XXXX://localhost:"+connParam.port+"/"+bddName;
