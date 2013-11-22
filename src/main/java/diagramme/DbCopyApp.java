@@ -9,7 +9,7 @@ import java.sql.SQLException;
  * Time: 9:39 AM
  * To change this template use File | Settings | File Templates.
  */
-public class MyApp {
+public class DbCopyApp {
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
 
@@ -18,13 +18,16 @@ public class MyApp {
 
     /* DO CONNECTION */
         BddConnecter bddConnecter = new BddConnecter();
+        bddConnecter.doSourceConnectionAndStatement();
+        bddConnecter.doOnlyDestinationConnection();
 
     /* DO COPY */
-        BddDataReproducer bddDataReproducer = new BddDataReproducer(bddConnecter,bddBuider);
+        new BddDataReproducer(bddConnecter,bddBuider);
 
     /* DO VERIFYING */
 
     /* DO CLOSE CONNECTION */
-        bddConnecter.closeConnections();
+        bddConnecter.closeSourceConnection();
+        bddConnecter.closeDestConnection();
     }
 }

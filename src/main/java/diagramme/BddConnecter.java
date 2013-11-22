@@ -1,5 +1,6 @@
 package diagramme;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -13,35 +14,69 @@ import java.sql.Statement;
 public class BddConnecter {
 
     private ConnectionParameters sourceConnectionParameters,destConnectionParameters;
-    protected Statement sourceStatement,destStatement;
-
     private SimpleConnection sourceConnection;
+    protected Statement sourceStatement;
+    private Connection connectionToPreparedStatement;
+
     private SimpleConnection destConnection;
 
     public BddConnecter(){
         sourceConnectionParameters = new ConnectionParameters("source");
         destConnectionParameters = new ConnectionParameters("destination");
+    }
+
+    /* SOURCE AND DESTINATION CONNECTION */
+    public void doSourceConnectionAndStatement(){
         try{
-            sourceConnection = new SimpleConnection(sourceConnectionParameters);
-            sourceStatement = sourceConnection.doConnection();
-            destConnection = new SimpleConnection(destConnectionParameters);
-            destStatement = destConnection.doConnection();
+            sourceConnection = new SimpleConnection();
+            sourceConnection.addParamConnection(sourceConnectionParameters);
+            sourceConnection.doConnection();
+            sourceStatement = sourceConnection.getStatement();
         }
-        catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        catch (ClassNotFoundException e) {e.printStackTrace();}
+        catch (SQLException e) {e.printStackTrace();}
+
+    }
+
+    public void doOnlyDestinationConnection (){
+
+        try{
+            destConnection = new SimpleConnection();
+            destConnection.addParamConnection(destConnectionParameters);
+            destConnection.doConnection();
+            connectionToPreparedStatement=destConnection.getConnection();
+
         }
-        catch (SQLException e) {
+        catch (ClassNotFoundException e) {e.printStackTrace();}
+        catch (SQLException e) {e.printStackTrace();}
+
+    }
+
+    /* GETTERS */
+    public Statement getStatementSource(){
+        return sourceStatement;
+    }
+
+    public Connection getConnectionDest(){
+        return connectionToPreparedStatement;
+    }
+
+    /* CLOSE METHODS */
+    public void closeSourceConnection(){
+        try {
+              sourceConnection.closeStatement();
+              sourceConnection.closeConnection();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
-    public void closeConnections(){
+    public void closeDestConnection(){
         try {
-            sourceConnection.closeConnection();
             destConnection.closeConnection();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
 
 }

@@ -15,16 +15,18 @@ public class ConnectionParameters {
 
     public int bdd, port;
     private String target;
+    private String baseName;
 
     public ConnectionParameters(String target){
             this.target=target;
-            getBdd();
-            getPort();
+            setBdd();
+            setPort();
+            setBaseName();
     }
 
-    public void getBdd(){
+    public void setBdd(){
         Scanner scanner = new Scanner(System.in);
-        bdd=0;
+        bdd=2;
 
         while(bdd<1 || bdd>5){
             System.out.println("Veuillez saisir la base "+target+" : ");
@@ -37,12 +39,24 @@ public class ConnectionParameters {
         }
     }
 
-    public void getPort (){
+    public void setPort (){
         Scanner scanner = new Scanner(System.in);
-        port = 0;
+        port = 5432;
         while (port<1024 || port>65535){
             System.out.println("Veuillez saisir le port "+target+": ");
             port = scanner.nextInt();
         }
+    }
+
+    public void setBaseName(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Veuillez saisir le nom de la base "+target+": ");
+
+        baseName = scanner.nextLine();
+
+    }
+
+    public String getBaseName(){
+        return baseName;
     }
 }

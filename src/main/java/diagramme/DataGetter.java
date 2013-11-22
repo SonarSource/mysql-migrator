@@ -30,7 +30,7 @@ public class DataGetter {
             SonarTable sonarTable= tables_of_bdd.get(tableIndex);
             String sonarTableName = sonarTable.getTableName();
 
-            resultSet =  statement.executeQuery("SELECT * FROM " + sonarTable.getTableName());
+            resultSet =  statement.executeQuery("SELECT * FROM " + sonarTable.getTableName()+" ORDER BY 1;");
 
             /* GET NUMBER OF TABLE ROWS */
             int  nbRowsInTable = resultSet.last() ? resultSet.getRow() : 0;
@@ -67,7 +67,7 @@ public class DataGetter {
             }
         }
         /* DEBUG AFFICHAGE sonarBDD */
-        DebugTableContent debug = new DebugTableContent(sonarBDD);
-        debug.AfficheColumnsAndRows();
+        //DebugTableContent debug = new DebugTableContent(sonarBDD);
+        //debug.AfficheColumnsAndRows();
     }
 }

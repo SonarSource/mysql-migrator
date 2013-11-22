@@ -18,12 +18,12 @@ public class BddDataReproducer {
     public BddDataReproducer(BddConnecter bddConnecter,BddBuider bddBuider) throws SQLException {
 
         try{
-            dataGetter = new DataGetter(bddConnecter.sourceStatement, bddBuider.sonarBDD);
+            dataGetter = new DataGetter(bddConnecter.getStatementSource(), bddBuider.sonarBDD);
             dataGetter.doRequest();
 
 
-            dataPutInBase = new DataPutInBase(bddConnecter.destStatement, bddBuider.sonarBDD);
-            dataPutInBase.doInsertInto();
+            dataPutInBase = new DataPutInBase(bddConnecter.getConnectionDest(), bddBuider.sonarBDD);
+            dataPutInBase.doInsertIntoTables();
 
         }
         catch (Exception e){e.getStackTrace();}
