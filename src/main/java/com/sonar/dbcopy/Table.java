@@ -8,36 +8,35 @@ package com.sonar.dbcopy;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SonarTable {
+public class Table {
 
   private String tableName;
   private int nbRows;
-  private List<SonarColumn> columns;
+  private List<Column> columns;
 
-  public SonarTable(String tableName){
+  public Table(String tableName){
     this.tableName = tableName;
     this.nbRows=0;
-    columns=new ArrayList<SonarColumn>();
+    columns=new ArrayList<Column>();
   }
 
-  public SonarColumn addOneColumnToTable(String columnName, String tableName){
-    SonarColumn columnToAdd = new SonarColumn(columnName,tableName);
+  /* SETTERS */
+  public Column addOneColumnToTable(String columnName){
+    Column columnToAdd = new Column(columnName);
     columns.add(columnToAdd);
     return columnToAdd;
-  }
-  public void setTableName(String tableName){
-    this.tableName = tableName;
   }
   public void setNbRows(int nbRows){
     this.nbRows = nbRows;
   }
+  /* GETTERS */
   public String getTableName(){
     return this.tableName;
   }
   public int getNbRows(){
     return nbRows;
   }
-  public List<SonarColumn> getColumns(){
+  public List<Column> getColumns(){
     return this.columns;
   }
 }

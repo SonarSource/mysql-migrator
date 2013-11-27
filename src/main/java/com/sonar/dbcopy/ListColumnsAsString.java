@@ -9,11 +9,11 @@ import java.util.List;
 
 public class ListColumnsAsString {
 
-  private List<SonarColumn> columnList;
+  private List<Column> columnList;
   private String columnsAsString, questionMarkString;
   private int nbColumns;
 
-  public ListColumnsAsString(List<SonarColumn> list){
+  public ListColumnsAsString(List<Column> list){
     columnList = list;
     nbColumns = columnList.size();
   }

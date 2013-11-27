@@ -9,17 +9,26 @@ import java.sql.SQLException;
 
 public class BddDataReproducer {
 
-  protected DataGetter dataGetter;
-  protected DataPutInBase dataPutInBase;
+  private DataGetter dataGetter;
+  private DataPutInBase dataPutInBase;
+  private Bdd Bdd;
 
-  public BddDataReproducer(BddConnecter bddConnecter,BddBuider bddBuider) throws SQLException {
+  public BddDataReproducer(BddConnecter bddConnecter,Bdd Bdd) throws SQLException {
+    this.Bdd = Bdd;
     try{
-      dataGetter = new DataGetter(bddConnecter.getStatementSource(), bddBuider.sonarBDD);
+      dataGetter = new DataGetter(bddConnecter.getStatementSource(), this.Bdd);
       dataGetter.doRequest();
 
-      dataPutInBase = new DataPutInBase(bddConnecter.getConnectionDest(), bddBuider.sonarBDD);
+      dataPutInBase = new DataPutInBase(bddConnecter.getConnectionDest(), this.Bdd);
       dataPutInBase.doInsertIntoTables();
     }
     catch (Exception e){e.getStackTrace();}
+  }
+  /* GETTERS */
+  public DataGetter getDataGetter(){
+    return this.dataGetter;
+  }
+  public DataPutInBase getDataPutInBase(){
+    return this.dataPutInBase;
   }
 }

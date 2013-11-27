@@ -11,55 +11,55 @@ import java.util.List;
 public class DataGetter {
 
   private Statement statement;
-  private SonarBDD sonarBDD;
+  private Bdd Bdd;
   private ResultSet resultSet;
-  protected SonarColumn sonarColumnToSet;
+  private Column columnToSet;
 
-  public DataGetter(Statement statement, SonarBDD sonarBDD){
+  public DataGetter(Statement statement, Bdd Bdd){
     this.statement = statement;
-    this.sonarBDD = sonarBDD;
+    this.Bdd = Bdd;
   }
 
   public void doRequest() throws SQLException {
-    List <SonarTable> tables_of_bdd = sonarBDD.getBDDTables();
+    List <Table> tables_of_bdd = Bdd.getBddTables();
     for(int tableIndex=0;tableIndex<tables_of_bdd.size();tableIndex++){
       /* GET TABLE AND NAMETABLE */
-      SonarTable sonarTable= tables_of_bdd.get(tableIndex);
-      String sonarTableName = sonarTable.getTableName();
+      Table table = tables_of_bdd.get(tableIndex);
+      String sonarTableName = table.getTableName();
 
       /* GET RESULTSET FROM SQL REQUEST : SELECT * FROM tableName ORDER BY 1 */
-      resultSet =  statement.executeQuery("SELECT * FROM " + sonarTable.getTableName()+" ORDER BY 1;");
+      resultSet =  statement.executeQuery("SELECT * FROM " + table.getTableName()+" ORDER BY 1;");
 
       /* GET NUMBER OF TABLE ROWS */
       int  nbRowsInTable = resultSet.last() ? resultSet.getRow() : 0;
       resultSet.beforeFirst();
-      sonarTable.setNbRows(nbRowsInTable);
+      table.setNbRows(nbRowsInTable);
 
       /* GET THE METADATA OF THIS TABLE */
       ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
       int columnNb = resultSetMetaData.getColumnCount();
 
-      /* GET DATA FROM RESULTSET AND RECORD THEM IN SonarBDD */
+      /* GET DATA FROM RESULTSET AND RECORD THEM IN Bdd */
       for(int columnIndex=1;columnIndex<=columnNb;columnIndex++){
 
         /* ADD THE COLUMN NAME AND COLUMN TYPE OF THE TABLE TO SET  */
         String columnName = resultSetMetaData.getColumnName(columnIndex);
         String  columnType = resultSetMetaData.getColumnTypeName(columnIndex);
 
-        sonarColumnToSet = sonarTable.addOneColumnToTable(columnName,sonarTableName);
-        sonarColumnToSet.addColumnType(columnType);
+        columnToSet = table.addOneColumnToTable(columnName);
+        columnToSet.addColumnType(columnType);
 
-        /* GET EACH LINE OF THE CURRENT COLUMN AND ADD IT IN THE JAVA BDD COLUMN OBJECT */
+        /* GET EACH LINE OF THE CURRENT COLUMN AND ADD IT IN THE JAVA Bdd COLUMN OBJECT */
         while (resultSet.next()) {
           Object objectGetted =  resultSet.getObject(columnIndex);
-          sonarColumnToSet.addDataObjectInTable(objectGetted);
+          columnToSet.addDataObjectInTable(objectGetted);
         }
         /* REPLACE CURSOR AT THE BEGINNING OF RESULTSET */
         resultSet.beforeFirst();
       }
     }
-    /* DEBUG AFFICHAGE sonarBDD */
-    //DebugTableContent debug = new DebugTableContent(sonarBDD);
+    /* DEBUG AFFICHAGE Bdd */
+    //DebugTableContent debug = new DebugTableContent(Bdd);
     //debug.AfficheColumnsAndRows();
   }
 }

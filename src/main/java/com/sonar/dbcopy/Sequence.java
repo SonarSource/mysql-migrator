@@ -5,11 +5,11 @@
  */
 package com.sonar.dbcopy;
 
-public class SonarSequence {
+public class Sequence {
 
   protected String sequenceName;
 
-  public SonarSequence(String sequenceName){
+  public Sequence(String sequenceName){
     this.sequenceName = sequenceName;
   }
 }

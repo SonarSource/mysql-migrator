@@ -12,22 +12,24 @@ import java.util.List;
 
 public class DataPutInBase {
 
-  private SonarBDD sonarBDD;
+  private Bdd Bdd;
   private Connection connectionDest;
-  private List<SonarTable> listOfTables;
+  private List<Table> listOfTables;
 
-  public DataPutInBase(Connection connection, SonarBDD sonarBDD){
+  public DataPutInBase(Connection connection, Bdd Bdd){
       this.connectionDest = connection;
-      this.sonarBDD = sonarBDD;
-      this.listOfTables = this.sonarBDD.getBDDTables();
+      this.Bdd = Bdd;
+      this.listOfTables = this.Bdd.getBddTables();
   }
   public void doInsertIntoTables ()throws SQLException{
     for(int indexTable=0;indexTable<listOfTables.size();indexTable++){
-      /* GET ( TABLE, TABLENAME, NB OF TABLE'S ROWS, COLUMNS AND NB OF COLUMS ) FROM JAVA BDD OBJECT */
-      SonarTable sonarTable = listOfTables.get(indexTable);
-      String tableName =  sonarTable.getTableName();
-      int nbRowsInTable = sonarTable.getNbRows();
-      List<SonarColumn> columns = sonarTable.getColumns();
+
+      /* GET ( TABLE, TABLENAME, NB OF TABLE'S ROWS, COLUMNS AND NB OF COLUMS ) FROM JAVA Bdd OBJECT */
+      Table table = listOfTables.get(indexTable);
+      String tableName =  table.getTableName();
+      System.out.println("Table "+tableName+" is copying...");
+      int nbRowsInTable = table.getNbRows();
+      List<Column> columns = table.getColumns();
       int nbColumns = columns.size();
 
       /* MAKE STRINGS TO PUT IN SQL INSERT REQUEST */
@@ -48,6 +50,7 @@ public class DataPutInBase {
         /* EXECUTE STATEMENT FOR EACH ROW*/
         statementDest.executeUpdate();
       }
+      System.out.println("DONE");
     }
   }
 }

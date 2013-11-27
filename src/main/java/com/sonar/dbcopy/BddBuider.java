@@ -9,68 +9,73 @@ import java.util.Arrays;
 
 public class BddBuider {
 
-  protected SonarBDD sonarBDD=null;
+  private Bdd Bdd =null;
 
-    public BddBuider (){
-      sonarBDD = new SonarBDD("sonar");
-      addtableToBDD();
-    }
 
-    public void addtableToBDD (){
-      sonarBDD.setBddTables(Arrays.asList(
-        new SonarTable("action_plans"),
-        new SonarTable("active_dashboards"),
-        new SonarTable("active_rule_changes"),
-        new SonarTable("active_rule_notes"),
-        new SonarTable("active_rule_param_changes"),
-        new SonarTable("active_rule_parameters"),
-        new SonarTable("active_rules"),
-        new SonarTable("alerts"),
-        new SonarTable("authors"),
-        new SonarTable("characteristic_edges"),
-        new SonarTable("characteristic_properties"),
-        new SonarTable("characteristics"),
-        new SonarTable("dashboards"),
-        new SonarTable("dependencies"),
-        new SonarTable("duplications_index"),
-        new SonarTable("events"),
-        new SonarTable("graphs"),
-        new SonarTable("group_roles"),
-        new SonarTable("groups"),
-        new SonarTable("groups_users"),
-        new SonarTable("issue_changes"),
-        new SonarTable("issue_filter_favourites"),
-        new SonarTable("issue_filters"),
-        new SonarTable("issues"),
-        new SonarTable("loaded_templates"),
-        new SonarTable("manual_measures"),
-        new SonarTable("measure_data"),
-        new SonarTable("measure_filter_favourites"),
-        new SonarTable("measure_filters"),
-        new SonarTable("metrics"),
-        new SonarTable("notifications"),
-        new SonarTable("perm_templates_groups"),
-        new SonarTable("perm_templates_users"),
-        new SonarTable("permission_templates"),
-        new SonarTable("project_links"),
-        new SonarTable("project_measures"),
-        new SonarTable("projects"),
-        new SonarTable("properties"),
-        new SonarTable("quality_models"),
-        new SonarTable("resource_index"),
-        new SonarTable("rule_notes"),
-        new SonarTable("rules"),
-        new SonarTable("rules_parameters"),
-        new SonarTable("rules_profiles"),
-        new SonarTable("schema_migrations"),
-        new SonarTable("semaphores"),
-        new SonarTable("snapshot_data"),
-        new SonarTable("snapshot_sources"),
-        new SonarTable("snapshots"),
-        new SonarTable("user_roles"),
-        new SonarTable("users"),
-        new SonarTable("widget_properties"),
-        new SonarTable("widgets")
-      ));
-    }
+  public BddBuider (){
+    Bdd = new Bdd("sonar");
+    addtableToBDD();
+  }
+  /* SETTERS */
+  private void addtableToBDD (){
+    Bdd.setBddTables(Arrays.asList(
+      new Table("action_plans"),
+      new Table("active_dashboards"),
+      new Table("active_rule_changes"),
+      new Table("active_rule_notes"),
+      new Table("active_rule_param_changes"),
+      new Table("active_rule_parameters"),
+      new Table("active_rules"),
+      new Table("alerts"),
+      new Table("authors"),
+      new Table("characteristic_edges"),
+      new Table("characteristic_properties"),
+      new Table("characteristics"),
+      new Table("dashboards"),
+      new Table("dependencies"),
+      new Table("duplications_index"),
+      new Table("events"),
+      new Table("graphs"),
+      new Table("group_roles"),
+      new Table("groups"),
+      new Table("groups_users"),
+      new Table("issue_changes"),
+      new Table("issue_filter_favourites"),
+      new Table("issue_filters"),
+      new Table("issues"),
+      new Table("loaded_templates"),
+      new Table("manual_measures"),
+      new Table("measure_data"),
+      new Table("measure_filter_favourites"),
+      new Table("measure_filters"),
+      new Table("metrics"),
+      new Table("notifications"),
+      new Table("perm_templates_groups"),
+      new Table("perm_templates_users"),
+      new Table("permission_templates"),
+      new Table("project_links"),
+      new Table("project_measures"),
+      new Table("projects"),
+      new Table("properties"),
+      new Table("quality_models"),
+      new Table("resource_index"),
+      new Table("rule_notes"),
+      new Table("rules"),
+      new Table("rules_parameters"),
+      new Table("rules_profiles"),
+      new Table("schema_migrations"),
+      new Table("semaphores"),
+      new Table("snapshot_data"),
+      new Table("snapshot_sources"),
+      new Table("snapshots"),
+      new Table("user_roles"),
+      new Table("users"),
+      new Table("widget_properties"),
+      new Table("widgets")
+    ));
+  }
+  /* GETTERS */
+  public Bdd getBdd(){
+    return this.Bdd;
+  }
 }

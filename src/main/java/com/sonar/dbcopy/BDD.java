@@ -7,24 +7,24 @@ package com.sonar.dbcopy;
 
 import java.util.List;
 
-public class SonarBDD {
+public class Bdd {
 
   private String bddName;
-  private List<SonarTable> tables_of_bdd;
+  private List<Table> tables_of_bdd;
 
-  public SonarBDD(String bddName){
+  public Bdd(String bddName){
     this.bddName = bddName;
   }
 
   /* GETTERS */
-  public List<SonarTable>  getBDDTables(){
+  public List<Table> getBddTables(){
     return tables_of_bdd;
   }
-  public String getBddNameName(){
+  public String getBddName(){
     return this.bddName;
   }
   /* SETTERS */
-  public void setBddTables (List<SonarTable> tables_of_bdd){
+  public void setBddTables (List<Table> tables_of_bdd){
     this.tables_of_bdd = tables_of_bdd;
   }
   public void setBddName (String bddName){

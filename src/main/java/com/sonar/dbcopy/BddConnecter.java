@@ -11,29 +11,23 @@ import java.sql.Statement;
 
 public class BddConnecter {
 
-  private ConnectionParameters sourceConnectionParameters,destConnectionParameters;
   private SimpleConnection sourceConnection;
-  protected Statement sourceStatement;
+  private Statement sourceStatement;
   private Connection connectionToPreparedStatement;
   private SimpleConnection destConnection;
 
-  public BddConnecter(){
-      sourceConnectionParameters = new ConnectionParameters("source");
-      destConnectionParameters = new ConnectionParameters("destination");
-  }
+  public BddConnecter(){ }
 
   /* SOURCE CONNECTION */
-  public void doSourceConnectionAndStatement()throws SQLException, ClassNotFoundException{
+  public void doSourceConnectionAndStatement(String driver, String urlSource, String user, String pwd)throws SQLException, ClassNotFoundException{
     sourceConnection = new SimpleConnection();
-    sourceConnection.addParamConnection(sourceConnectionParameters);
-    sourceConnection.doConnection();
-    sourceStatement = sourceConnection.getStatement();
+    sourceConnection.doConnection(driver, urlSource, user, pwd);
+    sourceStatement = sourceConnection.doStatement();
    }
   /* DESTINATION CONNECTION */
-  public void doOnlyDestinationConnection ()throws SQLException, ClassNotFoundException{
+  public void doOnlyDestinationConnection(String driver, String urlDest, String user, String pwd)throws SQLException, ClassNotFoundException{
     destConnection = new SimpleConnection();
-    destConnection.addParamConnection(destConnectionParameters);
-    destConnection.doConnection();
+    destConnection.doConnection(driver, urlDest, user, pwd);
     connectionToPreparedStatement=destConnection.getConnection();
   }
   /* GETTERS */

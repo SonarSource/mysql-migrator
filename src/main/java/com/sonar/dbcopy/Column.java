@@ -8,7 +8,7 @@ package com.sonar.dbcopy;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SonarColumn {
+public class Column {
 
   /* ATTRIBUTS */
   private String columnName;
@@ -16,16 +16,16 @@ public class SonarColumn {
   private int sizeOfType;
   private boolean canBeNull;
   private boolean anIndexIsPresent;
-  private SonarSequence sequence_if_id = null;
+  private Sequence sequence_if_id = null;
   private List<Object> objectTableData;
 
   /* CONSTRUCTEUR */
-  public SonarColumn (String columnName , String tableName){
+  public Column(String columnName){
     this.columnName = columnName;
     objectTableData = new ArrayList<Object>();
     /*
     if (columnName.equals("id")){
-      this.sequence_if_id = new SonarSequence("seq_"+tableName);
+      this.sequence_if_id = new Sequence("seq_"+tableName);
     }
     */
   }
@@ -51,7 +51,7 @@ public class SonarColumn {
     this.columnType = columnType;
   }
   public void addSequenceOnId(String tableName){
-    this.sequence_if_id = new SonarSequence(tableName+"_id_seq");
+    this.sequence_if_id = new Sequence(tableName+"_id_seq");
   }
   public void addColumnType(String type){
     this.columnType = type;
