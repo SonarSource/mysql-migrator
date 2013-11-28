@@ -23,6 +23,13 @@ public class Bdd {
   public String getBddName(){
     return this.bddName;
   }
+  public Object getDataFromColumnFromTable(int indexTable, int indexColumn , int indexData){
+    return getColumnFromTable(indexTable,indexColumn).getDataList().get(indexData);
+  }
+  public Column getColumnFromTable(int indexTable, int indexColumn ){
+    return  tables_of_bdd.get(indexTable).getColumns().get(indexColumn);
+  }
+
   /* SETTERS */
   public void setBddTables (List<Table> tables_of_bdd){
     this.tables_of_bdd = tables_of_bdd;

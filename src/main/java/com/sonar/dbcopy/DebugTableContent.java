@@ -13,7 +13,7 @@ public class DebugTableContent {     /* THAT CLASS SHOULD BE DELETE AT THE END O
     this.Bdd = bdd;
   }
 
-  public void affichage(){
+  public void showTableColumnDatas(){
     for(int indexTable=0; indexTable< Bdd.getBddTables().size();indexTable++){
       System.out.println("*** TABLE : "+ Bdd.getBddTables().get(indexTable).getTableName());
       for(int indexColumn=0; indexColumn< Bdd.getBddTables().get(indexTable).getColumns().size();indexColumn++){
@@ -25,7 +25,7 @@ public class DebugTableContent {     /* THAT CLASS SHOULD BE DELETE AT THE END O
       }
     }
   }
-  public void AfficheColumnsAndRows(){
+  public void showColumnsAndNbRowsByTable(){
     for(int indexTable=0; indexTable< Bdd.getBddTables().size();indexTable++){
       System.out.println("*** TABLE : "+ Bdd.getBddTables().get(indexTable).getTableName()+"--- NB ROWS = "+ Bdd.getBddTables().get(indexTable).getNbRows());
       for(int indexColumn=0; indexColumn< Bdd.getBddTables().get(indexTable).getColumns().size();indexColumn++){

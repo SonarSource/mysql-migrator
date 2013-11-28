@@ -11,12 +11,15 @@ public class Main {
 
   public static void main(String[] args) {
      /*
+     FOR POSTGRESQL:
+     ---------------
       DRIVER :    args[0] = org.postgresql.Driver
       URLSOURCE : args[1] = jdbc:postgresql://localhost:5432/sonar
       URLDEST :   args[2] = jdbc:postgresql://localhost:5432/sonarToWrite
       USER :      args[3] = sonar
       PASSWORD :  args[4] = sonar
       */
+
     try{
       /* BUILD DB OBJECT */
       BddBuider bddBuider = new BddBuider();

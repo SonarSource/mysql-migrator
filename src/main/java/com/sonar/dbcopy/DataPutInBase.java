@@ -44,7 +44,6 @@ public class DataPutInBase {
       for(int indexRow=0;indexRow<nbRowsInTable;indexRow++){
         for(int indexColumn=0;indexColumn<nbColumns;indexColumn++){
           Object objectToInsert = columns.get(indexColumn).getDataWithIndex(indexRow);
-          //System.out.println("objectToInsert in table: "+tableName+"at row:"+indexRow+" and col: "+indexColumn+" is "+objectToInsert);
           statementDest.setObject(indexColumn+1,objectToInsert);
         }
         /* EXECUTE STATEMENT FOR EACH ROW*/

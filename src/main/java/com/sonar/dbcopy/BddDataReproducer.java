@@ -11,15 +11,15 @@ public class BddDataReproducer {
 
   private DataGetter dataGetter;
   private DataPutInBase dataPutInBase;
-  private Bdd Bdd;
+  private Bdd bdd;
 
-  public BddDataReproducer(BddConnecter bddConnecter,Bdd Bdd) throws SQLException {
-    this.Bdd = Bdd;
+  public BddDataReproducer(BddConnecter bddConnecter,Bdd Bdd){
+    this.bdd = Bdd;
     try{
-      dataGetter = new DataGetter(bddConnecter.getStatementSource(), this.Bdd);
+      dataGetter = new DataGetter(bddConnecter.getStatementSource(), this.bdd);
       dataGetter.doRequest();
 
-      dataPutInBase = new DataPutInBase(bddConnecter.getConnectionDest(), this.Bdd);
+      dataPutInBase = new DataPutInBase(bddConnecter.getConnectionDest(), this.bdd);
       dataPutInBase.doInsertIntoTables();
     }
     catch (Exception e){e.getStackTrace();}

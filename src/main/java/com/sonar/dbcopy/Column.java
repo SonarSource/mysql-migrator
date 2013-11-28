@@ -56,7 +56,7 @@ public class Column {
   public void addColumnType(String type){
     this.columnType = type;
   }
-  public void addDataObjectInTable(Object object){
+  public void addDataObjectInColumn(Object object){
     this.objectTableData.add(object);
   }
   public void addCharacteristicOfColumn(String type, int size, boolean canBeNull, boolean anIndexIsPresent){

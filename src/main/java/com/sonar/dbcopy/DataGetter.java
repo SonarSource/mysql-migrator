@@ -11,24 +11,25 @@ import java.util.List;
 public class DataGetter {
 
   private Statement statement;
-  private Bdd Bdd;
+  private Bdd bdd;
   private ResultSet resultSet;
   private Column columnToSet;
 
-  public DataGetter(Statement statement, Bdd Bdd){
+  public DataGetter(Statement statement, Bdd bdd){
     this.statement = statement;
-    this.Bdd = Bdd;
+    this.bdd = bdd;
   }
 
   public void doRequest() throws SQLException {
-    List <Table> tables_of_bdd = Bdd.getBddTables();
+
+    List <Table> tables_of_bdd = bdd.getBddTables();
     for(int tableIndex=0;tableIndex<tables_of_bdd.size();tableIndex++){
       /* GET TABLE AND NAMETABLE */
       Table table = tables_of_bdd.get(tableIndex);
-      String sonarTableName = table.getTableName();
+      String tableName = table.getTableName();
 
       /* GET RESULTSET FROM SQL REQUEST : SELECT * FROM tableName ORDER BY 1 */
-      resultSet =  statement.executeQuery("SELECT * FROM " + table.getTableName()+" ORDER BY 1;");
+      resultSet =  this.statement.executeQuery("SELECT * FROM " +tableName+" ORDER BY 1;");
 
       /* GET NUMBER OF TABLE ROWS */
       int  nbRowsInTable = resultSet.last() ? resultSet.getRow() : 0;
@@ -52,7 +53,7 @@ public class DataGetter {
         /* GET EACH LINE OF THE CURRENT COLUMN AND ADD IT IN THE JAVA Bdd COLUMN OBJECT */
         while (resultSet.next()) {
           Object objectGetted =  resultSet.getObject(columnIndex);
-          columnToSet.addDataObjectInTable(objectGetted);
+          columnToSet.addDataObjectInColumn(objectGetted);
         }
         /* REPLACE CURSOR AT THE BEGINNING OF RESULTSET */
         resultSet.beforeFirst();

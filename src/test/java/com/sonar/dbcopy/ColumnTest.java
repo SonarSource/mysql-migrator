@@ -25,7 +25,7 @@ public class ColumnTest {
   }
   @Test
   public void verifyInsertionOfDataTypeString() throws Exception {
-    column.addDataObjectInTable("stringDataToVerify");
+    column.addDataObjectInColumn("stringDataToVerify");
     assertEquals("stringDataToVerify",column.getDataWithIndex(0));
   }
   @Test

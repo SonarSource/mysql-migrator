@@ -33,4 +33,7 @@ public class ListColumnsAsString {
       }
       return questionMarkString;
   }
+  public int getNbColumns(){
+    return nbColumns;
+  }
 }

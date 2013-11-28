@@ -23,11 +23,10 @@ public class SimpleConnectionTest {
 
     simpleConnection = new SimpleConnection();
     simpleConnection.doConnection("org.h2.Driver", "jdbc:h2:mem:sonar", "sonar", "sonar");
-
   }
 
   @Test
-  public void testMethodsAboutConnectionAndStatementInSimpleConnectionClass() throws Exception {
+  public void verifyMethodsAboutConnectionAndStatementInSimpleConnectionClass() throws Exception {
     assertNotNull(simpleConnection);
     assertNotNull(simpleConnection.getConnection());
 
@@ -39,7 +38,5 @@ public class SimpleConnectionTest {
 
     simpleConnection.closeConnection();
     Assert.assertTrue(simpleConnection.getConnection().isClosed());
-
   }
-
 }
