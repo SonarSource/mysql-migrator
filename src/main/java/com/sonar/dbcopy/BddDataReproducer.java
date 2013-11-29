@@ -18,6 +18,7 @@ public class BddDataReproducer {
 
     dataPutInBase = new DataPutInBase(bddConnecter.getConnectionDest(), bdd);
     dataPutInBase.doInsertIntoTables();
+    bddConnecter.closeDestConnection();
   }
   /* GETTERS */
   public DataGetter getDataGetter(){
