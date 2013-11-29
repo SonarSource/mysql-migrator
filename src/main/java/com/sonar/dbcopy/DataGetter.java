@@ -12,7 +12,6 @@ public class DataGetter {
 
   private Statement statement;
   private Bdd bdd;
-  private Column columnToSet;
 
   public DataGetter(Statement statement, Bdd bdd){
     this.statement = statement;
@@ -20,7 +19,6 @@ public class DataGetter {
   }
 
   public void doRequest() throws SQLException {
-    ResultSet resultSet;
     List <Table> tablesOfBdd = bdd.getBddTables();
     /* FOR EACH TABLE */
     for(int tableIndex=0;tableIndex<tablesOfBdd.size();tableIndex++){
@@ -29,7 +27,7 @@ public class DataGetter {
       String tableName = table.getTableName();
 
       /* GET RESULTSET FROM SQL REQUEST : SELECT * FROM tableName ORDER BY 1 */
-      resultSet =  this.statement.executeQuery("SELECT * FROM " +tableName+" ORDER BY 1;");
+      ResultSet resultSet =  this.statement.executeQuery("SELECT * FROM " +tableName+" ORDER BY 1;");
 
       /* GET NUMBER OF TABLE ROWS */
       int  nbRowsInTable = resultSet.last() ? resultSet.getRow() : 0;
@@ -47,7 +45,7 @@ public class DataGetter {
         String columnName = resultSetMetaData.getColumnName(columnIndex);
         String  columnType = resultSetMetaData.getColumnTypeName(columnIndex);
 
-        columnToSet = table.addOneColumnToTable(columnName);
+        Column columnToSet = table.addOneColumnToTable(columnName);
         columnToSet.addColumnType(columnType);
 
         /* FOR EACH ROW OF THE CURRENT COLUMN , ADD IT IN THE JAVA BDD COLUMN OBJECT */
@@ -58,6 +56,8 @@ public class DataGetter {
         /* REPLACE CURSOR AT THE BEGINNING OF RESULTSET */
         resultSet.beforeFirst();
       }
+      resultSet.close();
     }
+
   }
 }

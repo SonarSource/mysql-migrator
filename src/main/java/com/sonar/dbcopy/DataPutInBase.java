@@ -12,14 +12,14 @@ import java.util.List;
 
 public class DataPutInBase {
 
-  private Bdd Bdd;
+  private Bdd bdd;
   private Connection connectionDest;
   private List<Table> listOfTables;
 
-  public DataPutInBase(Connection connection, Bdd Bdd){
+  public DataPutInBase(Connection connection, Bdd bdd){
     this.connectionDest = connection;
-    this.Bdd = Bdd;
-    this.listOfTables = this.Bdd.getBddTables();
+    this.bdd = bdd;
+    this.listOfTables = this.bdd.getBddTables();
   }
   public void doInsertIntoTables ()throws SQLException{
     for(int indexTable=0;indexTable<listOfTables.size();indexTable++){
@@ -27,7 +27,6 @@ public class DataPutInBase {
       /* GET ( TABLE, TABLENAME, ROW NB OF TABLE, COLUMNS AND NB OF COLUMNS ) FROM JAVA BDD OBJECT */
       Table table = listOfTables.get(indexTable);
       String tableName =  table.getTableName();
-      System.out.println("Table "+tableName+" is copying...");
       int nbRowsInTable = table.getNbRows();
       List<Column> columns = table.getColumns();
       int nbColumns = columns.size();
@@ -48,7 +47,6 @@ public class DataPutInBase {
         /* EXECUTE STATEMENT FOR EACH ROW*/
         statementDest.executeUpdate();
       }
-      System.out.println("DONE");
       statementDest.close();
     }
     connectionDest.close();

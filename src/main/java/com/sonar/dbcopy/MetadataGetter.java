@@ -15,7 +15,7 @@ public class MetadataGetter {
 
   public MetadataGetter (Statement statement, Bdd bdd){
     statementSource = statement;
-    bdd = bdd;
+    this.bdd = bdd;
   }
 
 

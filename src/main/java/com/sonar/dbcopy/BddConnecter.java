@@ -16,7 +16,8 @@ public class BddConnecter {
   private Connection connectionToPreparedStatement;
   private SimpleConnection destConnection;
 
-  public BddConnecter(){ }
+  public BddConnecter(){
+  }
 
   /* SOURCE CONNECTION */
   public void doSourceConnectionAndStatement(String driver, String urlSource, String user, String pwd)throws SQLException, ClassNotFoundException{

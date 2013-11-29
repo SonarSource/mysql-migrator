@@ -11,7 +11,8 @@ public class SimpleConnection {
   private Connection connection;
   private Statement statement;
 
-  public SimpleConnection() { }
+  public SimpleConnection() {
+  }
   /* SETTERS */
   public Statement doStatement() throws ClassNotFoundException, SQLException {
     statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_UPDATABLE, ResultSet.HOLD_CURSORS_OVER_COMMIT);
