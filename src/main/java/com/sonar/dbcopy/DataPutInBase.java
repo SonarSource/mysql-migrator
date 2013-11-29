@@ -17,14 +17,14 @@ public class DataPutInBase {
   private List<Table> listOfTables;
 
   public DataPutInBase(Connection connection, Bdd Bdd){
-      this.connectionDest = connection;
-      this.Bdd = Bdd;
-      this.listOfTables = this.Bdd.getBddTables();
+    this.connectionDest = connection;
+    this.Bdd = Bdd;
+    this.listOfTables = this.Bdd.getBddTables();
   }
   public void doInsertIntoTables ()throws SQLException{
     for(int indexTable=0;indexTable<listOfTables.size();indexTable++){
 
-      /* GET ( TABLE, TABLENAME, NB OF TABLE'S ROWS, COLUMNS AND NB OF COLUMS ) FROM JAVA Bdd OBJECT */
+      /* GET ( TABLE, TABLENAME, ROW NB OF TABLE, COLUMNS AND NB OF COLUMNS ) FROM JAVA BDD OBJECT */
       Table table = listOfTables.get(indexTable);
       String tableName =  table.getTableName();
       System.out.println("Table "+tableName+" is copying...");
@@ -37,7 +37,6 @@ public class DataPutInBase {
       String columnsAsString = lcas.makeString();
       String questionMarkString = lcas.makeQuestionMarkString();
       String sql = "INSERT INTO "+tableName+" ("+columnsAsString+") VALUES("+questionMarkString+");";
-      //sql must be : INSERT INTO tableName (column1,column2,...) VALUES (?,?,...);
 
       /* PREPARE STATEMENT BEFORE SENDING */
       PreparedStatement statementDest = connectionDest.prepareStatement(sql);
@@ -50,6 +49,8 @@ public class DataPutInBase {
         statementDest.executeUpdate();
       }
       System.out.println("DONE");
+      statementDest.close();
     }
+    connectionDest.close();
   }
 }

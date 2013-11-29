@@ -9,16 +9,14 @@ import java.util.Arrays;
 
 public class BddBuider {
 
-  private Bdd Bdd =null;
-
+  private Bdd bdd =null;
 
   public BddBuider (){
-    Bdd = new Bdd("sonar");
-    addtableToBdd();
+    bdd = new Bdd("sonar");
   }
   /* SETTERS */
-  private void addtableToBdd (){
-    Bdd.setBddTables(Arrays.asList(
+  public void addtableToBdd (){
+    bdd.setBddTables(Arrays.asList(
       new Table("action_plans"),
       new Table("active_dashboards"),
       new Table("active_rule_changes"),
@@ -76,6 +74,6 @@ public class BddBuider {
   }
   /* GETTERS */
   public Bdd getBdd(){
-    return this.Bdd;
+    return this.bdd;
   }
 }

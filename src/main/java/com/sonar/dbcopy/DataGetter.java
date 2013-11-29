@@ -12,7 +12,6 @@ public class DataGetter {
 
   private Statement statement;
   private Bdd bdd;
-  private ResultSet resultSet;
   private Column columnToSet;
 
   public DataGetter(Statement statement, Bdd bdd){
@@ -21,11 +20,12 @@ public class DataGetter {
   }
 
   public void doRequest() throws SQLException {
-
-    List <Table> tables_of_bdd = bdd.getBddTables();
-    for(int tableIndex=0;tableIndex<tables_of_bdd.size();tableIndex++){
+    ResultSet resultSet;
+    List <Table> tablesOfBdd = bdd.getBddTables();
+    /* FOR EACH TABLE */
+    for(int tableIndex=0;tableIndex<tablesOfBdd.size();tableIndex++){
       /* GET TABLE AND NAMETABLE */
-      Table table = tables_of_bdd.get(tableIndex);
+      Table table = tablesOfBdd.get(tableIndex);
       String tableName = table.getTableName();
 
       /* GET RESULTSET FROM SQL REQUEST : SELECT * FROM tableName ORDER BY 1 */
@@ -40,7 +40,7 @@ public class DataGetter {
       ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
       int columnNb = resultSetMetaData.getColumnCount();
 
-      /* GET DATA FROM RESULTSET AND RECORD THEM IN Bdd */
+      /* FOR EACH COLUMN OF THE TABLE */
       for(int columnIndex=1;columnIndex<=columnNb;columnIndex++){
 
         /* ADD THE COLUMN NAME AND COLUMN TYPE OF THE TABLE TO SET  */
@@ -50,7 +50,7 @@ public class DataGetter {
         columnToSet = table.addOneColumnToTable(columnName);
         columnToSet.addColumnType(columnType);
 
-        /* GET EACH LINE OF THE CURRENT COLUMN AND ADD IT IN THE JAVA Bdd COLUMN OBJECT */
+        /* FOR EACH ROW OF THE CURRENT COLUMN , ADD IT IN THE JAVA BDD COLUMN OBJECT */
         while (resultSet.next()) {
           Object objectGetted =  resultSet.getObject(columnIndex);
           columnToSet.addDataObjectInColumn(objectGetted);
@@ -59,8 +59,5 @@ public class DataGetter {
         resultSet.beforeFirst();
       }
     }
-    /* DEBUG AFFICHAGE Bdd */
-    //DebugTableContent debug = new DebugTableContent(Bdd);
-    //debug.AfficheColumnsAndRows();
   }
 }

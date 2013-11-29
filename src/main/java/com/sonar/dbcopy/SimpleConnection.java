@@ -30,10 +30,10 @@ public class SimpleConnection {
   }
   /* CLOSER */
   public void closeStatement()throws SQLException {
-      statement.close();
+    statement.close();
   }
   public void closeConnection() throws SQLException {
-      connection.close();
+    connection.close();
   }
 
 }

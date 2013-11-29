@@ -10,7 +10,7 @@ import java.util.List;
 public class Bdd {
 
   private String bddName;
-  private List<Table> tables_of_bdd;
+  private List<Table> tablesOfBdd;
 
   public Bdd(String bddName){
     this.bddName = bddName;
@@ -18,7 +18,7 @@ public class Bdd {
 
   /* GETTERS */
   public List<Table> getBddTables(){
-    return tables_of_bdd;
+    return tablesOfBdd;
   }
   public String getBddName(){
     return this.bddName;
@@ -27,12 +27,12 @@ public class Bdd {
     return getColumnFromTable(indexTable,indexColumn).getDataList().get(indexData);
   }
   public Column getColumnFromTable(int indexTable, int indexColumn ){
-    return  tables_of_bdd.get(indexTable).getColumns().get(indexColumn);
+    return  tablesOfBdd.get(indexTable).getColumns().get(indexColumn);
   }
 
   /* SETTERS */
-  public void setBddTables (List<Table> tables_of_bdd){
-    this.tables_of_bdd = tables_of_bdd;
+  public void setBddTables (List<Table> tablesOfBdd){
+    this.tablesOfBdd = tablesOfBdd;
   }
   public void setBddName (String bddName){
     this.bddName = bddName;

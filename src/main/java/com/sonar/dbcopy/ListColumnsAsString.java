@@ -10,7 +10,6 @@ import java.util.List;
 public class ListColumnsAsString {
 
   private List<Column> columnList;
-  private String columnsAsString, questionMarkString;
   private int nbColumns;
 
   public ListColumnsAsString(List<Column> list){
@@ -19,7 +18,7 @@ public class ListColumnsAsString {
   }
 
   public String makeString(){
-    columnsAsString = new String();
+    String columnsAsString = "";
     for(int indexColumn=0;indexColumn<nbColumns;indexColumn++){
       columnsAsString+=","+columnList.get(indexColumn).getColumnName();
     }
@@ -27,11 +26,11 @@ public class ListColumnsAsString {
     return columnsAsString;
   }
   public String makeQuestionMarkString(){
-      questionMarkString ="?";
-      for(int indexColumn=0;indexColumn<nbColumns-1;indexColumn++){
-          questionMarkString+=",?";
-      }
-      return questionMarkString;
+    String questionMarkString ="?";
+    for(int indexColumn=0;indexColumn<nbColumns-1;indexColumn++){
+      questionMarkString+=",?";
+    }
+    return questionMarkString;
   }
   public int getNbColumns(){
     return nbColumns;

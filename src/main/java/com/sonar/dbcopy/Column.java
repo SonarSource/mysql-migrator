@@ -16,18 +16,13 @@ public class Column {
   private int sizeOfType;
   private boolean canBeNull;
   private boolean anIndexIsPresent;
-  private Sequence sequence_if_id = null;
+  private Sequence sequenceIfId = null;
   private List<Object> objectTableData;
 
   /* CONSTRUCTEUR */
   public Column(String columnName){
     this.columnName = columnName;
     objectTableData = new ArrayList<Object>();
-    /*
-    if (columnName.equals("id")){
-      this.sequence_if_id = new Sequence("seq_"+tableName);
-    }
-    */
   }
 
   /* GETTERS */
@@ -51,7 +46,7 @@ public class Column {
     this.columnType = columnType;
   }
   public void addSequenceOnId(String tableName){
-    this.sequence_if_id = new Sequence(tableName+"_id_seq");
+    this.sequenceIfId = new Sequence(tableName+"_id_seq");
   }
   public void addColumnType(String type){
     this.columnType = type;

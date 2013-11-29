@@ -5,11 +5,13 @@
  */
 package com.sonar.dbcopy;
 
-import java.sql.SQLException;
-
 public class Main {
 
-  public static void main(String[] args) {
+  private Main(){
+    // Utility classes, which are a collection of static members, should not have a public constructor
+  }
+
+  public static void main(String[] args) throws Exception {
      /*
      FOR POSTGRESQL:
      ---------------
@@ -20,9 +22,9 @@ public class Main {
       PASSWORD :  args[4] = sonar
       */
 
-    try{
       /* BUILD DB OBJECT */
       BddBuider bddBuider = new BddBuider();
+      bddBuider.addtableToBdd();
 
       /* DO CONNECTION */
       BddConnecter bddConnecter = new BddConnecter();
@@ -38,23 +40,6 @@ public class Main {
       /* DO CLOSE CONNECTION */
       bddConnecter.closeSourceConnection();
       bddConnecter.closeDestConnection();
-     }
-    catch (SQLException sqle){
-      System.err.println("Exception SQL : ");
-      while (sqle != null) {
-        String message = sqle.getMessage();
-        String sqlState = sqle.getSQLState();
-        int errorCode = sqle.getErrorCode();
-        System.out.println("Message = "+message);
-        System.out.println("SQLState = "+sqlState);
-        System.out.println("ErrorCode = "+errorCode);
-        sqle.printStackTrace();
-        sqle = sqle.getNextException();
-      }
-    }
-    catch (ClassNotFoundException cnfe){
-      System.err.println("ClassNotFoundException : ");
-      cnfe.printStackTrace();
-    }
+
   }
 }

@@ -17,6 +17,7 @@ public class BddBuiderTest {
   @Before
   public void createInstance() {
     bddBuider = new BddBuider();
+    bddBuider.addtableToBdd();
   }
 
   @Test
@@ -25,7 +26,7 @@ public class BddBuiderTest {
     assertEquals("sonar",bddBuider.getBdd().getBddName());
   }
   @Test
-  public void verifyTablesCcreation()throws Exception{
+  public void verifyTablesCreation()throws Exception{
     assertEquals(53,bddBuider.getBdd().getBddTables().size());
     assertEquals("widgets",bddBuider.getBdd().getBddTables().get(52).getTableName());
   }
