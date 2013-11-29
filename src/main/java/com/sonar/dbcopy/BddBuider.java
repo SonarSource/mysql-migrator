@@ -14,10 +14,10 @@ public class BddBuider {
 
   public BddBuider (){
     Bdd = new Bdd("sonar");
-    addtableToBDD();
+    addtableToBdd();
   }
   /* SETTERS */
-  private void addtableToBDD (){
+  private void addtableToBdd (){
     Bdd.setBddTables(Arrays.asList(
       new Table("action_plans"),
       new Table("active_dashboards"),
