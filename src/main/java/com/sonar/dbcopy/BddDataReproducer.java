@@ -13,8 +13,8 @@ public class BddDataReproducer {
   private DataPutInBase dataPutInBase;
 
   public BddDataReproducer(BddConnecter bddConnecter,Bdd bdd) throws SQLException {
-    dataGetter = new DataGetter(bddConnecter.getStatementSource(), bdd);
-    dataGetter.doRequest();
+    dataGetter = new DataGetter();
+    dataGetter.doRequest(bddConnecter.getStatementSource(), bdd.getBddTables());
 
     dataPutInBase = new DataPutInBase(bddConnecter.getConnectionDest(), bdd);
     dataPutInBase.doInsertIntoTables();

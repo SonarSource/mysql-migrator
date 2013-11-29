@@ -10,16 +10,12 @@ import java.util.List;
 
 public class DataGetter {
 
-  private Statement statement;
-  private Bdd bdd;
+  public DataGetter(){
 
-  public DataGetter(Statement statement, Bdd bdd){
-    this.statement = statement;
-    this.bdd = bdd;
   }
 
-  public void doRequest() throws SQLException {
-    List <Table> tablesOfBdd = bdd.getBddTables();
+  public void doRequest(Statement statement, List <Table> tablesOfBdd ) throws SQLException {
+
     /* FOR EACH TABLE */
     for(int tableIndex=0;tableIndex<tablesOfBdd.size();tableIndex++){
       /* GET TABLE AND NAMETABLE */
@@ -27,7 +23,7 @@ public class DataGetter {
       String tableName = table.getTableName();
 
       /* GET RESULTSET FROM SQL REQUEST : SELECT * FROM tableName ORDER BY 1 */
-      ResultSet resultSet =  this.statement.executeQuery("SELECT * FROM " +tableName+" ORDER BY 1;");
+      ResultSet resultSet =  statement.executeQuery("SELECT * FROM " +tableName+" ORDER BY 1;");
 
       /* GET NUMBER OF TABLE ROWS */
       int  nbRowsInTable = resultSet.last() ? resultSet.getRow() : 0;
@@ -58,6 +54,6 @@ public class DataGetter {
       }
       resultSet.close();
     }
-
+    statement.close();
   }
 }

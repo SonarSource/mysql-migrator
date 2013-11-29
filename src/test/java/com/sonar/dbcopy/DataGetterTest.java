@@ -34,8 +34,8 @@ public class DataGetterTest {
   public void testDoRequest() throws SQLException, ClassNotFoundException {
     /* CONNECT TO BDD H2 TO READ IT */
     statementFromUtils = databaseUtilsSource.getStatementFromH2();
-    dataGetter = new DataGetter(statementFromUtils,bddFromUtils);
-    dataGetter.doRequest();
+    dataGetter = new DataGetter();
+    dataGetter.doRequest(statementFromUtils,bddFromUtils.getBddTables());
 
     /* VERIFY FIRST TABLE */
     assertEquals("table_for_test",bddFromUtils.getBddTables().get(0).getTableName());

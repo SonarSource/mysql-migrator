@@ -18,23 +18,22 @@ public class ListColumnsAsString {
   }
 
   public String makeString(){
-    StringBuffer buf = new StringBuffer();
+    StringBuilder stringBuilder = new StringBuilder();
     for (int indexColumn = 0; indexColumn < nbColumns; indexColumn++) {
-      buf.append(",");
-      buf.append(columnList.get(indexColumn).getColumnName());
+      stringBuilder.append(",");
+      stringBuilder.append(columnList.get(indexColumn).getColumnName());
     }
-    String columnsAsString = buf.toString();
+    String columnsAsString = stringBuilder.toString();
     columnsAsString = columnsAsString.substring(1);
     return columnsAsString;
   }
   public String makeQuestionMarkString(){
-    StringBuffer buf = new StringBuffer();
-    buf.append("?");
+    StringBuilder stringBuilder = new StringBuilder();
+    stringBuilder.append("?");
     for (int indexColumn = 0; indexColumn < nbColumns-1; indexColumn++) {
-      buf.append(",?");
+      stringBuilder.append(",?");
     }
-    String questionMarkString = buf.toString();
-    return questionMarkString;
+    return stringBuilder.toString();
   }
   public int getNbColumns(){
     return nbColumns;

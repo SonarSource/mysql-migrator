@@ -10,6 +10,7 @@ import org.junit.Test;
 import static junit.framework.Assert.assertEquals;
 
 import java.sql.*;
+import java.util.List;
 
 public class DataPutInBaseTest {
 
@@ -18,6 +19,7 @@ public class DataPutInBaseTest {
   private Bdd bdd;
   private Connection connection;
   private Statement statement;
+  private List<Table> tablesOfBdd;
 
   @Before
   public void createInstance() throws SQLException, ClassNotFoundException {
@@ -26,6 +28,7 @@ public class DataPutInBaseTest {
     /* MAKE DATABASE JAVA OBJECT */
     bdd = databaseUtils.makeBddJavaObject();
     databaseUtils.addDatasToBddJavaObject();
+
     /* MAKE AN EMPTY DATABASE H2 */
     databaseUtils.makeDatabaseH2("sonarToWrite");
     connection = databaseUtils.getConnectionFromH2();
@@ -37,10 +40,10 @@ public class DataPutInBaseTest {
   public void testDoInsertIntoTables() throws SQLException, ClassNotFoundException {
     /* CONNECT AND GET STATEMENT TO READ RESULT IN DATABASE H2 */
     statement = databaseUtils.getStatementFromH2();
-
+    tablesOfBdd = bdd.getBddTables();
     /* FOR EACH TABLE */
-    for(int indexTable=0;indexTable<bdd.getBddTables().size();indexTable++){
-      Table tableToCompare = bdd.getBddTables().get(indexTable);
+    for(int indexTable=0;indexTable<tablesOfBdd.size();indexTable++){
+      Table tableToCompare = tablesOfBdd.get(indexTable);
       String tableName = tableToCompare.getTableName();
       int nbColumnInTable =  tableToCompare.getColumns().size();
       /* GET CONTENT OF TABLE */
