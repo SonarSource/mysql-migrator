@@ -17,7 +17,7 @@ public class BddBuiderTest {
   @Before
   public void createInstance() {
     bddBuider = new BddBuider();
-    bddBuider.addtableToBdd();
+    bddBuider.addTableToBdd();
   }
 
   @Test

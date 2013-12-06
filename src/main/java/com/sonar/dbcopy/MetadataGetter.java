@@ -10,6 +10,8 @@ import java.sql.Statement;
 
 public class MetadataGetter {
 
+  /** FILE FOR CONSTRUCT BDD DESTINATION FROM METADATA OF THE BDD SOURCE */
+
   private Statement statementSource;
   private Bdd bdd;
 

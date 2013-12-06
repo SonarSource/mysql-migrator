@@ -18,18 +18,21 @@ public class DatabaseUtils {
   private PreparedStatement preparedStatement;
   private Bdd bdd;
   private List<Table> tableList;
+  private String databaseName;
 
   public DatabaseUtils() { }
 
-  public void makeDatabaseH2(String tableName) throws SQLException, ClassNotFoundException {
+  /* H2 */
+  public void makeDatabaseH2Withtables(String databaseName) throws SQLException, ClassNotFoundException {
+    this.databaseName = databaseName;
+    /* CREATE H2 DATABASE */
+    String connectionPoolParameters =  "jdbc:h2:mem:"+this.databaseName+";DB_CLOSE_ON_EXIT=-1;";
 
-    /* CREATE DATABASE */
-    JdbcConnectionPool.create("jdbc:h2:mem:"+tableName+";DB_CLOSE_DELAY=-1", "sonar", "sonar");
+    JdbcConnectionPool jdbcConnectionPool = JdbcConnectionPool.create(connectionPoolParameters, "sonar", "sonar");
 
-    /* CONNECTION TO DATABASE */
-    bddConnecter = new BddConnecter();
-    bddConnecter.doOnlyDestinationConnection("org.h2.Driver", "jdbc:h2:mem:sonar", "sonar", "sonar");
-    connection = bddConnecter.getConnectionDest();
+    /* CONNECT TO H2 DATABASE */
+    connection =jdbcConnectionPool.getConnection();
+
 
     /* PREPARE STATEMENT TO CREATE TABLES */
     preparedStatement = connection.prepareStatement("DROP TABLE IF EXISTS table_for_test");
@@ -40,10 +43,9 @@ public class DatabaseUtils {
     preparedStatement.executeUpdate();
     preparedStatement = connection.prepareStatement("CREATE TABLE empty_table_for_test (ID integer PRIMARY KEY, COLSTRING varchar(50), COLTIMESTAMP timestamp)");
     preparedStatement.executeUpdate();
-
-    System.out.println();
   }
-  public void insertDatasInH2() throws SQLException {
+
+  public void insertDatasInH2Tables() throws SQLException {
 
     /* PREPARE STATEMENT TO INSERT DATAS */
     String stringToInsert = "INSERT INTO table_for_test (COLUMNINTEGER , COLUMNSTRING , COLUMNTIMESTAMP ) VALUES (?,?,?)";
@@ -52,7 +54,6 @@ public class DatabaseUtils {
     /* CREATE DATAS */
     Object idForColumnInteger = 1;
     Object stringForColumnString = "This is a first string for test";
-    java.util.Date date= new java.util.Date();
     Object timestampForColumnTimestamp = new Timestamp(123456);
 
     /* INSERT A FIRST ROW OF DATAS IN DATABASE */
@@ -72,7 +73,11 @@ public class DatabaseUtils {
     preparedStatement.setObject(3,timestampForColumnTimestamp2);
     preparedStatement.executeUpdate();
   }
-  public Bdd makeBddJavaObject(){
+  public Connection getConnectionFromH2() throws SQLException, ClassNotFoundException {
+    return this.connection;
+  }
+  /* JAVA DATABASE */
+  public void makeBddJavaObject(){
     bdd = new Bdd("sonar");
 
     Table table1 = new Table("table_for_test");
@@ -83,8 +88,6 @@ public class DatabaseUtils {
     tableList.add(table2);
 
     bdd.setBddTables(tableList);
-
-    return bdd;
   }
   public void addDatasToBddJavaObject(){
     tableList.get(0).addOneColumnToTable("COLUMNINTEGER");
@@ -101,16 +104,9 @@ public class DatabaseUtils {
     tableList.get(0).getColumns().get(2).addDataObjectInColumn(new Timestamp(123456));
     tableList.get(0).getColumns().get(2).addDataObjectInColumn(new Timestamp(456789));
   }
-  public Statement getStatementFromH2 () throws SQLException, ClassNotFoundException {
-    bddConnecter = new BddConnecter();
-    bddConnecter.doSourceConnectionAndStatement("org.h2.Driver", "jdbc:h2:mem:sonar", "sonar", "sonar");
-    Statement statement = bddConnecter.getStatementSource();
-    return statement;
+  public Bdd getJavaBddFromUtils(){
+    return this.bdd;
   }
-  public Connection getConnectionFromH2() throws SQLException, ClassNotFoundException {
-    bddConnecter = new BddConnecter();
-    bddConnecter.doOnlyDestinationConnection("org.h2.Driver", "jdbc:h2:mem:sonarToWrite", "sonar", "sonar");
-    connection = bddConnecter.getConnectionDest();
-    return connection;
-  }
+
+
 }

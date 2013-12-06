@@ -11,39 +11,34 @@ import java.sql.Statement;
 
 public class BddConnecter {
 
-  private SimpleConnection sourceConnection;
-  private Statement sourceStatement;
-  private Connection connectionToPreparedStatement;
-  private SimpleConnection destConnection;
+  private SimpleConnection sourceSimpleConnection,destSimpleConnection;
+  private Connection sourceConnection, destConnection;
 
   public BddConnecter(){
   }
 
-  /* SOURCE CONNECTION */
-  public void doSourceConnectionAndStatement(String driver, String urlSource, String user, String pwd)throws SQLException, ClassNotFoundException{
-    sourceConnection = new SimpleConnection();
-    sourceConnection.doConnection(driver, urlSource, user, pwd);
-    sourceStatement = sourceConnection.doStatement();
+  /* DO CONNECTION */
+  public void doSourceConnection(String driver, String urlSource, String user, String pwd)throws SQLException, ClassNotFoundException{
+    SimpleConnection sourceSimpleConnection = new SimpleConnection();
+    sourceConnection = sourceSimpleConnection.openConnection(driver, urlSource, user, pwd);
    }
   /* DESTINATION CONNECTION */
-  public void doOnlyDestinationConnection(String driver, String urlDest, String user, String pwd)throws SQLException, ClassNotFoundException{
-    destConnection = new SimpleConnection();
-    destConnection.doConnection(driver, urlDest, user, pwd);
-    connectionToPreparedStatement=destConnection.getConnection();
+  public void doDestinationConnection(String driver, String urlDest, String user, String pwd)throws SQLException, ClassNotFoundException{
+    SimpleConnection destSimpleConnection = new SimpleConnection();
+    destConnection = destSimpleConnection.openConnection(driver, urlDest, user, pwd);
   }
   /* GETTERS */
-  public Statement getStatementSource(){
-    return sourceStatement;
-  }
-  public Connection getConnectionDest(){
-    return connectionToPreparedStatement;
+   public Connection getSourceConnection(){
+     return sourceConnection;
+   }
+  public Connection getDestConnection(){
+    return destConnection;
   }
   /* CLOSE METHODS */
   public void closeSourceConnection()throws SQLException{
-    sourceConnection.closeStatement();
-    sourceConnection.closeConnection();
+    sourceConnection.close();
   }
   public void closeDestConnection()throws SQLException{
-    destConnection.closeConnection();
+    destConnection.close();
   }
 }

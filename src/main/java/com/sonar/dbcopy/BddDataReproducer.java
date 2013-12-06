@@ -14,11 +14,11 @@ public class BddDataReproducer {
 
   public BddDataReproducer(BddConnecter bddConnecter,Bdd bdd) throws SQLException {
     dataGetter = new DataGetter();
-    dataGetter.doRequest(bddConnecter.getStatementSource(), bdd.getBddTables());
+    dataGetter.createStatement(bddConnecter.getSourceConnection());
+    dataGetter.writeDataInJavaBdd(bdd.getBddTables());
 
-    dataPutInBase = new DataPutInBase(bddConnecter.getConnectionDest(), bdd);
-    dataPutInBase.doInsertIntoTables();
-    bddConnecter.closeDestConnection();
+    dataPutInBase = new DataPutInBase();
+    dataPutInBase.insertDatasFromJavaDatabaseToDestinationDatabase(bddConnecter.getDestConnection(),bdd.getBddTables());
   }
   /* GETTERS */
   public DataGetter getDataGetter(){

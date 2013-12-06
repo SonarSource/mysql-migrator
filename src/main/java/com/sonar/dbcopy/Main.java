@@ -24,21 +24,21 @@ public class Main {
 
     /* BUILD DB OBJECT */
     BddBuider bddBuider = new BddBuider();
-    bddBuider.addtableToBdd();
+    bddBuider.addTableToBdd();
 
     /* DO CONNECTION */
-    BddConnecter bddConnecter = new BddConnecter();
-    bddConnecter.doSourceConnectionAndStatement(args[0],args[1],args[3],args[4]);
-    bddConnecter.doOnlyDestinationConnection(args[0],args[2],args[3],args[4]);
+      BddConnecter bddConnecter = new BddConnecter();
+      bddConnecter.doSourceConnection(args[0],args[1],args[3],args[4]);
+      bddConnecter.doDestinationConnection(args[0],args[2],args[3],args[4]);
 
-    /* DO COPY */
-    new BddDataReproducer(bddConnecter,bddBuider.getBdd());
+      /* DO COPY */
+      new BddDataReproducer(bddConnecter,bddBuider.getBdd());
 
-    /* DO VERIFYING */
-    // TODO VERIFY THAT CONTENTS ARE THE SAME BETWEEN SOURCE AND  DESTINATION DATABASES
+      /* DO VERIFYING */
+      // TODO VERIFY THAT CONTENTS ARE THE SAME BETWEEN SOURCE AND  DESTINATION DATABASES
 
-    /* DO CLOSE CONNECTION */
-    bddConnecter.closeSourceConnection();
-    bddConnecter.closeDestConnection();
+      /* DO CLOSE CONNECTION */
+      bddConnecter.closeSourceConnection();
+      bddConnecter.closeDestConnection();
   }
 }

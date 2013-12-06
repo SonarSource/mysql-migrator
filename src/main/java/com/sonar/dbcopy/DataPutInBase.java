@@ -12,16 +12,11 @@ import java.util.List;
 
 public class DataPutInBase {
 
-  private Bdd bdd;
-  private Connection connectionDest;
-  private List<Table> listOfTables;
-
-  public DataPutInBase(Connection connection, Bdd bdd){
-    this.connectionDest = connection;
-    this.bdd = bdd;
-    this.listOfTables = this.bdd.getBddTables();
+  public DataPutInBase(){
   }
-  public void doInsertIntoTables ()throws SQLException{
+
+  public void insertDatasFromJavaDatabaseToDestinationDatabase (Connection connectionDest,List<Table> listOfTables)throws SQLException{
+
     for(int indexTable=0;indexTable<listOfTables.size();indexTable++){
 
       /* GET ( TABLE, TABLENAME, ROW NB OF TABLE, COLUMNS AND NB OF COLUMNS ) FROM JAVA BDD OBJECT */
@@ -35,10 +30,12 @@ public class DataPutInBase {
       ListColumnsAsString lcas = new ListColumnsAsString(columns);
       String columnsAsString = lcas.makeString();
       String questionMarkString = lcas.makeQuestionMarkString();
-      String sql = "INSERT INTO "+tableName+" ("+columnsAsString+") VALUES("+questionMarkString+");";
+      String sqlRequest = "INSERT INTO "+tableName+" ("+columnsAsString+") VALUES("+questionMarkString+");";
 
       /* PREPARE STATEMENT BEFORE SENDING */
-      PreparedStatement statementDest = connectionDest.prepareStatement(sql);
+      PreparedStatement statementDest = connectionDest.prepareStatement(sqlRequest);
+
+      /* ADD DATA IN PREPARED STATEMENT FOR EACH COLUMN AND ROW BY ROW */
       for(int indexRow=0;indexRow<nbRowsInTable;indexRow++){
         for(int indexColumn=0;indexColumn<nbColumns;indexColumn++){
           Object objectToInsert = columns.get(indexColumn).getDataWithIndex(indexRow);
@@ -49,6 +46,5 @@ public class DataPutInBase {
       }
       statementDest.close();
     }
-    connectionDest.close();
   }
 }

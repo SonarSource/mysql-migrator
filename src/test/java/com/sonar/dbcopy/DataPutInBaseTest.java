@@ -5,6 +5,7 @@
  */
 package com.sonar.dbcopy;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static junit.framework.Assert.assertEquals;
@@ -17,8 +18,7 @@ public class DataPutInBaseTest {
   private DataPutInBase dataPutInBase;
   private DatabaseUtils databaseUtils;
   private Bdd bdd;
-  private Connection connection;
-  private Statement statement;
+  private Connection connectionFromUtils;
   private List<Table> tablesOfBdd;
 
   @Before
@@ -26,21 +26,25 @@ public class DataPutInBaseTest {
 
     databaseUtils = new DatabaseUtils();
     /* MAKE DATABASE JAVA OBJECT */
-    bdd = databaseUtils.makeBddJavaObject();
+    databaseUtils.makeBddJavaObject();
     databaseUtils.addDatasToBddJavaObject();
+    bdd = databaseUtils.getJavaBddFromUtils();
+    tablesOfBdd = bdd.getBddTables();
 
-    /* MAKE AN EMPTY DATABASE H2 */
-    databaseUtils.makeDatabaseH2("sonarToWrite");
-    connection = databaseUtils.getConnectionFromH2();
+    /* MAKE AN EMPTY DATABASE H2 : don't insert datas in h2 database */
+    databaseUtils.makeDatabaseH2Withtables("sonarToWrite");
+    connectionFromUtils = databaseUtils.getConnectionFromH2();
+
+
     /* DO THE COPY FROM JAVA OBJECT TO EMPTY DATABASE H2 */
-    dataPutInBase = new DataPutInBase(connection,bdd);
+    dataPutInBase = new DataPutInBase();
+    dataPutInBase.insertDatasFromJavaDatabaseToDestinationDatabase(connectionFromUtils,bdd.getBddTables());
   }
 
   @Test
-  public void testDoInsertIntoTables() throws SQLException, ClassNotFoundException {
-    /* CONNECT AND GET STATEMENT TO READ RESULT IN DATABASE H2 */
-    statement = databaseUtils.getStatementFromH2();
-    tablesOfBdd = bdd.getBddTables();
+  public void verifyInsertDatasFromJavaDatabaseToDestinationDatabase() throws SQLException, ClassNotFoundException {
+     Statement statement = connectionFromUtils.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT);
+
     /* FOR EACH TABLE */
     for(int indexTable=0;indexTable<tablesOfBdd.size();indexTable++){
       Table tableToCompare = tablesOfBdd.get(indexTable);
@@ -64,4 +68,10 @@ public class DataPutInBaseTest {
     }
     statement.close();
   }
+
+  @After
+  public void  closeEveryThing() throws SQLException {
+    connectionFromUtils.close();
+  }
+
 }

@@ -6,37 +6,39 @@
 package com.sonar.dbcopy;
 
 import junit.framework.Assert;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import java.sql.Connection;
 import java.sql.SQLException;
 import org.h2.jdbcx.JdbcConnectionPool;
 
 public class SimpleConnectionTest {
 
   private SimpleConnection simpleConnection;
+  private Connection connection;
 
   @Before
   public void createInstance() throws SQLException, ClassNotFoundException {
     JdbcConnectionPool.create("jdbc:h2:mem:sonar;DB_CLOSE_DELAY=-1", "sonar", "sonar");
 
     simpleConnection = new SimpleConnection();
-    simpleConnection.doConnection("org.h2.Driver", "jdbc:h2:mem:sonar", "sonar", "sonar");
+    connection = simpleConnection.openConnection("org.h2.Driver", "jdbc:h2:mem:sonar", "sonar", "sonar");
   }
 
   @Test
-  public void verifyMethodsAboutConnectionAndStatementInSimpleConnectionClass() throws Exception {
+  public void verifyMethodsAboutConnectionInSimpleConnectionClass() throws Exception {
     assertNotNull(simpleConnection);
-    assertNotNull(simpleConnection.getConnection());
-
-    simpleConnection.doStatement();
-    assertNotNull(simpleConnection.getStatement());
-
-    simpleConnection.closeStatement();
-    assertTrue(simpleConnection.getStatement().isClosed());
+    assertNotNull(connection);
 
     simpleConnection.closeConnection();
-    Assert.assertTrue(simpleConnection.getConnection().isClosed());
+    Assert.assertTrue(connection.isClosed());
+  }
+  @After
+  public void  closeEveryThing() throws SQLException, ClassNotFoundException {
+    connection.close();
   }
 }

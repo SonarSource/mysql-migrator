@@ -8,31 +8,18 @@ package com.sonar.dbcopy;
 import java.sql.*;
 
 public class SimpleConnection {
+
   private Connection connection;
-  private Statement statement;
 
   public SimpleConnection() {
   }
   /* SETTERS */
-  public Statement doStatement() throws ClassNotFoundException, SQLException {
-    statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_UPDATABLE, ResultSet.HOLD_CURSORS_OVER_COMMIT);
-    return statement;
-  }
-  public void doConnection(String driver, String url,String user,String pwd) throws ClassNotFoundException, SQLException {
+  public Connection openConnection(String driver, String url,String user,String pwd) throws SQLException, ClassNotFoundException {
     Class.forName(driver);
-    connection =DriverManager.getConnection(url, user, pwd);
-  }
-  /* GETTERS */
-  public Connection getConnection(){
+    connection = DriverManager.getConnection(url, user, pwd);
     return connection;
   }
-  public Statement getStatement(){
-    return statement;
-  }
-  /* CLOSER */
-  public void closeStatement()throws SQLException {
-    statement.close();
-  }
+  /* CLOSERS */
   public void closeConnection() throws SQLException {
     connection.close();
   }

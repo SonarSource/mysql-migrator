@@ -5,39 +5,49 @@
  */
 package com.sonar.dbcopy;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
+
+import java.sql.*;
+
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 
 public class DataGetterTest {
 
   private DataGetter dataGetter;
   private DatabaseUtils databaseUtilsSource;
   private Bdd bddFromUtils;
-  private Statement statementFromUtils;
+  private Connection connectionFromUtils;
 
   @Before
   public void createInstance() throws SQLException, ClassNotFoundException {
-    /* MAKE FILLED DATABASE TO BE THE SOURCE */
     databaseUtilsSource = new DatabaseUtils();
-    databaseUtilsSource.makeDatabaseH2("sonarToRead");
-    databaseUtilsSource.insertDatasInH2();
 
     /* MAKE BDD JAVA OBJECT TO RECORD DATAS */
-    bddFromUtils = databaseUtilsSource.makeBddJavaObject();
+    databaseUtilsSource.makeBddJavaObject();
+    bddFromUtils = databaseUtilsSource.getJavaBddFromUtils();
+
+    /* MAKE FILLED H2 DATABASE TO BE THE SOURCE */
+    databaseUtilsSource.makeDatabaseH2Withtables("sonarToRead");
+    databaseUtilsSource.insertDatasInH2Tables();
+    connectionFromUtils = databaseUtilsSource.getConnectionFromH2();
+
+    /* BUILD DataGetter OBJECT */
+    dataGetter = new DataGetter();
+    dataGetter.createStatement(connectionFromUtils);
+    dataGetter.writeDataInJavaBdd(bddFromUtils.getBddTables());
+
   }
 
   @Test
-  public void testDoRequest() throws SQLException, ClassNotFoundException {
-    /* CONNECT TO BDD H2 TO READ IT */
-    statementFromUtils = databaseUtilsSource.getStatementFromH2();
-    dataGetter = new DataGetter();
-    dataGetter.doRequest(statementFromUtils,bddFromUtils.getBddTables());
+  public void verifywriteDataInJavaBdd() throws SQLException, ClassNotFoundException {
 
-    /* VERIFY FIRST TABLE */
+    assertNotNull(dataGetter.getStatementSource());
+
+    /* VERIFY FIRST TABLE FROM JAVA BDD*/
     assertEquals("table_for_test",bddFromUtils.getBddTables().get(0).getTableName());
     assertEquals("COLUMNINTEGER",bddFromUtils.getColumnFromTable(0,0).getColumnName());
     assertEquals("COLUMNSTRING",bddFromUtils.getColumnFromTable(0,1).getColumnName());
@@ -58,6 +68,12 @@ public class DataGetterTest {
     assertEquals("COLTIMESTAMP",bddFromUtils.getColumnFromTable(1,2).getColumnName());
     assertEquals(0,bddFromUtils.getBddTables().get(1).getNbRows());
 
-    statementFromUtils.close();
+    dataGetter.getStatementSource().close();
+
+    assertTrue(dataGetter.getStatementSource().isClosed());
+  }
+  @After
+  public void  closeEveryThing() throws SQLException {
+    connectionFromUtils.close();
   }
 }

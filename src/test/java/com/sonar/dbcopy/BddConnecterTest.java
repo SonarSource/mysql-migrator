@@ -5,10 +5,12 @@
  */
 package com.sonar.dbcopy;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import java.sql.SQLException;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 
 public class BddConnecterTest {
 
@@ -18,17 +20,26 @@ public class BddConnecterTest {
   @Before
   public void createInstance() throws SQLException, ClassNotFoundException {
     databaseUtils = new DatabaseUtils();
-    databaseUtils.makeDatabaseH2("sonar");
+    databaseUtils.makeDatabaseH2Withtables("sonar");
 
     bddConnecter = new BddConnecter();
-    bddConnecter.doSourceConnectionAndStatement("org.h2.Driver", "jdbc:h2:mem:sonar", "sonar", "sonar");
-    bddConnecter.doOnlyDestinationConnection("org.h2.Driver", "jdbc:h2:mem:sonar", "sonar", "sonar");
+    bddConnecter.doSourceConnection("org.h2.Driver", "jdbc:h2:mem:sonar", "sonar", "sonar");
+    bddConnecter.doDestinationConnection("org.h2.Driver", "jdbc:h2:mem:sonar", "sonar", "sonar");
 
   }
   @Test
-  public void verifyBddConnecterCreation() throws Exception {
-    assertNotNull(bddConnecter.getStatementSource());
-    assertNotNull(bddConnecter.getConnectionDest());
-  }
+  public void verifyBddConnecter() throws Exception {
+    assertNotNull(bddConnecter.getSourceConnection());
+    assertNotNull(bddConnecter.getDestConnection());
 
+    bddConnecter.closeSourceConnection();
+    bddConnecter.closeDestConnection();
+
+    assertTrue(bddConnecter.getSourceConnection().isClosed());
+    assertTrue(bddConnecter.getDestConnection().isClosed());
+  }
+  @After
+  public void  closeEveryThing() throws SQLException, ClassNotFoundException {
+    databaseUtils.getConnectionFromH2().close();
+  }
 }

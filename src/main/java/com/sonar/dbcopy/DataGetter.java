@@ -10,11 +10,17 @@ import java.util.List;
 
 public class DataGetter {
 
+  private Statement sourceStatement;
+
   public DataGetter(){
+  }
+
+  public void createStatement(Connection sourceConnection) throws SQLException {
+    sourceStatement = sourceConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT);
 
   }
 
-  public void doRequest(Statement statement, List <Table> tablesOfBdd ) throws SQLException {
+  public void writeDataInJavaBdd(List <Table> tablesOfBdd ) throws SQLException {
 
     /* FOR EACH TABLE */
     for(int tableIndex=0;tableIndex<tablesOfBdd.size();tableIndex++){
@@ -23,7 +29,7 @@ public class DataGetter {
       String tableName = table.getTableName();
 
       /* GET RESULTSET FROM SQL REQUEST : SELECT * FROM tableName ORDER BY 1 */
-      ResultSet resultSet =  statement.executeQuery("SELECT * FROM " +tableName+" ORDER BY 1;");
+      ResultSet resultSet =  sourceStatement.executeQuery("SELECT * FROM " +tableName+" ORDER BY 1;");
 
       /* GET NUMBER OF TABLE ROWS */
       int  nbRowsInTable = resultSet.last() ? resultSet.getRow() : 0;
@@ -54,6 +60,9 @@ public class DataGetter {
       }
       resultSet.close();
     }
-    statement.close();
+  }
+
+  public Statement getStatementSource(){
+    return sourceStatement;
   }
 }
