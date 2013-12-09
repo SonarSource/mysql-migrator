@@ -12,7 +12,7 @@ public class BddBuider {
   private Bdd bdd =null;
 
   public BddBuider (){
-    bdd = new Bdd("sonar");
+    bdd = new Bdd("javaBdd");
   }
   /* SETTERS */
   public void addTableToBdd (){

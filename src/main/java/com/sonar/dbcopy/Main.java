@@ -17,28 +17,35 @@ public class Main {
    ---------------
     DRIVER :    args[0] = org.postgresql.Driver
     URLSOURCE : args[1] = jdbc:postgresql://localhost:5432/sonar
-    URLDEST :   args[2] = jdbc:postgresql://localhost:5432/sonarToWrite
+    URLDEST :   args[2] = jdbc:postgresql://localhost:5432/sonarDestination
     USER :      args[3] = sonar
     PASSWORD :  args[4] = sonar
     */
 
+
     /* BUILD DB OBJECT */
     BddBuider bddBuider = new BddBuider();
-    bddBuider.addTableToBdd();
+    //bddBuider.addTableToBdd();
 
     /* DO CONNECTION */
-      BddConnecter bddConnecter = new BddConnecter();
-      bddConnecter.doSourceConnection(args[0],args[1],args[3],args[4]);
-      bddConnecter.doDestinationConnection(args[0],args[2],args[3],args[4]);
+    BddConnecter bddConnecter = new BddConnecter();
+    bddConnecter.doSourceConnection(args[0],args[1],args[3],args[4]);
+    bddConnecter.doDestinationConnection(args[0],args[2],args[3],args[4]);
 
-      /* DO COPY */
-      new BddDataReproducer(bddConnecter,bddBuider.getBdd());
+        /* BUID SCHEMA DB DEST */
+    MetadataGetter metadataGetter = new MetadataGetter();
+    metadataGetter.getSchemaOfBddSource(bddConnecter.getSourceConnection(),bddBuider.getBdd());
+    metadataGetter.addSchemaToBddDest(bddConnecter.getDestConnection(),bddBuider.getBdd());
 
-      /* DO VERIFYING */
-      // TODO VERIFY THAT CONTENTS ARE THE SAME BETWEEN SOURCE AND  DESTINATION DATABASES
+    /* DO COPY */
+    new BddDataReproducer(bddConnecter,bddBuider.getBdd());
 
-      /* DO CLOSE CONNECTION */
-      bddConnecter.closeSourceConnection();
-      bddConnecter.closeDestConnection();
+    /* DO VERIFYING */
+    // TODO VERIFY THAT CONTENTS ARE THE SAME BETWEEN SOURCE AND  DESTINATION DATABASES
+
+    /* DO CLOSE CONNECTION */
+    bddConnecter.closeSourceConnection();
+    bddConnecter.closeDestConnection();
+    // TODO gerer les exception
   }
 }

@@ -21,9 +21,9 @@ public class BddBuiderTest {
   }
 
   @Test
-  public void verifyBddCreation()throws Exception{
+  public void verifyJavaBddCreation()throws Exception{
     assertNotNull(bddBuider.getBdd());
-    assertEquals("sonar",bddBuider.getBdd().getBddName());
+    assertEquals("javaBdd",bddBuider.getBdd().getBddName());
   }
   @Test
   public void verifyTablesCreation()throws Exception{

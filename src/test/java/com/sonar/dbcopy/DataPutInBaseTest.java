@@ -27,6 +27,7 @@ public class DataPutInBaseTest {
     databaseUtils = new DatabaseUtils();
     /* MAKE DATABASE JAVA OBJECT */
     databaseUtils.makeBddJavaObject();
+    databaseUtils.addColumnsToBddJavaObject();
     databaseUtils.addDatasToBddJavaObject();
     bdd = databaseUtils.getJavaBddFromUtils();
     tablesOfBdd = bdd.getBddTables();

@@ -5,6 +5,7 @@
  */
 package com.sonar.dbcopy;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Bdd {
@@ -14,6 +15,7 @@ public class Bdd {
 
   public Bdd(String bddName){
     this.bddName = bddName;
+    tablesOfBdd = new ArrayList<Table>();
   }
 
   /* GETTERS */
@@ -36,5 +38,10 @@ public class Bdd {
   }
   public void setBddName (String bddName){
     this.bddName = bddName;
+  }
+  public Table addTable(String tableName){
+    Table table =  new Table(tableName);
+    tablesOfBdd.add(table);
+    return table;
   }
 }

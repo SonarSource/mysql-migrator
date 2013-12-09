@@ -17,7 +17,6 @@ public class DataGetter {
 
   public void createStatement(Connection sourceConnection) throws SQLException {
     sourceStatement = sourceConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT);
-
   }
 
   public void writeDataInJavaBdd(List <Table> tablesOfBdd ) throws SQLException {
@@ -41,18 +40,24 @@ public class DataGetter {
       int columnNb = resultSetMetaData.getColumnCount();
 
       /* FOR EACH COLUMN OF THE TABLE */
-      for(int columnIndex=1;columnIndex<=columnNb;columnIndex++){
+      for(int columnIndex=0;columnIndex<columnNb;columnIndex++){
 
         /* ADD THE COLUMN NAME AND COLUMN TYPE OF THE TABLE TO SET  */
-        String columnName = resultSetMetaData.getColumnName(columnIndex);
-        String  columnType = resultSetMetaData.getColumnTypeName(columnIndex);
+        // TODO : DELETE FOLLOWING BECAUSE BEFORE IT WAS DONE CREATING A NEW COLUMN BUT NOW THE BDD IS ALREADY BUILT BECAUSE OF THE SCHEMA COPY
 
-        Column columnToSet = table.addOneColumnToTable(columnName);
-        columnToSet.addColumnType(columnType);
+        // TODO String columnName = resultSetMetaData.getColumnName(columnIndex);
+        // TODO String  columnType = resultSetMetaData.getColumnTypeName(columnIndex);
+
+        // TODO Column columnToSet = table.addOneColumnToTable(columnName);
+        // TODO columnToSet.addColumnType(columnType);
+
+        Column columnToSet = table.getColumns().get(columnIndex);
+        // TODO if (columnName.equals(columnToSet.getColumnName())){System.out.println("go: "+columnName);}
+
 
         /* FOR EACH ROW OF THE CURRENT COLUMN , ADD IT IN THE JAVA BDD COLUMN OBJECT */
         while (resultSet.next()) {
-          Object objectGetted =  resultSet.getObject(columnIndex);
+          Object objectGetted =  resultSet.getObject(columnIndex+1);
           columnToSet.addDataObjectInColumn(objectGetted);
         }
         /* REPLACE CURSOR AT THE BEGINNING OF RESULTSET */
@@ -64,5 +69,9 @@ public class DataGetter {
 
   public Statement getStatementSource(){
     return sourceStatement;
+  }
+
+  public void closeStatement() throws SQLException {
+    sourceStatement.close();
   }
 }

@@ -14,7 +14,7 @@ public class Column {
   private String columnName;
   private String columnType;
   private int sizeOfType;
-  private boolean canBeNull;
+  private String canBeNull;
   private boolean anIndexIsPresent;
   private Sequence sequenceIfId = null;
   private List<Object> objectTableData;
@@ -30,7 +30,7 @@ public class Column {
     return this.objectTableData;
   }
   public Object getDataWithIndex(int index){
-    return objectTableData.get(index);
+      return objectTableData.get(index);
   }
   public String getColumnName(){
     return this.columnName;
@@ -38,6 +38,13 @@ public class Column {
   public String getColumnType(){
     return this.columnType;
   }
+  public int getColumnTypeSize(){
+    return sizeOfType;
+  }
+  public String getCanBeNull(){
+    return this.canBeNull;
+  }
+
   /* SETTERS */
   public void setColumnName(String columnName){
     this.columnName = columnName;
@@ -54,10 +61,14 @@ public class Column {
   public void addDataObjectInColumn(Object object){
     this.objectTableData.add(object);
   }
-  public void addCharacteristicOfColumn(String type, int size, boolean canBeNull, boolean anIndexIsPresent){
+  public void addCharacteristicOfColumn(String type, int size, String canBeNull){
     this.columnType = type;
     this.sizeOfType = size;
-    this.canBeNull = canBeNull;
-    this.anIndexIsPresent = anIndexIsPresent;
+    if (canBeNull.equals("NO")){
+      this.canBeNull = "NOT NULL";
+    }
+    else{
+      this.canBeNull="";
+    }
   }
 }

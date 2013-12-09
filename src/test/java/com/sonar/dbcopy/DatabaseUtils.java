@@ -89,14 +89,15 @@ public class DatabaseUtils {
 
     bdd.setBddTables(tableList);
   }
-  public void addDatasToBddJavaObject(){
+  public void addColumnsToBddJavaObject(){
     tableList.get(0).addOneColumnToTable("COLUMNINTEGER");
     tableList.get(0).addOneColumnToTable("COLUMNSTRING");
     tableList.get(0).addOneColumnToTable("COLUMNTIMESTAMP");
     tableList.get(1).addOneColumnToTable("ID");
     tableList.get(1).addOneColumnToTable("COLSTRING");
     tableList.get(1).addOneColumnToTable("COLTIMESTAMP");
-
+  }
+  public void addDatasToBddJavaObject(){
     tableList.get(0).getColumns().get(0).addDataObjectInColumn(1);
     tableList.get(0).getColumns().get(0).addDataObjectInColumn(2);
     tableList.get(0).getColumns().get(1).addDataObjectInColumn("This is a first string for test");

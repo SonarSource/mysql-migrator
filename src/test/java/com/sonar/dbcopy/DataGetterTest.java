@@ -28,6 +28,7 @@ public class DataGetterTest {
 
     /* MAKE BDD JAVA OBJECT TO RECORD DATAS */
     databaseUtilsSource.makeBddJavaObject();
+    databaseUtilsSource.addColumnsToBddJavaObject();
     bddFromUtils = databaseUtilsSource.getJavaBddFromUtils();
 
     /* MAKE FILLED H2 DATABASE TO BE THE SOURCE */

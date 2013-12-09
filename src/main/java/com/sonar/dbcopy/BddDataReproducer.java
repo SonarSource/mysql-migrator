@@ -13,12 +13,12 @@ public class BddDataReproducer {
   private DataPutInBase dataPutInBase;
 
   public BddDataReproducer(BddConnecter bddConnecter,Bdd bdd) throws SQLException {
-    dataGetter = new DataGetter();
-    dataGetter.createStatement(bddConnecter.getSourceConnection());
-    dataGetter.writeDataInJavaBdd(bdd.getBddTables());
+      dataGetter = new DataGetter();
+      dataGetter.createStatement(bddConnecter.getSourceConnection());
+      dataGetter.writeDataInJavaBdd(bdd.getBddTables());
 
-    dataPutInBase = new DataPutInBase();
-    dataPutInBase.insertDatasFromJavaDatabaseToDestinationDatabase(bddConnecter.getDestConnection(),bdd.getBddTables());
+      dataPutInBase = new DataPutInBase();
+      dataPutInBase.insertDatasFromJavaDatabaseToDestinationDatabase(bddConnecter.getDestConnection(),bdd.getBddTables());
   }
   /* GETTERS */
   public DataGetter getDataGetter(){
