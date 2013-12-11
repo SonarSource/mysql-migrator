@@ -28,7 +28,7 @@ public class BddConnecterTest {
 
   }
   @Test
-  public void verifyBddConnecter() throws Exception {
+  public void testBddConnecter() throws Exception {
     assertNotNull(bddConnecter.getSourceConnection());
     assertNotNull(bddConnecter.getDestConnection());
 

@@ -15,6 +15,7 @@ public class BddBuider {
     bdd = new Bdd("javaBdd");
   }
   /* SETTERS */
+  //TODO to remove if metadatagetter do the job (don't forget to modify unit test)
   public void addTableToBdd (){
     bdd.setBddTables(Arrays.asList(
       new Table("action_plans"),

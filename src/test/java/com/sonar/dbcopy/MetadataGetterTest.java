@@ -28,7 +28,7 @@ public class MetadataGetterTest {
     databaseUtils.makeDatabaseH2Withtables("sonar");
     connection = databaseUtils.getConnectionFromH2();
 
-    databaseUtils.makeBddJavaObjectWithTable();
+    databaseUtils.makeBddJavaObject();
   }
 
   @Test

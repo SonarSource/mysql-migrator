@@ -18,35 +18,30 @@ public class ColumnTest {
   @Before
   public void create_instance(){
     column = new Column("columnNameToVerify");
+    column.addDataObjectInColumn("stringDataToVerify");
+    column.addCharacteristicOfColumn("integer",4,0);
+    column.setIsAutoIncrement(true);
+    column.addSequenceOnId("tableName");
   }
   @Test
-  public void verifyColumnAndDataArrayCreation() throws Exception {
+  public void testColumnCreation() throws Exception {
     assertNotNull(column);
+    assertEquals("columnNameToVerify", column.getColumnName());
     assertNotNull(column.getDataList());
   }
   @Test
-  public void verifyInsertionOfDataTypeString() throws Exception {
-    column.addDataObjectInColumn("stringDataToVerify");
+  public void testInsertionOfDataTypeString() throws Exception {
     assertEquals("stringDataToVerify",column.getDataWithIndex(0));
   }
   @Test
-  public void verifyColumnName() throws Exception {
-    assertEquals("columnNameToVerify", column.getColumnName());
-  }
-  @Test
-  public void  verifyAddCharacteristicOfColumn(){
-    column.addCharacteristicOfColumn("integer",4,0);
-    assertEquals("integer", column.getColumnType());
+  public void testGettersForColumnAttributes() throws Exception {
+    assertEquals("integer",column.getColumnType());
     assertEquals(4,column.getColumnTypeSize());
+    assertTrue(column.getIsAutoIncrement());
     assertEquals("NOT NULL",column.getCanBeNull());
   }
-  @Test public void verifySetIsAutoIncrement(){
-    column.setIsAutoIncrement(true);
-    assertTrue(column.getIsAutoIncrement());
-  }
   @Test
-  public void verifyAddSequenceOnId(){
-    column.addSequenceOnId("tableName");
+  public void testAddSequenceOnId(){
     assertNotNull(column.getSequence());
     assertEquals("tableName_id_seq",column.getSequence().getSequencename());
   }

@@ -21,12 +21,12 @@ public class BddBuiderTest {
   }
 
   @Test
-  public void verifyJavaBddCreation()throws Exception{
+  public void testJavaBddCreation()throws Exception{
     assertNotNull(bddBuider.getBdd());
     assertEquals("javaBdd",bddBuider.getBdd().getBddName());
   }
   @Test
-  public void verifyTablesCreation()throws Exception{
+  public void testTablesCreation()throws Exception{
     assertEquals(53,bddBuider.getBdd().getBddTables().size());
     assertEquals("widgets",bddBuider.getBdd().getBddTables().get(52).getTableName());
   }

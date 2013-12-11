@@ -51,7 +51,7 @@ public class DatabaseUtils {
     preparedStatement = connection.prepareStatement(stringToInsert);
 
     /* CREATE DATAS */
-    Object idForColumnInteger = 1;
+    Object idForColumnInteger = 8;
     Object stringForColumnString = "This is a first string for test";
     Object timestampForColumnTimestamp = new Timestamp(123456);
 
@@ -62,7 +62,7 @@ public class DatabaseUtils {
     preparedStatement.executeUpdate();
 
     /* MODIFY DATAS FOR SECOND ROW */
-    idForColumnInteger=2;
+    idForColumnInteger=5;
     stringForColumnString = "This is a second string for test";
     Object timestampForColumnTimestamp2= new Timestamp(456789);
 
@@ -76,7 +76,7 @@ public class DatabaseUtils {
     return this.connection;
   }
   /* JAVA DATABASE */
-  public void makeBddJavaObjectWithTable(){
+  public void makeBddJavaObject(){
     bdd = new Bdd("sonar");
   }
   public void addTablesToBddJavaObject(){

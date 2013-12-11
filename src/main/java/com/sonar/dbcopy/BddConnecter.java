@@ -26,9 +26,9 @@ public class BddConnecter {
     destConnection = simpleDestConnection.openConnection(driver, urlDest, user, pwd);
   }
   /* GETTERS */
-   public Connection getSourceConnection(){
-     return sourceConnection;
-   }
+  public Connection getSourceConnection(){
+    return sourceConnection;
+  }
   public Connection getDestConnection(){
     return destConnection;
   }

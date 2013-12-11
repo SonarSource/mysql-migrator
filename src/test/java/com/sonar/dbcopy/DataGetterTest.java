@@ -28,7 +28,7 @@ public class DataGetterTest {
     databaseUtilsSource = new DatabaseUtils();
 
     /* MAKE BDD JAVA OBJECT TO RECORD DATAS */
-    databaseUtilsSource.makeBddJavaObjectWithTable();
+    databaseUtilsSource.makeBddJavaObject();
     databaseUtilsSource.addTablesToBddJavaObject();
     databaseUtilsSource.addColumnsToBddJavaObject();
     bddFromUtils = databaseUtilsSource.getJavaBddFromUtils();
@@ -57,12 +57,12 @@ public class DataGetterTest {
     assertEquals("COLUMNTIMESTAMP",bddFromUtils.getColumnFromTable(0,2).getColumnName());
     assertEquals(2,bddFromUtils.getBddTables().get(0).getNbRows());
 
-    assertEquals(1,bddFromUtils.getDataFromColumnFromTable(0,0,0));
-    assertEquals(2,bddFromUtils.getDataFromColumnFromTable(0,0,1));
-    assertEquals("This is a first string for test",bddFromUtils.getDataFromColumnFromTable(0,1,0));
-    assertEquals("This is a second string for test",bddFromUtils.getDataFromColumnFromTable(0,1,1));
-    assertEquals(new Timestamp(123456),bddFromUtils.getDataFromColumnFromTable(0,2,0));
-    assertEquals(new Timestamp(456789),bddFromUtils.getDataFromColumnFromTable(0,2,1));
+    assertEquals(5,bddFromUtils.getDataFromColumnFromTable(0,0,0));
+    assertEquals(8,bddFromUtils.getDataFromColumnFromTable(0,0,1));
+    assertEquals("This is a second string for test",bddFromUtils.getDataFromColumnFromTable(0,1,0));
+    assertEquals("This is a first string for test",bddFromUtils.getDataFromColumnFromTable(0,1,1));
+    assertEquals(new Timestamp(456789),bddFromUtils.getDataFromColumnFromTable(0,2,0));
+    assertEquals(new Timestamp(123456),bddFromUtils.getDataFromColumnFromTable(0,2,1));
 
     /* VERIFY SECOND TABLE */
     assertEquals("empty_table_for_test",bddFromUtils.getBddTables().get(1).getTableName());
