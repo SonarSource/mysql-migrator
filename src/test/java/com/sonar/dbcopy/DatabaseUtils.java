@@ -13,7 +13,6 @@ import java.util.List;
 
 public class DatabaseUtils {
 
-  private BddConnecter bddConnecter;
   private Connection connection;
   private PreparedStatement preparedStatement;
   private Bdd bdd;
@@ -39,7 +38,7 @@ public class DatabaseUtils {
     preparedStatement.executeUpdate();
     preparedStatement = connection.prepareStatement("DROP TABLE IF EXISTS empty_table_for_test");
     preparedStatement.executeUpdate();
-    preparedStatement = connection.prepareStatement("CREATE TABLE table_for_test (COLUMNINTEGER integer PRIMARY KEY, COLUMNSTRING varchar(50), COLUMNTIMESTAMP timestamp)");
+    preparedStatement = connection.prepareStatement("CREATE TABLE table_for_test (COLUMNINTEGER integer NOT NULL PRIMARY KEY, COLUMNSTRING varchar(50), COLUMNTIMESTAMP timestamp)");
     preparedStatement.executeUpdate();
     preparedStatement = connection.prepareStatement("CREATE TABLE empty_table_for_test (ID integer PRIMARY KEY, COLSTRING varchar(50), COLTIMESTAMP timestamp)");
     preparedStatement.executeUpdate();
@@ -77,15 +76,14 @@ public class DatabaseUtils {
     return this.connection;
   }
   /* JAVA DATABASE */
-  public void makeBddJavaObject(){
+  public void makeBddJavaObjectWithTable(){
     bdd = new Bdd("sonar");
-
-    Table table1 = new Table("table_for_test");
-    Table table2 = new Table(("empty_table_for_test"));
-
+  }
+  public void addTablesToBddJavaObject(){
     tableList =new ArrayList<Table>();
-    tableList.add(table1);
-    tableList.add(table2);
+
+    tableList.add(new Table("table_for_test"));
+    tableList.add(new Table("empty_table_for_test"));
 
     bdd.setBddTables(tableList);
   }

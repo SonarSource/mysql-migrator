@@ -6,26 +6,24 @@
 package com.sonar.dbcopy;
 
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 public class BddConnecter {
 
-  private SimpleConnection sourceSimpleConnection,destSimpleConnection;
+  private SimpleConnection simpleSourceConnection,simpleDestConnection;
   private Connection sourceConnection, destConnection;
 
   public BddConnecter(){
   }
 
   /* DO CONNECTION */
-  public void doSourceConnection(String driver, String urlSource, String user, String pwd)throws SQLException, ClassNotFoundException{
-    SimpleConnection sourceSimpleConnection = new SimpleConnection();
-    sourceConnection = sourceSimpleConnection.openConnection(driver, urlSource, user, pwd);
+  public void doSourceConnection(String driver, String urlSource, String user, String pwd){
+    simpleSourceConnection = new SimpleConnection();
+    sourceConnection = simpleSourceConnection.openConnection(driver, urlSource, user, pwd);
    }
   /* DESTINATION CONNECTION */
-  public void doDestinationConnection(String driver, String urlDest, String user, String pwd)throws SQLException, ClassNotFoundException{
-    SimpleConnection destSimpleConnection = new SimpleConnection();
-    destConnection = destSimpleConnection.openConnection(driver, urlDest, user, pwd);
+  public void doDestinationConnection(String driver, String urlDest, String user, String pwd) {
+    simpleDestConnection = new SimpleConnection();
+    destConnection = simpleDestConnection.openConnection(driver, urlDest, user, pwd);
   }
   /* GETTERS */
    public Connection getSourceConnection(){
@@ -34,11 +32,17 @@ public class BddConnecter {
   public Connection getDestConnection(){
     return destConnection;
   }
-  /* CLOSE METHODS */
-  public void closeSourceConnection()throws SQLException{
-    sourceConnection.close();
+  public SimpleConnection getSimpleSourceConnection(){
+    return simpleSourceConnection;
   }
-  public void closeDestConnection()throws SQLException{
-    destConnection.close();
+  public SimpleConnection getSimpleDestConnection(){
+    return simpleDestConnection;
+  }
+  /* CLOSE METHODS */
+  public void closeSourceConnection(){
+    simpleSourceConnection.closeConnection();
+  }
+  public void closeDestConnection(){
+    simpleDestConnection.closeConnection();
   }
 }

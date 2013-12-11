@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 
 public class ColumnTest {
 
@@ -32,4 +33,22 @@ public class ColumnTest {
   public void verifyColumnName() throws Exception {
     assertEquals("columnNameToVerify", column.getColumnName());
   }
+  @Test
+  public void  verifyAddCharacteristicOfColumn(){
+    column.addCharacteristicOfColumn("integer",4,0);
+    assertEquals("integer", column.getColumnType());
+    assertEquals(4,column.getColumnTypeSize());
+    assertEquals("NOT NULL",column.getCanBeNull());
+  }
+  @Test public void verifySetIsAutoIncrement(){
+    column.setIsAutoIncrement(true);
+    assertTrue(column.getIsAutoIncrement());
+  }
+  @Test
+  public void verifyAddSequenceOnId(){
+    column.addSequenceOnId("tableName");
+    assertNotNull(column.getSequence());
+    assertEquals("tableName_id_seq",column.getSequence().getSequencename());
+  }
+
  }

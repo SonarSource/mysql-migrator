@@ -36,9 +36,6 @@ public class Bdd {
   public void setBddTables (List<Table> tablesOfBdd){
     this.tablesOfBdd = tablesOfBdd;
   }
-  public void setBddName (String bddName){
-    this.bddName = bddName;
-  }
   public Table addTable(String tableName){
     Table table =  new Table(tableName);
     tablesOfBdd.add(table);

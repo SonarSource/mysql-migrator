@@ -9,6 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.sql.*;
 
 import static junit.framework.Assert.assertEquals;
@@ -23,11 +24,12 @@ public class DataGetterTest {
   private Connection connectionFromUtils;
 
   @Before
-  public void createInstance() throws SQLException, ClassNotFoundException {
+  public void createInstance() throws SQLException, ClassNotFoundException, IOException {
     databaseUtilsSource = new DatabaseUtils();
 
     /* MAKE BDD JAVA OBJECT TO RECORD DATAS */
-    databaseUtilsSource.makeBddJavaObject();
+    databaseUtilsSource.makeBddJavaObjectWithTable();
+    databaseUtilsSource.addTablesToBddJavaObject();
     databaseUtilsSource.addColumnsToBddJavaObject();
     bddFromUtils = databaseUtilsSource.getJavaBddFromUtils();
 

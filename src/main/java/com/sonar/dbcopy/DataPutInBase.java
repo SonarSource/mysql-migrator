@@ -5,6 +5,7 @@
  */
 package com.sonar.dbcopy;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -12,10 +13,13 @@ import java.util.List;
 
 public class DataPutInBase {
 
-  public DataPutInBase(){
+  private LogDisplay logDisplay;
+
+  public DataPutInBase() throws IOException {
+    logDisplay = new LogDisplay();
   }
 
-  public void insertDatasFromJavaDatabaseToDestinationDatabase (Connection connectionDest,List<Table> listOfTables)throws SQLException{
+  public void insertDatasFromJavaDatabaseToDestinationDatabase (Connection connectionDest,List<Table> listOfTables) throws SQLException {
 
     for(int indexTable=0;indexTable<listOfTables.size();indexTable++){
 
@@ -41,10 +45,11 @@ public class DataPutInBase {
           Object objectToInsert = columns.get(indexColumn).getDataWithIndex(indexRow);
           statementDest.setObject(indexColumn+1,objectToInsert);
         }
-        /* EXECUTE STATEMENT FOR EACH ROW*/
+        /* EXECUTE STATEMENT FOR EACH ROW */
         statementDest.executeUpdate();
       }
       statementDest.close();
+      logDisplay.displayInformationLog("DATAS ADDED IN "+tableName+" TABLE");
     }
   }
 }

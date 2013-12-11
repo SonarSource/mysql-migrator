@@ -15,7 +15,7 @@ public class Column {
   private String columnType;
   private int sizeOfType;
   private String canBeNull;
-  private boolean anIndexIsPresent;
+  private boolean isAutoIncrement;   //TODO when autoincrement syntax depends on vendor !!
   private Sequence sequenceIfId = null;
   private List<Object> objectTableData;
 
@@ -44,31 +44,31 @@ public class Column {
   public String getCanBeNull(){
     return this.canBeNull;
   }
+  public boolean getIsAutoIncrement(){
+    return isAutoIncrement;
+  }
+  public Sequence getSequence(){
+    return this.sequenceIfId;
+  }
 
   /* SETTERS */
-  public void setColumnName(String columnName){
-    this.columnName = columnName;
-  }
-  public void setColumnType(String columnType){
-    this.columnType = columnType;
-  }
   public void addSequenceOnId(String tableName){
     this.sequenceIfId = new Sequence(tableName+"_id_seq");
-  }
-  public void addColumnType(String type){
-    this.columnType = type;
   }
   public void addDataObjectInColumn(Object object){
     this.objectTableData.add(object);
   }
-  public void addCharacteristicOfColumn(String type, int size, String canBeNull){
+  public void addCharacteristicOfColumn(String type, int size, int canBeNull){
     this.columnType = type;
     this.sizeOfType = size;
-    if (canBeNull.equals("NO")){
+    if (canBeNull==0){
       this.canBeNull = "NOT NULL";
     }
     else{
       this.canBeNull="";
     }
+  }
+  public void setIsAutoIncrement(boolean isAutoIncrement){
+    this.isAutoIncrement = isAutoIncrement;
   }
 }

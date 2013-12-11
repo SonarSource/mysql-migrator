@@ -14,14 +14,25 @@ public class SimpleConnection {
   public SimpleConnection() {
   }
   /* SETTERS */
-  public Connection openConnection(String driver, String url,String user,String pwd) throws SQLException, ClassNotFoundException {
-    Class.forName(driver);
-    connection = DriverManager.getConnection(url, user, pwd);
+  public Connection openConnection(String driver, String url,String user,String pwd) {
+    try{
+      Class.forName(driver);
+      connection = DriverManager.getConnection(url, user, pwd);
+    }
+    catch (SQLException e){
+      throw new DbCopyException("Open connection failed.",e);
+    }
+    catch (ClassNotFoundException e){
+      throw new DbCopyException("impossible to get the jdbc Driver.",e);
+    }
     return connection;
   }
   /* CLOSERS */
-  public void closeConnection() throws SQLException {
-    connection.close();
+  public void closeConnection() {
+    try {
+      connection.close();
+    } catch (SQLException e) {
+      throw new DbCopyException("Closing of connection failed.",e);
+    }
   }
-
 }

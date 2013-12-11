@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import static junit.framework.Assert.assertEquals;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.List;
 
@@ -22,11 +23,12 @@ public class DataPutInBaseTest {
   private List<Table> tablesOfBdd;
 
   @Before
-  public void createInstance() throws SQLException, ClassNotFoundException {
+  public void createInstance() throws SQLException, ClassNotFoundException, IOException {
 
     databaseUtils = new DatabaseUtils();
     /* MAKE DATABASE JAVA OBJECT */
-    databaseUtils.makeBddJavaObject();
+    databaseUtils.makeBddJavaObjectWithTable();
+    databaseUtils.addTablesToBddJavaObject();
     databaseUtils.addColumnsToBddJavaObject();
     databaseUtils.addDatasToBddJavaObject();
     bdd = databaseUtils.getJavaBddFromUtils();
