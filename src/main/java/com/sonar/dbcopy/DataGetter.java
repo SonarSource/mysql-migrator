@@ -23,7 +23,7 @@ public class DataGetter {
       sourceStatement = sourceConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT);
     }
     catch (SQLException e) {
-      throw new DbCopyException("Creation of statement to get data from database source failed.",e);
+      throw new DbException("Creation of statement to get data from database source failed.",e);
     }
   }
 
@@ -73,7 +73,7 @@ public class DataGetter {
     try {
       sourceStatement.close();
     } catch (SQLException e) {
-      throw new DbCopyException("Closing of  statement source from data getter failed.",e);
+      throw new DbException("Closing of  statement source from data getter failed.",e);
     }
   }
 }

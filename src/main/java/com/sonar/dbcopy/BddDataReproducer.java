@@ -23,7 +23,7 @@ public class BddDataReproducer {
       dataGetter.writeDataInJavaBdd(bdd.getBddTables());
     }
     catch (SQLException e) {
-      throw new DbCopyException("Problem when getting datas from database source",e);
+      throw new DbException("Problem when getting datas from database source",e);
     }
     finally {
       dataGetter.closeSourceStatement();
@@ -35,7 +35,7 @@ public class BddDataReproducer {
       dataDropper.deleteDatas(bddConnecter.getDestConnection(),bdd.getBddTables());
     }
     catch (SQLException e) {
-      throw new DbCopyException("Problem when deleting datas from database destination",e);
+      throw new DbException("Problem when deleting datas from database destination",e);
     }
     finally {
       bddConnecter.getSimpleSourceConnection().closeConnection();
@@ -47,7 +47,7 @@ public class BddDataReproducer {
       dataPutInBase.insertDatasFromJavaDatabaseToDestinationDatabase(bddConnecter.getDestConnection(),bdd.getBddTables());
     }
     catch (SQLException e){
-      throw new DbCopyException("Problem when adding datas in database destination",e);
+      throw new DbException("Problem when adding datas in database destination",e);
     }
     finally {
       bddConnecter.getSimpleDestConnection().closeConnection();

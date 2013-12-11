@@ -18,7 +18,7 @@ public class MetadataGetter {
       statementSource = connectionSource.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT);
     }
     catch (SQLException e) {
-      throw new DbCopyException("Creation of statement source to get schema failed",e);
+      throw new DbException("Creation of statement source to get schema failed",e);
     }
 
     try{
@@ -29,7 +29,7 @@ public class MetadataGetter {
       //DatabaseMetaData metaData = connectionSource.getMetaData();
       //ResultSet resultSetTables = metaData.getTables(null, "public", "%", null);
       if(!resultSetTables.isBeforeFirst()){
-        throw new DbCopyException("*** ERROR : DATAS NOT FOUND IN DATABASE SOURCE ***", new Exception());
+        throw new DbException("*** ERROR : DATAS NOT FOUND IN DATABASE SOURCE ***", new Exception());
       }
       else{
         while (resultSetTables.next()){
@@ -64,7 +64,7 @@ public class MetadataGetter {
       statementSource.close();
     }
     catch (SQLException e) {
-      throw new DbCopyException("Problem to get schema from database source.",e);
+      throw new DbException("Problem to get schema from database source.",e);
     }
   }
 }

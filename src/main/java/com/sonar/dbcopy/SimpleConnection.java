@@ -20,10 +20,10 @@ public class SimpleConnection {
       connection = DriverManager.getConnection(url, user, pwd);
     }
     catch (SQLException e){
-      throw new DbCopyException("Open connection failed.",e);
+      throw new DbException("Open connection failed.",e);
     }
     catch (ClassNotFoundException e){
-      throw new DbCopyException("impossible to get the jdbc Driver.",e);
+      throw new DbException("impossible to get the jdbc Driver.",e);
     }
     return connection;
   }
@@ -32,7 +32,7 @@ public class SimpleConnection {
     try {
       connection.close();
     } catch (SQLException e) {
-      throw new DbCopyException("Closing of connection failed.",e);
+      throw new DbException("Closing of connection failed.",e);
     }
   }
 }

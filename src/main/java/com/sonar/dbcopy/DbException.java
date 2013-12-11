@@ -5,9 +5,9 @@
  */
 package com.sonar.dbcopy;
 
-public class DbCopyException extends RuntimeException {
+public class DbException extends RuntimeException {
 
-  public DbCopyException(String message, Exception e){
+  public DbException(String message, Exception e){
     super(message, e);
   }
 }
