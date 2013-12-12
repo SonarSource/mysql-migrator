@@ -14,7 +14,7 @@ public class StringMakerAccordingToProvider {
   private static final String STRINGPOSTGRESQL = "SELECT table_name FROM information_schema.tables WHERE table_schema='public' ORDER BY 1";
   private static final String STRINGSQLSERVER = "SELECT table_name FROM information_schema.tables WHERE table_schema='public' ORDER BY 1";
   private static final String STRINGORACLE = "SELECT * FROM dba_tables";
-  private static final String STRINGH2 = "SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = 'public' ORDER BY 1";
+  private static final String STRINGH2 = "SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = 'PUBLIC' ORDER BY 1";
 
 
   public String getSqlRequest(Connection connection) throws SQLException {
