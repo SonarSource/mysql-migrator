@@ -11,8 +11,6 @@ import java.sql.SQLException;
 public class BddDataReproducer {
 
   private DataGetter dataGetter;
-  private DataPutInBase dataPutInBase;
-  private DataDropper dataDropper;
 
   public BddDataReproducer(BddConnecter bddConnecter,Bdd bdd)throws IOException{
 
@@ -21,35 +19,29 @@ public class BddDataReproducer {
       dataGetter = new DataGetter();
       dataGetter.createStatement(bddConnecter.getSourceConnection());
       dataGetter.writeDataInJavaBdd(bdd.getBddTables());
-    }
-    catch (SQLException e) {
+    } catch (SQLException e) {
       throw new DbException("Problem when getting datas from database source",e);
-    }
-    finally {
+    } finally {
       dataGetter.closeSourceStatement();
     }
 
     /* DELETE CONTENT OF DESTINATION */
     try {
-      dataDropper =new DataDropper();
+      DataDropper dataDropper =new DataDropper();
       dataDropper.deleteDatas(bddConnecter.getDestConnection(),bdd.getBddTables());
-    }
-    catch (SQLException e) {
+    } catch (SQLException e) {
       throw new DbException("Problem when deleting datas from database destination",e);
-    }
-    finally {
+    } finally {
       bddConnecter.getSimpleSourceConnection().closeConnection();
     }
 
     /* ADD DATAS TO DESTINATION */
     try{
-      dataPutInBase = new DataPutInBase();
+      DataPutInBase dataPutInBase = new DataPutInBase();
       dataPutInBase.insertDatasFromJavaDatabaseToDestinationDatabase(bddConnecter.getDestConnection(),bdd.getBddTables());
-    }
-    catch (SQLException e){
+    } catch (SQLException e){
       throw new DbException("Problem when adding datas in database destination",e);
-    }
-    finally {
+    } finally {
       bddConnecter.getSimpleDestConnection().closeConnection();
     }
   }

@@ -15,14 +15,12 @@ public class SimpleConnection {
   }
   /* SETTERS */
   public Connection openConnection(String driver, String url,String user,String pwd) {
-    try{
+    try {
       Class.forName(driver);
       connection = DriverManager.getConnection(url, user, pwd);
-    }
-    catch (SQLException e){
+    } catch (SQLException e){
       throw new DbException("Open connection failed.",e);
-    }
-    catch (ClassNotFoundException e){
+    } catch (ClassNotFoundException e){
       throw new DbException("impossible to get the jdbc Driver.",e);
     }
     return connection;

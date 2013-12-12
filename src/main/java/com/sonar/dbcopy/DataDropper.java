@@ -12,18 +12,22 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class DataDropper {
 
-    public void deleteDatas(Connection connectionDest,List<Table> tableList) throws IOException, SQLException {
-      LogDisplay logDisplay = new LogDisplay();
-
-      Statement statementToDrop = connectionDest.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT);
-
+  public void deleteDatas(Connection connectionDest,List<Table> tableList) throws IOException, SQLException {
+    LogDisplay logDisplay = new LogDisplay();
+    Statement statementToDelete = connectionDest.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT);
+    try {
       for(int indexTable=0;indexTable<tableList.size();indexTable++){
-        statementToDrop.execute("DELETE FROM "+tableList.get(indexTable).getTableName());
+        statementToDelete.execute("DELETE FROM "+tableList.get(indexTable).getTableName());
         logDisplay.displayInformationLog("TABLES "+tableList.get(indexTable)+" DELETED ON DESTINATION.");
       }
-      statementToDrop.close();
+    } catch (SQLException e){
+      throw new DbException("Deleting dats from destination failed.",e);
+    } finally {
+      statementToDelete.close();
+    }
   }
 }

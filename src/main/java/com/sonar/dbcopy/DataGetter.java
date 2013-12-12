@@ -21,8 +21,7 @@ public class DataGetter {
   public void createStatement(Connection sourceConnection)  {
     try {
       sourceStatement = sourceConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT);
-    }
-    catch (SQLException e) {
+    } catch (SQLException e) {
       throw new DbException("Creation of statement to get data from database source failed.",e);
     }
   }
@@ -48,7 +47,6 @@ public class DataGetter {
 
         /* FOR EACH COLUMN OF THE TABLE */
         for(int columnIndex=0;columnIndex<columnNb;columnIndex++){
-
           /* ADD THE COLUMN NAME AND COLUMN TYPE OF THE TABLE TO SET  */
           Column columnToSet = table.getColumns().get(columnIndex);
 

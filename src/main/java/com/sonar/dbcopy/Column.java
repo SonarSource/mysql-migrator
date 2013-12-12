@@ -15,7 +15,8 @@ public class Column {
   private String columnType;
   private int sizeOfType;
   private String canBeNull;
-  private boolean isAutoIncrement;   //TODO when autoincrement syntax depends on vendor !!
+  //TODO when autoincrement syntax depends on provider !!
+  private boolean isAutoIncrement;
   private Sequence sequenceIfId = null;
   private List<Object> objectTableData;
 
@@ -30,7 +31,7 @@ public class Column {
     return this.objectTableData;
   }
   public Object getDataWithIndex(int index){
-      return objectTableData.get(index);
+    return objectTableData.get(index);
   }
   public String getColumnName(){
     return this.columnName;
@@ -63,8 +64,7 @@ public class Column {
     this.sizeOfType = size;
     if (canBeNull==0){
       this.canBeNull = "NOT NULL";
-    }
-    else{
+    } else{
       this.canBeNull="";
     }
   }

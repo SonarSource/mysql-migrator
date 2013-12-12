@@ -37,11 +37,11 @@ public class MetadataWriter {
         /* CONCATENATION OF SQL STRING */
         String sqlAlterTableString = "ALTER TABLE "+tableName+
           " ADD COLUMN "+colunmName+" "+columnType;
-        if (columnTypeSize!=0){
+        if(columnTypeSize!=0){
           sqlAlterTableString+=" ("+columnTypeSize+") ";
         }
         sqlAlterTableString+=" "+canBeNull;
-        if(colunmName.equals("id")){
+        if("id".equals(colunmName)){
           sqlAlterTableString+=" PRIMARY KEY";
         }
         sqlAlterTableString+=" ;";

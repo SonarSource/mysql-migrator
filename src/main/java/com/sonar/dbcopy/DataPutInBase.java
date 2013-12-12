@@ -14,6 +14,7 @@ import java.util.List;
 public class DataPutInBase {
 
   private LogDisplay logDisplay;
+  private PreparedStatement statementDest;
 
   public DataPutInBase() throws IOException {
     logDisplay = new LogDisplay();
@@ -37,19 +38,30 @@ public class DataPutInBase {
       String sqlRequest = "INSERT INTO "+tableName+" ("+columnsAsString+") VALUES("+questionMarkString+");";
 
       /* PREPARE STATEMENT BEFORE SENDING */
-      PreparedStatement statementDest = connectionDest.prepareStatement(sqlRequest);
-
-      /* ADD DATA IN PREPARED STATEMENT FOR EACH COLUMN AND ROW BY ROW */
-      for(int indexRow=0;indexRow<nbRowsInTable;indexRow++){
-        for(int indexColumn=0;indexColumn<nbColumns;indexColumn++){
-          Object objectToInsert = columns.get(indexColumn).getDataWithIndex(indexRow);
-          statementDest.setObject(indexColumn+1,objectToInsert);
+      statementDest = connectionDest.prepareStatement(sqlRequest);
+      try {
+        /* ADD DATA IN PREPARED STATEMENT FOR EACH COLUMN AND ROW BY ROW */
+        for(int indexRow=0;indexRow<nbRowsInTable;indexRow++){
+          for(int indexColumn=0;indexColumn<nbColumns;indexColumn++){
+            Object objectToInsert = columns.get(indexColumn).getDataWithIndex(indexRow);
+            statementDest.setObject(indexColumn+1,objectToInsert);
+          }
+          /* EXECUTE STATEMENT FOR EACH ROW */
+          statementDest.executeUpdate();
         }
-        /* EXECUTE STATEMENT FOR EACH ROW */
-        statementDest.executeUpdate();
+      } catch (SQLException e){
+        throw new DbException("Problem when inserting datas in database destination.",e);
+      }finally {
+        closeStatementAndresultSet();
       }
-      statementDest.close();
       logDisplay.displayInformationLog("DATAS ADDED IN "+tableName+" TABLE");
+    }
+  }
+  private void closeStatementAndresultSet(){
+    try {
+      statementDest.close();
+    } catch (SQLException e){
+      throw new DbException("Closing statement destination in DataPutInBase failed.",e);
     }
   }
 }

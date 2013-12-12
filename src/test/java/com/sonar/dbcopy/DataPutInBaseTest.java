@@ -21,6 +21,8 @@ public class DataPutInBaseTest {
   private Bdd bdd;
   private Connection connectionFromUtils;
   private List<Table> tablesOfBdd;
+  private Statement statement;
+  private ResultSet resultSet;
 
   @Before
   public void createInstance() throws SQLException, ClassNotFoundException, IOException {
@@ -46,7 +48,7 @@ public class DataPutInBaseTest {
 
   @Test
   public void verifyInsertDatasFromJavaDatabaseToDestinationDatabase() throws SQLException, ClassNotFoundException {
-     Statement statement = connectionFromUtils.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT);
+     statement = connectionFromUtils.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT);
 
     /* FOR EACH TABLE */
     for(int indexTable=0;indexTable<tablesOfBdd.size();indexTable++){
@@ -54,7 +56,7 @@ public class DataPutInBaseTest {
       String tableName = tableToCompare.getTableName();
       int nbColumnInTable =  tableToCompare.getColumns().size();
       /* GET CONTENT OF TABLE */
-      ResultSet resultSet =  statement.executeQuery("SELECT * FROM " +tableName+" ORDER BY 1;");
+      resultSet =  statement.executeQuery("SELECT * FROM " +tableName+" ORDER BY 1;");
       int indexRow = 0;
 
       /* COMPARE BY ROW THE DATA BETWEEN DATABASE H2 AND JAVA OBJECT */
@@ -74,6 +76,12 @@ public class DataPutInBaseTest {
 
   @After
   public void  closeEveryThing() throws SQLException {
+    if(!resultSet.isClosed()){
+      resultSet.close();
+    }
+    if(!statement.isClosed()){
+      statement.close();
+    }
     connectionFromUtils.close();
   }
 

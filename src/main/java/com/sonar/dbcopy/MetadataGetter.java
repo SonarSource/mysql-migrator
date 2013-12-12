@@ -9,29 +9,29 @@ import java.sql.*;
 
 public class MetadataGetter {
 
+  private  Statement statementSource;
+  private ResultSet  resultSetTables;
+
   public MetadataGetter (){
   }
 
   public void getSchemaOfBddSource(Connection connectionSource, Bdd bdd){
-    Statement statementSource;
-    try{
+    try {
       statementSource = connectionSource.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT);
-    }
-    catch (SQLException e) {
+    } catch (SQLException e) {
       throw new DbException("Creation of statement source to get schema failed",e);
     }
 
-    try{
+    try {
       StringMakerAccordingToProvider stringMaker = new StringMakerAccordingToProvider();
       /* GET ALL TABLES WITH NB OF COLUMNS FRON SOURCE */
 
-      ResultSet resultSetTables = statementSource.executeQuery(stringMaker.getSqlRequest(connectionSource));
+      resultSetTables = statementSource.executeQuery(stringMaker.getSqlRequest(connectionSource));
       //DatabaseMetaData metaData = connectionSource.getMetaData();
       //ResultSet resultSetTables = metaData.getTables(null, "public", "%", null);
       if(!resultSetTables.isBeforeFirst()){
         throw new DbException("*** ERROR : DATAS NOT FOUND IN DATABASE SOURCE ***", new Exception());
-      }
-      else{
+      } else{
         while (resultSetTables.next()){
           bdd.addTable(resultSetTables.getString(1));
         }
@@ -51,20 +51,31 @@ public class MetadataGetter {
           String columnName = resultSetMetaData.getColumnName(indexColumn);
           String columnType = resultSetMetaData.getColumnTypeName(indexColumn);
           int sizeOfType = resultSetMetaData.getPrecision(indexColumn);
-          int canBeNull = resultSetMetaData.isNullable(indexColumn);   // isNullable : columnNoNulls=0, columnNullable=1 or columnNullableUnknown=2
+          // isNullable : columnNoNulls=0, columnNullable=1 or columnNullableUnknown=2
+          int canBeNull = resultSetMetaData.isNullable(indexColumn);
           boolean isAutoIncrement = resultSetMetaData.isAutoIncrement(indexColumn);
 
           Column columnToAdd = tableToModify.addOneColumnToTable(columnName);
           columnToAdd.addCharacteristicOfColumn(columnType,sizeOfType,canBeNull);
           columnToAdd.setIsAutoIncrement(isAutoIncrement);
-
         }
         resultSet.close();
       }
-      statementSource.close();
-    }
-    catch (SQLException e) {
+    } catch (SQLException e) {
       throw new DbException("Problem to get schema from database source.",e);
+    } finally {
+      closeStatementAndResultSet();
+    }
+  }
+
+  public void closeStatementAndResultSet(){
+    try {
+      if(!resultSetTables.isClosed()){
+        resultSetTables.close();
+      }
+      statementSource.close();
+    } catch (SQLException e) {
+      throw new DbException("Closing of  statement source or resultset from metadata getter failed.",e);
     }
   }
 }
