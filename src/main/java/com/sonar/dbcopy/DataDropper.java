@@ -23,7 +23,7 @@ public class DataDropper {
     try {
       for(int indexTable=0;indexTable<tableList.size();indexTable++){
         statementToDelete.execute("DELETE FROM "+tableList.get(indexTable).getTableName());
-        LOGGER.log(Level.INFO,"TABLES " + tableList.get(indexTable) + " DELETED ON DESTINATION.");
+        LOGGER.log(Level.INFO,"TABLES " + tableList.get(indexTable).getTableName() + " DELETED ON DESTINATION.");
       }
     } catch (SQLException e){
       throw new DbException("Deleting dats from destination failed.",e);
