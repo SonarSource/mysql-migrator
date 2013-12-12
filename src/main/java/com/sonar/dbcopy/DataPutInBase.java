@@ -10,14 +10,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DataPutInBase {
 
-  private LogDisplay logDisplay;
   private PreparedStatement statementDest;
+  private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
   public DataPutInBase() throws IOException {
-    logDisplay = new LogDisplay();
   }
 
   public void insertDatasFromJavaDatabaseToDestinationDatabase (Connection connectionDest,List<Table> listOfTables) throws SQLException {
@@ -54,7 +55,7 @@ public class DataPutInBase {
       }finally {
         closeStatementAndresultSet();
       }
-      logDisplay.displayInformationLog("DATAS ADDED IN "+tableName+" TABLE");
+      LOGGER.log(Level.INFO,"DATAS ADDED IN "+tableName+" TABLE");
     }
   }
   private void closeStatementAndresultSet(){

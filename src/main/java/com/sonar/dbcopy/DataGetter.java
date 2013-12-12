@@ -8,14 +8,15 @@ package com.sonar.dbcopy;
 import java.io.IOException;
 import java.sql.*;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DataGetter {
 
   private Statement sourceStatement;
-  private LogDisplay logDisplay;
+  private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
   public DataGetter() throws IOException {
-    logDisplay = new LogDisplay();
   }
 
   public void createStatement(Connection sourceConnection)  {
@@ -59,7 +60,7 @@ public class DataGetter {
           resultSet.beforeFirst();
         }
         resultSet.close();
-        logDisplay.displayInformationLog("Datas GETTED from "+tableName+" table.");
+        LOGGER.log(Level.INFO,"Datas GETTED from "+tableName+" table.");
     }
   }
 
