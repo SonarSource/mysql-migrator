@@ -9,40 +9,47 @@ import java.sql.Connection;
 
 public class BddConnecter {
 
-  private SimpleConnection simpleSourceConnection,simpleDestConnection;
+  private SimpleConnection simpleSourceConnection, simpleDestConnection;
   private Connection sourceConnection, destConnection;
 
-  public BddConnecter(){
+  public BddConnecter() {
   }
 
   /* DO CONNECTION */
-  public void doSourceConnection(String driver, String urlSource, String user, String pwd){
+  public void doSourceConnection(String driver, String urlSource, String user, String pwd) {
     simpleSourceConnection = new SimpleConnection();
     sourceConnection = simpleSourceConnection.openConnection(driver, urlSource, user, pwd);
-   }
+  }
+
   /* DESTINATION CONNECTION */
   public void doDestinationConnection(String driver, String urlDest, String user, String pwd) {
     simpleDestConnection = new SimpleConnection();
     destConnection = simpleDestConnection.openConnection(driver, urlDest, user, pwd);
   }
+
   /* GETTERS */
-  public Connection getSourceConnection(){
+  public Connection getSourceConnection() {
     return sourceConnection;
   }
-  public Connection getDestConnection(){
+
+  public Connection getDestConnection() {
     return destConnection;
   }
-  public SimpleConnection getSimpleSourceConnection(){
+
+  public SimpleConnection getSimpleSourceConnection() {
     return simpleSourceConnection;
   }
-  public SimpleConnection getSimpleDestConnection(){
+
+  public SimpleConnection getSimpleDestConnection() {
     return simpleDestConnection;
   }
+
   /* CLOSE METHODS */
-  public void closeSourceConnection(){
+  public void closeSourceConnection() {
     simpleSourceConnection.closeConnection();
   }
-  public void closeDestConnection(){
+
+  public void closeDestConnection() {
     simpleDestConnection.closeConnection();
   }
 }

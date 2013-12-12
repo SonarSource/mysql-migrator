@@ -9,14 +9,15 @@ import java.util.Arrays;
 
 public class BddBuider {
 
-  private Bdd bdd =null;
+  private Bdd bdd = null;
 
-  public BddBuider (){
+  public BddBuider() {
     bdd = new Bdd("javaBdd");
   }
+
   /* SETTERS */
   //TODO to remove if metadatagetter do the job (don't forget to modify unit test)
-  public void addTableToBdd (){
+  public void addTableToBdd() {
     bdd.setBddTables(Arrays.asList(
       new Table("action_plans"),
       new Table("active_dashboards"),
@@ -73,8 +74,9 @@ public class BddBuider {
       new Table("widgets")
     ));
   }
+
   /* GETTERS */
-  public Bdd getBdd(){
+  public Bdd getBdd() {
     return this.bdd;
   }
 }

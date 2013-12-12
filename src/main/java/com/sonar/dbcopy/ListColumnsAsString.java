@@ -12,12 +12,12 @@ public class ListColumnsAsString {
   private List<Column> columnList;
   private int nbColumns;
 
-  public ListColumnsAsString(List<Column> list){
+  public ListColumnsAsString(List<Column> list) {
     columnList = list;
     nbColumns = columnList.size();
   }
 
-  public String makeString(){
+  public String makeString() {
     StringBuilder stringBuilder = new StringBuilder();
     for (int indexColumn = 0; indexColumn < nbColumns; indexColumn++) {
       stringBuilder.append(",");
@@ -27,15 +27,17 @@ public class ListColumnsAsString {
     columnsAsString = columnsAsString.substring(1);
     return columnsAsString;
   }
-  public String makeQuestionMarkString(){
+
+  public String makeQuestionMarkString() {
     StringBuilder stringBuilder = new StringBuilder();
     stringBuilder.append("?");
-    for (int indexColumn = 0; indexColumn < nbColumns-1; indexColumn++) {
+    for (int indexColumn = 0; indexColumn < nbColumns - 1; indexColumn++) {
       stringBuilder.append(",?");
     }
     return stringBuilder.toString();
   }
-  public int getNbColumns(){
+
+  public int getNbColumns() {
     return nbColumns;
   }
 }

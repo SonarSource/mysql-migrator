@@ -14,29 +14,33 @@ public class Table {
   private int nbRows;
   private List<Column> columns;
 
-  public Table(String tableName){
+  public Table(String tableName) {
     this.tableName = tableName;
-    this.nbRows=0;
-    columns=new ArrayList<Column>();
+    this.nbRows = 0;
+    columns = new ArrayList<Column>();
   }
 
   /* SETTERS */
-  public Column addOneColumnToTable(String columnName){
+  public Column addOneColumnToTable(String columnName) {
     Column columnToAdd = new Column(columnName);
     columns.add(columnToAdd);
     return columnToAdd;
   }
-  public void setNbRows(int nbRows){
+
+  public void setNbRows(int nbRows) {
     this.nbRows = nbRows;
   }
+
   /* GETTERS */
-  public String getTableName(){
+  public String getTableName() {
     return this.tableName;
   }
-  public int getNbRows(){
+
+  public int getNbRows() {
     return nbRows;
   }
-  public List<Column> getColumns(){
+
+  public List<Column> getColumns() {
     return this.columns;
   }
 }

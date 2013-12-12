@@ -5,7 +5,9 @@
  */
 package com.sonar.dbcopy;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class SimpleConnection {
 
@@ -13,24 +15,26 @@ public class SimpleConnection {
 
   public SimpleConnection() {
   }
+
   /* SETTERS */
-  public Connection openConnection(String driver, String url,String user,String pwd) {
+  public Connection openConnection(String driver, String url, String user, String pwd) {
     try {
       Class.forName(driver);
       connection = DriverManager.getConnection(url, user, pwd);
-    } catch (SQLException e){
-      throw new DbException("Open connection failed.",e);
-    } catch (ClassNotFoundException e){
-      throw new DbException("impossible to get the jdbc Driver.",e);
+    } catch (SQLException e) {
+      throw new DbException("Open connection failed.", e);
+    } catch (ClassNotFoundException e) {
+      throw new DbException("impossible to get the jdbc Driver.", e);
     }
     return connection;
   }
+
   /* CLOSERS */
   public void closeConnection() {
     try {
       connection.close();
     } catch (SQLException e) {
-      throw new DbException("Closing of connection failed.",e);
+      throw new DbException("Closing of connection failed.", e);
     }
   }
 }

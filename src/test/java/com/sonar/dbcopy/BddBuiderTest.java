@@ -7,12 +7,13 @@ package com.sonar.dbcopy;
 
 import org.junit.Before;
 import org.junit.Test;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 public class BddBuiderTest {
 
-   private BddBuider bddBuider;
+  private BddBuider bddBuider;
 
   @Before
   public void createInstance() {
@@ -21,13 +22,14 @@ public class BddBuiderTest {
   }
 
   @Test
-  public void testJavaBddCreation()throws Exception{
+  public void testJavaBddCreation() throws Exception {
     assertNotNull(bddBuider.getBdd());
-    assertEquals("javaBdd",bddBuider.getBdd().getBddName());
+    assertEquals("javaBdd", bddBuider.getBdd().getBddName());
   }
+
   @Test
-  public void testTablesCreation()throws Exception{
-    assertEquals(53,bddBuider.getBdd().getBddTables().size());
-    assertEquals("widgets",bddBuider.getBdd().getBddTables().get(52).getTableName());
+  public void testTablesCreation() throws Exception {
+    assertEquals(53, bddBuider.getBdd().getBddTables().size());
+    assertEquals("widgets", bddBuider.getBdd().getBddTables().get(52).getTableName());
   }
 }

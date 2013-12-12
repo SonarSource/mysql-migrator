@@ -6,15 +6,15 @@
 package com.sonar.dbcopy;
 
 import junit.framework.Assert;
+import org.h2.jdbcx.JdbcConnectionPool;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import org.h2.jdbcx.JdbcConnectionPool;
+
+import static junit.framework.Assert.assertNotNull;
 
 public class SimpleConnectionTest {
 
@@ -37,8 +37,9 @@ public class SimpleConnectionTest {
     simpleConnection.closeConnection();
     Assert.assertTrue(connection.isClosed());
   }
+
   @After
-  public void  closeEveryThing() throws SQLException, ClassNotFoundException {
+  public void closeEveryThing() throws SQLException, ClassNotFoundException {
     connection.close();
   }
 }

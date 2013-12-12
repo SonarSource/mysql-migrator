@@ -8,7 +8,9 @@ package com.sonar.dbcopy;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import java.sql.SQLException;
+
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
@@ -27,6 +29,7 @@ public class BddConnecterTest {
     bddConnecter.doDestinationConnection("org.h2.Driver", "jdbc:h2:mem:sonar", "sonar", "sonar");
 
   }
+
   @Test
   public void testBddConnecter() throws Exception {
     assertNotNull(bddConnecter.getSourceConnection());
@@ -38,8 +41,9 @@ public class BddConnecterTest {
     assertTrue(bddConnecter.getSourceConnection().isClosed());
     assertTrue(bddConnecter.getDestConnection().isClosed());
   }
+
   @After
-  public void  closeEveryThing() throws SQLException, ClassNotFoundException {
+  public void closeEveryThing() throws SQLException, ClassNotFoundException {
     databaseUtils.getConnectionFromH2().close();
   }
 }

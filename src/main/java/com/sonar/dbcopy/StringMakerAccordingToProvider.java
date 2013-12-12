@@ -18,23 +18,23 @@ public class StringMakerAccordingToProvider {
 
 
   public String getSqlRequest(Connection connection) throws SQLException {
-    String provider =connection.getMetaData().getDriverName();
-    provider = provider.substring(0,5).toLowerCase();
+    String provider = connection.getMetaData().getDriverName();
+    provider = provider.substring(0, 5).toLowerCase();
 
     String sqlRequestToReturn;
 
-    if("mysql".equals(provider)){
+    if ("mysql".equals(provider)) {
       sqlRequestToReturn = STRINGMYSQL;
-    } else if ("postg".equals(provider)){
+    } else if ("postg".equals(provider)) {
       sqlRequestToReturn = STRINGPOSTGRESQL;
-    } else if ("sqlse".equals(provider)){
+    } else if ("sqlse".equals(provider)) {
       sqlRequestToReturn = STRINGSQLSERVER;
-    } else if ("oracl".equals(provider)){
+    } else if ("oracl".equals(provider)) {
       sqlRequestToReturn = STRINGORACLE;
-    } else if ("h2 jd".equals(provider)){
+    } else if ("h2 jd".equals(provider)) {
       sqlRequestToReturn = STRINGH2;
-    } else{
-      throw new SQLException("*** ERROR : Provider "+provider+" is not reconized to get schema database.",new Exception());
+    } else {
+      throw new SQLException("*** ERROR : Provider " + provider + " is not reconized to get schema database.", new Exception());
     }
     return sqlRequestToReturn;
   }

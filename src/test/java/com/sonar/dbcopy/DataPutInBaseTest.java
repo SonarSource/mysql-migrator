@@ -8,11 +8,15 @@ package com.sonar.dbcopy;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static junit.framework.Assert.assertEquals;
 
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
+
+import static junit.framework.Assert.assertEquals;
 
 public class DataPutInBaseTest {
 
@@ -43,29 +47,29 @@ public class DataPutInBaseTest {
 
     /* DO THE COPY FROM JAVA OBJECT TO EMPTY DATABASE H2 */
     dataPutInBase = new DataPutInBase();
-    dataPutInBase.insertDatasFromJavaDatabaseToDestinationDatabase(connectionFromUtils,bdd.getBddTables());
+    dataPutInBase.insertDatasFromJavaDatabaseToDestinationDatabase(connectionFromUtils, bdd.getBddTables());
   }
 
   @Test
   public void verifyInsertDatasFromJavaDatabaseToDestinationDatabase() throws SQLException, ClassNotFoundException {
-     statement = connectionFromUtils.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT);
+    statement = connectionFromUtils.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT);
 
     /* FOR EACH TABLE */
-    for(int indexTable=0;indexTable<tablesOfBdd.size();indexTable++){
+    for (int indexTable = 0; indexTable < tablesOfBdd.size(); indexTable++) {
       Table tableToCompare = tablesOfBdd.get(indexTable);
       String tableName = tableToCompare.getTableName();
-      int nbColumnInTable =  tableToCompare.getColumns().size();
+      int nbColumnInTable = tableToCompare.getColumns().size();
       /* GET CONTENT OF TABLE */
-      resultSet =  statement.executeQuery("SELECT * FROM " +tableName+" ORDER BY 1;");
+      resultSet = statement.executeQuery("SELECT * FROM " + tableName + " ORDER BY 1;");
       int indexRow = 0;
 
       /* COMPARE BY ROW THE DATA BETWEEN DATABASE H2 AND JAVA OBJECT */
       /* FOR EACH ROW */
       while (resultSet.next()) {
         /* FOR EACH COLUMN */
-        for(int indexColumn=0; indexColumn<nbColumnInTable;indexColumn++){
+        for (int indexColumn = 0; indexColumn < nbColumnInTable; indexColumn++) {
           /* DO JUNIT TEST */
-          assertEquals(bdd.getDataFromColumnFromTable(indexTable,indexColumn,indexRow),resultSet.getObject(indexColumn));
+          assertEquals(bdd.getDataFromColumnFromTable(indexTable, indexColumn, indexRow), resultSet.getObject(indexColumn));
         }
         indexRow++;
       }
@@ -75,11 +79,11 @@ public class DataPutInBaseTest {
   }
 
   @After
-  public void  closeEveryThing() throws SQLException {
-    if(!resultSet.isClosed()){
+  public void closeEveryThing() throws SQLException {
+    if (!resultSet.isClosed()) {
       resultSet.close();
     }
-    if(!statement.isClosed()){
+    if (!statement.isClosed()) {
       statement.close();
     }
     connectionFromUtils.close();

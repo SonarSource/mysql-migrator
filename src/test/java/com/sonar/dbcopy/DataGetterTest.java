@@ -10,11 +10,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.*;
 
 public class DataGetterTest {
 
@@ -51,32 +51,33 @@ public class DataGetterTest {
     assertNotNull(dataGetter.getStatementSource());
 
     /* VERIFY FIRST TABLE FROM JAVA BDD*/
-    assertEquals("table_for_test",bddFromUtils.getBddTables().get(0).getTableName());
-    assertEquals("COLUMNINTEGER",bddFromUtils.getColumnFromTable(0,0).getColumnName());
-    assertEquals("COLUMNSTRING",bddFromUtils.getColumnFromTable(0,1).getColumnName());
-    assertEquals("COLUMNTIMESTAMP",bddFromUtils.getColumnFromTable(0,2).getColumnName());
-    assertEquals(2,bddFromUtils.getBddTables().get(0).getNbRows());
+    assertEquals("table_for_test", bddFromUtils.getBddTables().get(0).getTableName());
+    assertEquals("COLUMNINTEGER", bddFromUtils.getColumnFromTable(0, 0).getColumnName());
+    assertEquals("COLUMNSTRING", bddFromUtils.getColumnFromTable(0, 1).getColumnName());
+    assertEquals("COLUMNTIMESTAMP", bddFromUtils.getColumnFromTable(0, 2).getColumnName());
+    assertEquals(2, bddFromUtils.getBddTables().get(0).getNbRows());
 
-    assertEquals(5,bddFromUtils.getDataFromColumnFromTable(0,0,0));
-    assertEquals(8,bddFromUtils.getDataFromColumnFromTable(0,0,1));
-    assertEquals("This is a second string for test",bddFromUtils.getDataFromColumnFromTable(0,1,0));
-    assertEquals("This is a first string for test",bddFromUtils.getDataFromColumnFromTable(0,1,1));
-    assertEquals(new Timestamp(456789),bddFromUtils.getDataFromColumnFromTable(0,2,0));
-    assertEquals(new Timestamp(123456),bddFromUtils.getDataFromColumnFromTable(0,2,1));
+    assertEquals(5, bddFromUtils.getDataFromColumnFromTable(0, 0, 0));
+    assertEquals(8, bddFromUtils.getDataFromColumnFromTable(0, 0, 1));
+    assertEquals("This is a second string for test", bddFromUtils.getDataFromColumnFromTable(0, 1, 0));
+    assertEquals("This is a first string for test", bddFromUtils.getDataFromColumnFromTable(0, 1, 1));
+    assertEquals(new Timestamp(456789), bddFromUtils.getDataFromColumnFromTable(0, 2, 0));
+    assertEquals(new Timestamp(123456), bddFromUtils.getDataFromColumnFromTable(0, 2, 1));
 
     /* VERIFY SECOND TABLE */
-    assertEquals("empty_table_for_test",bddFromUtils.getBddTables().get(1).getTableName());
-    assertEquals("ID",bddFromUtils.getColumnFromTable(1,0).getColumnName());
-    assertEquals("COLSTRING",bddFromUtils.getColumnFromTable(1,1).getColumnName());
-    assertEquals("COLTIMESTAMP",bddFromUtils.getColumnFromTable(1,2).getColumnName());
-    assertEquals(0,bddFromUtils.getBddTables().get(1).getNbRows());
+    assertEquals("empty_table_for_test", bddFromUtils.getBddTables().get(1).getTableName());
+    assertEquals("ID", bddFromUtils.getColumnFromTable(1, 0).getColumnName());
+    assertEquals("COLSTRING", bddFromUtils.getColumnFromTable(1, 1).getColumnName());
+    assertEquals("COLTIMESTAMP", bddFromUtils.getColumnFromTable(1, 2).getColumnName());
+    assertEquals(0, bddFromUtils.getBddTables().get(1).getNbRows());
 
     dataGetter.getStatementSource().close();
 
     assertTrue(dataGetter.getStatementSource().isClosed());
   }
+
   @After
-  public void  closeEveryThing() throws SQLException {
+  public void closeEveryThing() throws SQLException {
     connectionFromUtils.close();
   }
 }

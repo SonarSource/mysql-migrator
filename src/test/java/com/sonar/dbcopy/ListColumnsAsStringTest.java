@@ -7,10 +7,12 @@ package com.sonar.dbcopy;
 
 import org.junit.Before;
 import org.junit.Test;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 
 public class ListColumnsAsStringTest {
 
@@ -18,7 +20,7 @@ public class ListColumnsAsStringTest {
   private ListColumnsAsString listColumnsAsString;
 
   @Before
-  public void createInstance(){
+  public void createInstance() {
     columnList = new ArrayList<Column>();
     columnList.add(new Column("columnName1"));
     columnList.add(new Column("columnName2"));
@@ -28,20 +30,22 @@ public class ListColumnsAsStringTest {
   }
 
   @Test
-  public void verifyListColumnAsStringCreation(){
+  public void verifyListColumnAsStringCreation() {
     assertNotNull(listColumnsAsString);
   }
+
   @Test
   public void verifyMakeString() throws Exception {
-    assertEquals("columnName1,columnName2,columnName3",listColumnsAsString.makeString());
+    assertEquals("columnName1,columnName2,columnName3", listColumnsAsString.makeString());
   }
 
   @Test
   public void verifyMakeQuestionMarkString() throws Exception {
-    assertEquals("?,?,?",listColumnsAsString.makeQuestionMarkString());
+    assertEquals("?,?,?", listColumnsAsString.makeQuestionMarkString());
   }
+
   @Test
   public void verifyGetNbColumns() throws Exception {
-    assertEquals(3,listColumnsAsString.getNbColumns());
+    assertEquals(3, listColumnsAsString.getNbColumns());
   }
 }

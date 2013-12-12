@@ -12,7 +12,7 @@ public class BddDataReproducer {
 
   private DataGetter dataGetter;
 
-  public BddDataReproducer(BddConnecter bddConnecter,Bdd bdd)throws IOException{
+  public BddDataReproducer(BddConnecter bddConnecter, Bdd bdd) throws IOException {
 
     /* GET DATAS FROM SOURCE */
     try {
@@ -20,27 +20,27 @@ public class BddDataReproducer {
       dataGetter.createStatement(bddConnecter.getSourceConnection());
       dataGetter.writeDataInJavaBdd(bdd.getBddTables());
     } catch (SQLException e) {
-      throw new DbException("Problem when getting datas from database source",e);
+      throw new DbException("Problem when getting datas from database source", e);
     } finally {
       dataGetter.closeSourceStatement();
     }
 
     /* DELETE CONTENT OF DESTINATION */
     try {
-      DataDropper dataDropper =new DataDropper();
-      dataDropper.deleteDatas(bddConnecter.getDestConnection(),bdd.getBddTables());
+      DataDropper dataDropper = new DataDropper();
+      dataDropper.deleteDatas(bddConnecter.getDestConnection(), bdd.getBddTables());
     } catch (SQLException e) {
-      throw new DbException("Problem when deleting datas from database destination",e);
+      throw new DbException("Problem when deleting datas from database destination", e);
     } finally {
       bddConnecter.getSimpleSourceConnection().closeConnection();
     }
 
     /* ADD DATAS TO DESTINATION */
-    try{
+    try {
       DataPutInBase dataPutInBase = new DataPutInBase();
-      dataPutInBase.insertDatasFromJavaDatabaseToDestinationDatabase(bddConnecter.getDestConnection(),bdd.getBddTables());
-    } catch (SQLException e){
-      throw new DbException("Problem when adding datas in database destination",e);
+      dataPutInBase.insertDatasFromJavaDatabaseToDestinationDatabase(bddConnecter.getDestConnection(), bdd.getBddTables());
+    } catch (SQLException e) {
+      throw new DbException("Problem when adding datas in database destination", e);
     } finally {
       bddConnecter.getSimpleDestConnection().closeConnection();
     }

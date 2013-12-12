@@ -19,60 +19,60 @@ public class DataGetter {
   public DataGetter() throws IOException {
   }
 
-  public void createStatement(Connection sourceConnection)  {
+  public void createStatement(Connection sourceConnection) {
     try {
-      sourceStatement = sourceConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE , ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT);
+      sourceStatement = sourceConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT);
     } catch (SQLException e) {
-      throw new DbException("Creation of statement to get data from database source failed.",e);
+      throw new DbException("Creation of statement to get data from database source failed.", e);
     }
   }
 
-  public void writeDataInJavaBdd(List <Table> tablesOfBdd ) throws SQLException {
+  public void writeDataInJavaBdd(List<Table> tablesOfBdd) throws SQLException {
     /* FOR EACH TABLE */
-    for(int tableIndex=0;tableIndex<tablesOfBdd.size();tableIndex++){
+    for (int tableIndex = 0; tableIndex < tablesOfBdd.size(); tableIndex++) {
       /* GET TABLE AND NAMETABLE */
       Table table = tablesOfBdd.get(tableIndex);
       String tableName = table.getTableName();
 
       /* GET RESULTSET FROM SQL REQUEST */
-        ResultSet resultSet =  sourceStatement.executeQuery("SELECT * FROM " +tableName+" ORDER BY 1;");
+      ResultSet resultSet = sourceStatement.executeQuery("SELECT * FROM " + tableName + " ORDER BY 1;");
 
         /* GET NUMBER OF TABLE ROWS */
-        int  nbRowsInTable = resultSet.last() ? resultSet.getRow() : 0;
-        resultSet.beforeFirst();
-        table.setNbRows(nbRowsInTable);
+      int nbRowsInTable = resultSet.last() ? resultSet.getRow() : 0;
+      resultSet.beforeFirst();
+      table.setNbRows(nbRowsInTable);
 
         /* GET THE METADATA OF THIS TABLE */
-        ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
-        int columnNb = resultSetMetaData.getColumnCount();
+      ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+      int columnNb = resultSetMetaData.getColumnCount();
 
         /* FOR EACH COLUMN OF THE TABLE */
-        for(int columnIndex=0;columnIndex<columnNb;columnIndex++){
+      for (int columnIndex = 0; columnIndex < columnNb; columnIndex++) {
           /* ADD THE COLUMN NAME AND COLUMN TYPE OF THE TABLE TO SET  */
-          Column columnToSet = table.getColumns().get(columnIndex);
+        Column columnToSet = table.getColumns().get(columnIndex);
 
           /* FOR EACH ROW OF THE CURRENT COLUMN , ADD IT IN THE JAVA BDD COLUMN OBJECT */
-          while (resultSet.next()) {
-            Object objectGetted =  resultSet.getObject(columnIndex+1);
-            columnToSet.addDataObjectInColumn(objectGetted);
-          }
-          /* REPLACE CURSOR AT THE BEGINNING OF RESULTSET */
-          resultSet.beforeFirst();
+        while (resultSet.next()) {
+          Object objectGetted = resultSet.getObject(columnIndex + 1);
+          columnToSet.addDataObjectInColumn(objectGetted);
         }
-        resultSet.close();
-        LOGGER.log(Level.INFO,"Datas GETTED from "+tableName+" table.");
+          /* REPLACE CURSOR AT THE BEGINNING OF RESULTSET */
+        resultSet.beforeFirst();
+      }
+      resultSet.close();
+      LOGGER.log(Level.INFO, "Datas GETTED from " + tableName + " table.");
     }
   }
 
-  public Statement getStatementSource(){
+  public Statement getStatementSource() {
     return sourceStatement;
   }
 
-  public void closeSourceStatement(){
+  public void closeSourceStatement() {
     try {
       sourceStatement.close();
     } catch (SQLException e) {
-      throw new DbException("Closing of  statement source from data getter failed.",e);
+      throw new DbException("Closing of  statement source from data getter failed.", e);
     }
   }
 }

@@ -9,12 +9,12 @@ public class Sequence {
 
   private String sequenceName;
 
-  public Sequence(String sequenceName){
+  public Sequence(String sequenceName) {
     this.sequenceName = sequenceName;
   }
 
   /* GETTERS */
-  public String getSequencename(){
+  public String getSequencename() {
     return sequenceName;
   }
 }

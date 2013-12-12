@@ -20,6 +20,7 @@ public class MetadataGetterTest {
   private MetadataGetter metadataGetter;
   private DatabaseUtils databaseUtils;
   private Connection connection;
+
   @Before
   public void createInstance() throws SQLException, ClassNotFoundException {
     metadataGetter = new MetadataGetter();
@@ -34,24 +35,25 @@ public class MetadataGetterTest {
   @Test
   public void verifyGetSchemaOfBddSource() throws Exception {
     Bdd bdd = databaseUtils.getJavaBddFromUtils();
-    metadataGetter.getSchemaOfBddSource(connection,bdd);
-    assertEquals("TABLE_FOR_TEST",bdd.getBddTables().get(1).getTableName());
-    assertEquals("EMPTY_TABLE_FOR_TEST",bdd.getBddTables().get(0).getTableName());
-    assertEquals(2,bdd.getBddTables().size());
+    metadataGetter.getSchemaOfBddSource(connection, bdd);
+    assertEquals("TABLE_FOR_TEST", bdd.getBddTables().get(1).getTableName());
+    assertEquals("EMPTY_TABLE_FOR_TEST", bdd.getBddTables().get(0).getTableName());
+    assertEquals(2, bdd.getBddTables().size());
 
-    assertEquals("COLUMNINTEGER",bdd.getBddTables().get(1).getColumns().get(0).getColumnName());
-    assertEquals("INTEGER",bdd.getBddTables().get(1).getColumns().get(0).getColumnType());
-    assertEquals(10,bdd.getBddTables().get(1).getColumns().get(0).getColumnTypeSize());
-    assertEquals("NOT NULL",bdd.getBddTables().get(1).getColumns().get(0).getCanBeNull());
+    assertEquals("COLUMNINTEGER", bdd.getBddTables().get(1).getColumns().get(0).getColumnName());
+    assertEquals("INTEGER", bdd.getBddTables().get(1).getColumns().get(0).getColumnType());
+    assertEquals(10, bdd.getBddTables().get(1).getColumns().get(0).getColumnTypeSize());
+    assertEquals("NOT NULL", bdd.getBddTables().get(1).getColumns().get(0).getCanBeNull());
     assertFalse(bdd.getBddTables().get(1).getColumns().get(0).getIsAutoIncrement());
-   }
+  }
 
   @Test
   public void verifyAddSchemaToBddDest() throws Exception {
 
   }
+
   @After
-  public void  closeEveryThing() throws SQLException, ClassNotFoundException {
+  public void closeEveryThing() throws SQLException, ClassNotFoundException {
     connection.close();
   }
 }
