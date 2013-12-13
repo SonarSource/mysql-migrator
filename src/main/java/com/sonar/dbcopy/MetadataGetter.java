@@ -10,7 +10,7 @@ import java.sql.*;
 public class MetadataGetter {
 
   private Statement statementSource;
-  private ResultSet resultSetTables;
+  private ResultSet resultSetTables,resultSetCol;
 
   public MetadataGetter() {
   }
@@ -46,15 +46,15 @@ public class MetadataGetter {
 
         Table tableToModify = database.getTable(indexTable);
 
-        ResultSet resultSet = statementSource.executeQuery("SELECT * FROM " + tableToModify.getName());
-        ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+        resultSetCol = statementSource.executeQuery("SELECT * FROM " + tableToModify.getName());
+        ResultSetMetaData resultSetMetaData = resultSetCol.getMetaData();
         int nbColumns = resultSetMetaData.getColumnCount();
 
         for (int indexColumn = 1; indexColumn <= nbColumns; indexColumn++) {
           String columnName = resultSetMetaData.getColumnName(indexColumn);
           tableToModify.addColumn(columnName);
         }
-        resultSet.close();
+        resultSetCol.close();
       }
     } catch (SQLException e) {
       throw new DbException("Problem to get schema from database source.", e);
@@ -65,6 +65,9 @@ public class MetadataGetter {
 
   public void closeStatementAndResultSet() {
     try {
+      if(!resultSetCol.isClosed()){
+        resultSetCol.close();
+      }
       if (!resultSetTables.isClosed()) {
         resultSetTables.close();
       }

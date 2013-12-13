@@ -22,10 +22,10 @@ public class DataDropper {
     try {
       for (int indexTable = 0; indexTable < database.getNbTables(); indexTable++) {
         statementToDelete.execute("DELETE FROM " + database.getTableName(indexTable));
-        LOGGER.log(Level.INFO, "TABLES " + database.getTableName(indexTable) + " DELETED ON DESTINATION.");
+        LOGGER.log(Level.INFO, "TABLES " + database.getTableName(indexTable) + " DELETED IN DESTINATION.");
       }
     } catch (SQLException e) {
-      throw new DbException("Deleting dats from destination failed.", e);
+      throw new DbException("Deleting datas from destination failed.", e);
     } finally {
       statementToDelete.close();
     }

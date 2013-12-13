@@ -37,7 +37,7 @@ public class Reproducer {
     } catch (SQLException e) {
       throw new DbException("Problem when adding datas in database destination", e);
     } finally {
-//      dataGetter.closeSourceStatement();
+      dataGetter.closeSourceStatement();
       connecter.closeSource();
       connecter.closeDestination();
     }
