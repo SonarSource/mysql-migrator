@@ -29,27 +29,17 @@ public class MetadataGetterTest {
     databaseUtils.makeDatabaseH2Withtables("sonar");
     connection = databaseUtils.getConnectionFromH2();
 
-    databaseUtils.makeBddJavaObject();
+    databaseUtils.makeDatabaseJavaObject();
   }
 
   @Test
-  public void verifyGetSchemaOfBddSource() throws Exception {
-    Bdd bdd = databaseUtils.getJavaBddFromUtils();
-    metadataGetter.getSchemaOfBddSource(connection, bdd);
-    assertEquals("TABLE_FOR_TEST", bdd.getBddTables().get(1).getTableName());
-    assertEquals("EMPTY_TABLE_FOR_TEST", bdd.getBddTables().get(0).getTableName());
-    assertEquals(2, bdd.getBddTables().size());
-
-    assertEquals("COLUMNINTEGER", bdd.getBddTables().get(1).getColumns().get(0).getColumnName());
-    assertEquals("INTEGER", bdd.getBddTables().get(1).getColumns().get(0).getColumnType());
-    assertEquals(10, bdd.getBddTables().get(1).getColumns().get(0).getColumnTypeSize());
-    assertEquals("NOT NULL", bdd.getBddTables().get(1).getColumns().get(0).getCanBeNull());
-    assertFalse(bdd.getBddTables().get(1).getColumns().get(0).getIsAutoIncrement());
-  }
-
-  @Test
-  public void verifyAddSchemaToBddDest() throws Exception {
-
+  public void testGetSchemaOfDatabaseSource() throws Exception {
+    Database database = databaseUtils.getJavaDatabaseFromUtils();
+    metadataGetter.getSchemaOfDatabaseSource(connection, database);
+    assertEquals("TABLE_FOR_TEST", database.getTables().get(1).getName());
+    assertEquals("EMPTY_TABLE_FOR_TEST", database.getTables().get(0).getName());
+    assertEquals(2, database.getTables().size());
+    assertEquals("COLUMNINTEGER", database.getTables().get(1).getColumns().get(0).getName());
   }
 
   @After

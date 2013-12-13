@@ -30,22 +30,22 @@ public class ListColumnsAsStringTest {
   }
 
   @Test
-  public void verifyListColumnAsStringCreation() {
+  public void testListColumnAsStringCreation() {
     assertNotNull(listColumnsAsString);
   }
 
   @Test
-  public void verifyMakeString() throws Exception {
-    assertEquals("columnName1,columnName2,columnName3", listColumnsAsString.makeString());
+  public void testMakeString() throws Exception {
+    assertEquals("columnName1,columnName2,columnName3", listColumnsAsString.makeColumnString());
   }
 
   @Test
-  public void verifyMakeQuestionMarkString() throws Exception {
+  public void testMakeQuestionMarkString() throws Exception {
     assertEquals("?,?,?", listColumnsAsString.makeQuestionMarkString());
   }
 
   @Test
-  public void verifyGetNbColumns() throws Exception {
+  public void testGetNbColumns() throws Exception {
     assertEquals(3, listColumnsAsString.getNbColumns());
   }
 }

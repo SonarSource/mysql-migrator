@@ -7,14 +7,13 @@ package com.sonar.dbcopy;
 
 public class Sequence {
 
-  private String sequenceName;
+  private String name;
 
-  public Sequence(String sequenceName) {
-    this.sequenceName = sequenceName;
+  public Sequence(String name) {
+    this.name = name;
   }
 
-  /* GETTERS */
-  public String getSequencename() {
-    return sequenceName;
+  public String getName() {
+    return name;
   }
 }

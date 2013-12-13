@@ -10,72 +10,70 @@ import java.util.List;
 
 public class Column {
 
-  /* ATTRIBUTS */
-  private String columnName;
-  private String columnType;
+  private String name;
+  private String type;
   private int sizeOfType;
   private String canBeNull;
-  //TODO when autoincrement syntax depends on provider !!
+  //TODO autoincrementwould be needed on Oracle
   private boolean isAutoIncrement;
   private Sequence sequenceIfId = null;
-  private List<Object> objectTableData;
+  private List<Object> dataList;
 
-  /* CONSTRUCTEUR */
-  public Column(String columnName) {
-    this.columnName = columnName;
-    objectTableData = new ArrayList<Object>();
+  public Column(String name) {
+    this.name = name;
+    dataList = new ArrayList<Object>();
   }
 
-  /* GETTERS */
   public List<Object> getDataList() {
-    return this.objectTableData;
+    return this.dataList;
   }
 
-  public Object getDataWithIndex(int index) {
-    return objectTableData.get(index);
+  public Object getData(int index) {
+    return dataList.get(index);
   }
 
-  public String getColumnName() {
-    return this.columnName;
+  public String getName() {
+    return this.name;
   }
 
-  public String getColumnType() {
-    return this.columnType;
+  public String getType() {
+    return this.type;
   }
 
-  public int getColumnTypeSize() {
+  public int getTypeSize() {
     return sizeOfType;
   }
 
+  // return "NOT NULL" if it can't be null  otherwise ""
   public String getCanBeNull() {
     return this.canBeNull;
   }
 
-  public boolean getIsAutoIncrement() {
+  public boolean isAutoIncrement() {
     return isAutoIncrement;
-  }
-
-  public void setIsAutoIncrement(boolean isAutoIncrement) {
-    this.isAutoIncrement = isAutoIncrement;
   }
 
   public Sequence getSequence() {
     return this.sequenceIfId;
   }
 
-  /* SETTERS */
+  public void setIsAutoIncrement(boolean isAutoIncrement) {
+    this.isAutoIncrement = isAutoIncrement;
+  }
+
   public void addSequenceOnId(String tableName) {
     this.sequenceIfId = new Sequence(tableName + "_id_seq");
   }
 
-  public void addDataObjectInColumn(Object object) {
-    this.objectTableData.add(object);
+  public void addData(Object object) {
+    this.dataList.add(object);
   }
 
-  public void addCharacteristicOfColumn(String type, int size, int canBeNull) {
-    this.columnType = type;
+  // isNullable : columnNoNulls=0, columnNullable=1 or columnNullableUnknown=2
+  public void addCharacteristic(String type, int size, int isNullable) {
+    this.type = type;
     this.sizeOfType = size;
-    if (canBeNull == 0) {
+    if (isNullable == 0) {
       this.canBeNull = "NOT NULL";
     } else {
       this.canBeNull = "";

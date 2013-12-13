@@ -20,24 +20,22 @@ public class Table {
     columns = new ArrayList<Column>();
   }
 
-  /* SETTERS */
-  public Column addOneColumnToTable(String columnName) {
+  public Column addColumn(String columnName) {
     Column columnToAdd = new Column(columnName);
     columns.add(columnToAdd);
     return columnToAdd;
   }
 
-  public void setNbRows(int nbRows) {
-    this.nbRows = nbRows;
-  }
-
-  /* GETTERS */
-  public String getTableName() {
+  public String getName() {
     return this.tableName;
   }
 
   public int getNbRows() {
     return nbRows;
+  }
+
+  public void setNbRows(int nbRows) {
+    this.nbRows = nbRows;
   }
 
   public List<Column> getColumns() {

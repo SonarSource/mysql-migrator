@@ -21,20 +21,20 @@ public class DataPutInBase {
   public DataPutInBase() throws IOException {
   }
 
-  public void insertDatasFromJavaDatabaseToDestinationDatabase(Connection connectionDest, List<Table> listOfTables) throws SQLException {
+  public void insertDatasToDestination(Connection connectionDest, Database database) throws SQLException {
 
-    for (int indexTable = 0; indexTable < listOfTables.size(); indexTable++) {
+    for (int indexTable = 0; indexTable < database.getNbTables(); indexTable++) {
 
-      /* GET ( TABLE, TABLENAME, ROW NB OF TABLE, COLUMNS AND NB OF COLUMNS ) FROM JAVA BDD OBJECT */
-      Table table = listOfTables.get(indexTable);
-      String tableName = table.getTableName();
+      /* GET ( TABLE, TABLENAME, ROW NB OF TABLE, COLUMNS AND NB OF COLUMNS ) FROM JAVA DB OBJECT */
+      Table table = database.getTable(indexTable);
+      String tableName = table.getName();
       int nbRowsInTable = table.getNbRows();
       List<Column> columns = table.getColumns();
       int nbColumns = columns.size();
 
       /* MAKE STRINGS TO PUT IN SQL INSERT REQUEST */
       ListColumnsAsString lcas = new ListColumnsAsString(columns);
-      String columnsAsString = lcas.makeString();
+      String columnsAsString = lcas.makeColumnString();
       String questionMarkString = lcas.makeQuestionMarkString();
       String sqlRequest = "INSERT INTO " + tableName + " (" + columnsAsString + ") VALUES(" + questionMarkString + ");";
 
@@ -44,7 +44,7 @@ public class DataPutInBase {
         /* ADD DATA IN PREPARED STATEMENT FOR EACH COLUMN AND ROW BY ROW */
         for (int indexRow = 0; indexRow < nbRowsInTable; indexRow++) {
           for (int indexColumn = 0; indexColumn < nbColumns; indexColumn++) {
-            Object objectToInsert = columns.get(indexColumn).getDataWithIndex(indexRow);
+            Object objectToInsert = database.getData(indexTable,indexColumn,indexRow);
             statementDest.setObject(indexColumn + 1, objectToInsert);
           }
           /* EXECUTE STATEMENT FOR EACH ROW */
@@ -53,13 +53,13 @@ public class DataPutInBase {
       } catch (SQLException e) {
         throw new DbException("Problem when inserting datas in database destination.", e);
       } finally {
-        closeStatementAndresultSet();
+        closeStatement();
       }
       LOGGER.log(Level.INFO, "DATAS ADDED IN " + tableName + " TABLE");
     }
   }
 
-  private void closeStatementAndresultSet() {
+  private void closeStatement() {
     try {
       statementDest.close();
     } catch (SQLException e) {

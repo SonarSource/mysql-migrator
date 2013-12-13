@@ -16,7 +16,6 @@ public class StringMakerAccordingToProvider {
   private static final String STRINGORACLE = "SELECT * FROM dba_tables";
   private static final String STRINGH2 = "SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = 'PUBLIC' ORDER BY 1";
 
-
   public String getSqlRequest(Connection connection) throws SQLException {
     String provider = connection.getMetaData().getDriverName();
     provider = provider.substring(0, 5).toLowerCase();

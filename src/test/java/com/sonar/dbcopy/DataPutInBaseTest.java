@@ -22,9 +22,9 @@ public class DataPutInBaseTest {
 
   private DataPutInBase dataPutInBase;
   private DatabaseUtils databaseUtils;
-  private Bdd bdd;
+  private Database database;
   private Connection connectionFromUtils;
-  private List<Table> tablesOfBdd;
+  private List<Table> databaseTables;
   private Statement statement;
   private ResultSet resultSet;
 
@@ -33,12 +33,12 @@ public class DataPutInBaseTest {
 
     databaseUtils = new DatabaseUtils();
     /* MAKE DATABASE JAVA OBJECT */
-    databaseUtils.makeBddJavaObject();
-    databaseUtils.addTablesToBddJavaObject();
-    databaseUtils.addColumnsToBddJavaObject();
-    databaseUtils.addDatasToBddJavaObject();
-    bdd = databaseUtils.getJavaBddFromUtils();
-    tablesOfBdd = bdd.getBddTables();
+    databaseUtils.makeDatabaseJavaObject();
+    databaseUtils.addTablesToDatabaseJavaObject();
+    databaseUtils.addColumnsToDatabaseJavaObject();
+    databaseUtils.addDatasToDatabaseJavaObject();
+    database = databaseUtils.getJavaDatabaseFromUtils();
+    databaseTables = database.getTables();
 
     /* MAKE AN EMPTY DATABASE H2 : don't insert datas in h2 database */
     databaseUtils.makeDatabaseH2Withtables("sonarToWrite");
@@ -47,17 +47,17 @@ public class DataPutInBaseTest {
 
     /* DO THE COPY FROM JAVA OBJECT TO EMPTY DATABASE H2 */
     dataPutInBase = new DataPutInBase();
-    dataPutInBase.insertDatasFromJavaDatabaseToDestinationDatabase(connectionFromUtils, bdd.getBddTables());
+    dataPutInBase.insertDatasToDestination(connectionFromUtils, database);
   }
 
   @Test
-  public void verifyInsertDatasFromJavaDatabaseToDestinationDatabase() throws SQLException, ClassNotFoundException {
+  public void testInsertDataToDestination() throws SQLException, ClassNotFoundException {
     statement = connectionFromUtils.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT);
 
     /* FOR EACH TABLE */
-    for (int indexTable = 0; indexTable < tablesOfBdd.size(); indexTable++) {
-      Table tableToCompare = tablesOfBdd.get(indexTable);
-      String tableName = tableToCompare.getTableName();
+    for (int indexTable = 0; indexTable < databaseTables.size(); indexTable++) {
+      Table tableToCompare = databaseTables.get(indexTable);
+      String tableName = tableToCompare.getName();
       int nbColumnInTable = tableToCompare.getColumns().size();
       /* GET CONTENT OF TABLE */
       resultSet = statement.executeQuery("SELECT * FROM " + tableName + " ORDER BY 1;");
@@ -69,7 +69,7 @@ public class DataPutInBaseTest {
         /* FOR EACH COLUMN */
         for (int indexColumn = 0; indexColumn < nbColumnInTable; indexColumn++) {
           /* DO JUNIT TEST */
-          assertEquals(bdd.getDataFromColumnFromTable(indexTable, indexColumn, indexRow), resultSet.getObject(indexColumn));
+          assertEquals(database.getData(indexTable, indexColumn, indexRow), resultSet.getObject(indexColumn));
         }
         indexRow++;
       }

@@ -5,19 +5,14 @@
  */
 package com.sonar.dbcopy;
 
-import java.io.IOException;
 import java.sql.*;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DataGetter {
 
-  private Statement sourceStatement;
   private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-
-  public DataGetter() throws IOException {
-  }
+  private Statement sourceStatement;
 
   public void createStatement(Connection sourceConnection) {
     try {
@@ -27,12 +22,12 @@ public class DataGetter {
     }
   }
 
-  public void writeDataInJavaBdd(List<Table> tablesOfBdd) throws SQLException {
+  public void recordDatas(Database database) throws SQLException {
     /* FOR EACH TABLE */
-    for (int tableIndex = 0; tableIndex < tablesOfBdd.size(); tableIndex++) {
+    for (int indexTable = 0; indexTable < database.getNbTables(); indexTable++) {
       /* GET TABLE AND NAMETABLE */
-      Table table = tablesOfBdd.get(tableIndex);
-      String tableName = table.getTableName();
+      Table table = database.getTable(indexTable);
+      String tableName = table.getName();
 
       /* GET RESULTSET FROM SQL REQUEST */
       ResultSet resultSet = sourceStatement.executeQuery("SELECT * FROM " + tableName + " ORDER BY 1;");
@@ -51,10 +46,10 @@ public class DataGetter {
           /* ADD THE COLUMN NAME AND COLUMN TYPE OF THE TABLE TO SET  */
         Column columnToSet = table.getColumns().get(columnIndex);
 
-          /* FOR EACH ROW OF THE CURRENT COLUMN , ADD IT IN THE JAVA BDD COLUMN OBJECT */
+          /* FOR EACH ROW OF THE CURRENT COLUMN , ADD IT IN THE JAVA DB COLUMN OBJECT */
         while (resultSet.next()) {
           Object objectGetted = resultSet.getObject(columnIndex + 1);
-          columnToSet.addDataObjectInColumn(objectGetted);
+          columnToSet.addData(objectGetted);
         }
           /* REPLACE CURSOR AT THE BEGINNING OF RESULTSET */
         resultSet.beforeFirst();

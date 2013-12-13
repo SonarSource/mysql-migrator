@@ -14,9 +14,9 @@ import java.sql.SQLException;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
-public class BddConnecterTest {
+public class ConnecterTest {
 
-  private BddConnecter bddConnecter;
+  private Connecter connecter;
   private DatabaseUtils databaseUtils;
 
   @Before
@@ -24,22 +24,22 @@ public class BddConnecterTest {
     databaseUtils = new DatabaseUtils();
     databaseUtils.makeDatabaseH2Withtables("sonar");
 
-    bddConnecter = new BddConnecter();
-    bddConnecter.doSourceConnection("org.h2.Driver", "jdbc:h2:mem:sonar", "sonar", "sonar");
-    bddConnecter.doDestinationConnection("org.h2.Driver", "jdbc:h2:mem:sonar", "sonar", "sonar");
+    connecter = new Connecter();
+    connecter.doSourceConnection("org.h2.Driver", "jdbc:h2:mem:sonar", "sonar", "sonar");
+    connecter.doDestinationConnection("org.h2.Driver", "jdbc:h2:mem:sonar", "sonar", "sonar");
 
   }
 
   @Test
-  public void testBddConnecter() throws Exception {
-    assertNotNull(bddConnecter.getSourceConnection());
-    assertNotNull(bddConnecter.getDestConnection());
+  public void testDatabaseConnecter() throws Exception {
+    assertNotNull(connecter.getConnectionSource());
+    assertNotNull(connecter.getConnectionDest());
 
-    bddConnecter.closeSourceConnection();
-    bddConnecter.closeDestConnection();
+    connecter.closeSource();
+    connecter.closeDestination();
 
-    assertTrue(bddConnecter.getSourceConnection().isClosed());
-    assertTrue(bddConnecter.getDestConnection().isClosed());
+    assertTrue(connecter.getConnectionSource().isClosed());
+    assertTrue(connecter.getConnectionDest().isClosed());
   }
 
   @After

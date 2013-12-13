@@ -17,11 +17,11 @@ public class ListColumnsAsString {
     nbColumns = columnList.size();
   }
 
-  public String makeString() {
+  public String makeColumnString() {
     StringBuilder stringBuilder = new StringBuilder();
     for (int indexColumn = 0; indexColumn < nbColumns; indexColumn++) {
       stringBuilder.append(",");
-      stringBuilder.append(columnList.get(indexColumn).getColumnName());
+      stringBuilder.append(columnList.get(indexColumn).getName());
     }
     String columnsAsString = stringBuilder.toString();
     columnsAsString = columnsAsString.substring(1);

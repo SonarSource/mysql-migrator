@@ -18,31 +18,31 @@ public class TableTest {
   @Before
   public void createInstance() {
     table = new Table("tableNameToVerify");
-    table.addOneColumnToTable("columnNameToVerify");
+    table.addColumn("columnNameToVerify");
   }
 
   @Test
-  public void verifyTableCreation() {
+  public void testTableCreation() {
     assertNotNull(table);
   }
 
   @Test
-  public void verifyColumnAddToTable() throws Exception {
+  public void testColumnAddToTable() throws Exception {
     assertNotNull(table.getColumns().get(0));
   }
 
   @Test
-  public void verifyNbRowsIsNull() throws Exception {
+  public void testNbRowsIsNull() throws Exception {
     assertEquals(0, table.getNbRows());
   }
 
   @Test
-  public void verifyGetTableName() throws Exception {
-    assertEquals("tableNameToVerify", table.getTableName());
+  public void testGetTableName() throws Exception {
+    assertEquals("tableNameToVerify", table.getName());
   }
 
   @Test
-  public void verifyColumnName() throws Exception {
-    assertEquals("columnNameToVerify", table.getColumns().get(0).getColumnName());
+  public void testColumnName() throws Exception {
+    assertEquals("columnNameToVerify", table.getColumns().get(0).getName());
   }
 }

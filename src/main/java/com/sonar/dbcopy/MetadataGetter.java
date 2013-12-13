@@ -15,7 +15,7 @@ public class MetadataGetter {
   public MetadataGetter() {
   }
 
-  public void getSchemaOfBddSource(Connection connectionSource, Bdd bdd) {
+  public void getSchemaOfDatabaseSource(Connection connectionSource, Database database) {
     try {
       statementSource = connectionSource.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT);
     } catch (SQLException e) {
@@ -24,40 +24,35 @@ public class MetadataGetter {
 
     try {
       StringMakerAccordingToProvider stringMaker = new StringMakerAccordingToProvider();
-      /* GET ALL TABLES WITH NB OF COLUMNS FRON SOURCE */
 
+      /* GET ALL TABLES WITH NB OF COLUMNS FROM SOURCE */
       resultSetTables = statementSource.executeQuery(stringMaker.getSqlRequest(connectionSource));
-      //DatabaseMetaData metaData = connectionSource.getMetaData();
-      //ResultSet resultSetTables = metaData.getTables(null, "public", "%", null);
+
+      // TODO to get schema tables with metadata
+      //       DatabaseMetaData metaData = connectionSource.getMetaData();
+      //       ResultSet resultSetTables = metaData.getTables(null, "public", "%", null);
+
       if (!resultSetTables.isBeforeFirst()) {
         throw new DbException("*** ERROR : DATAS NOT FOUND IN DATABASE SOURCE ***", new Exception());
       } else {
         while (resultSetTables.next()) {
-          bdd.addTable(resultSetTables.getString(1));
+          database.addTable(resultSetTables.getString(1));
         }
       }
       resultSetTables.close();
 
-      /* GET ALL COLUMNS , TYPE , SIZE OF TYPE , IF CAN'T BE NULL FROM EACH TABLE ALREADY FOUND */
-      for (int indexTable = 0; indexTable < bdd.getBddTables().size(); indexTable++) {
+      /* GET ALL COLUMNS FROM EACH TABLE ALREADY FOUND */
+      for (int indexTable = 0; indexTable < database.getTables().size(); indexTable++) {
 
-        Table tableToModify = bdd.getBddTables().get(indexTable);
+        Table tableToModify = database.getTable(indexTable);
 
-        ResultSet resultSet = statementSource.executeQuery("SELECT * FROM " + tableToModify.getTableName());
+        ResultSet resultSet = statementSource.executeQuery("SELECT * FROM " + tableToModify.getName());
         ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
         int nbColumns = resultSetMetaData.getColumnCount();
 
         for (int indexColumn = 1; indexColumn <= nbColumns; indexColumn++) {
           String columnName = resultSetMetaData.getColumnName(indexColumn);
-          String columnType = resultSetMetaData.getColumnTypeName(indexColumn);
-          int sizeOfType = resultSetMetaData.getPrecision(indexColumn);
-          // isNullable : columnNoNulls=0, columnNullable=1 or columnNullableUnknown=2
-          int canBeNull = resultSetMetaData.isNullable(indexColumn);
-          boolean isAutoIncrement = resultSetMetaData.isAutoIncrement(indexColumn);
-
-          Column columnToAdd = tableToModify.addOneColumnToTable(columnName);
-          columnToAdd.addCharacteristicOfColumn(columnType, sizeOfType, canBeNull);
-          columnToAdd.setIsAutoIncrement(isAutoIncrement);
+          tableToModify.addColumn(columnName);
         }
         resultSet.close();
       }

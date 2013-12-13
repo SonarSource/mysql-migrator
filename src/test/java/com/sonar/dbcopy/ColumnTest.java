@@ -17,8 +17,8 @@ public class ColumnTest {
   @Before
   public void create_instance() {
     column = new Column("columnNameToVerify");
-    column.addDataObjectInColumn("stringDataToVerify");
-    column.addCharacteristicOfColumn("integer", 4, 0);
+    column.addData("stringDataToVerify");
+    column.addCharacteristic("integer", 4, 0);
     column.setIsAutoIncrement(true);
     column.addSequenceOnId("tableName");
   }
@@ -26,27 +26,27 @@ public class ColumnTest {
   @Test
   public void testColumnCreation() throws Exception {
     assertNotNull(column);
-    assertEquals("columnNameToVerify", column.getColumnName());
+    assertEquals("columnNameToVerify", column.getName());
     assertNotNull(column.getDataList());
   }
 
   @Test
   public void testInsertionOfDataTypeString() throws Exception {
-    assertEquals("stringDataToVerify", column.getDataWithIndex(0));
+    assertEquals("stringDataToVerify", column.getData(0));
   }
 
   @Test
   public void testGettersForColumnAttributes() throws Exception {
-    assertEquals("integer", column.getColumnType());
-    assertEquals(4, column.getColumnTypeSize());
-    assertTrue(column.getIsAutoIncrement());
+    assertEquals("integer", column.getType());
+    assertEquals(4, column.getTypeSize());
+    assertTrue(column.isAutoIncrement());
     assertEquals("NOT NULL", column.getCanBeNull());
   }
 
   @Test
   public void testAddSequenceOnId() {
     assertNotNull(column.getSequence());
-    assertEquals("tableName_id_seq", column.getSequence().getSequencename());
+    assertEquals("tableName_id_seq", column.getSequence().getName());
   }
 
 }

@@ -18,18 +18,18 @@ public class DatabaseUtils {
 
   private Connection connection;
   private PreparedStatement preparedStatement;
-  private Bdd bdd;
+  private Database database;
   private List<Table> tableList;
-  private String databaseName;
+  private String h2DatabaseName;
 
   public DatabaseUtils() {
   }
 
   /* H2 */
-  public void makeDatabaseH2Withtables(String databaseName) throws SQLException, ClassNotFoundException {
-    this.databaseName = databaseName;
+  public void makeDatabaseH2Withtables(String h2DatabaseName) throws SQLException, ClassNotFoundException {
+    this.h2DatabaseName = h2DatabaseName;
     /* CREATE H2 DATABASE */
-    String connectionPoolParameters = "jdbc:h2:mem:" + this.databaseName + ";DB_CLOSE_ON_EXIT=-1;";
+    String connectionPoolParameters = "jdbc:h2:mem:" + this.h2DatabaseName + ";DB_CLOSE_ON_EXIT=-1;";
 
     JdbcConnectionPool jdbcConnectionPool = JdbcConnectionPool.create(connectionPoolParameters, "sonar", "sonar");
 
@@ -82,39 +82,42 @@ public class DatabaseUtils {
   }
 
   /* JAVA DATABASE */
-  public void makeBddJavaObject() {
-    bdd = new Bdd("sonar");
+  public void makeDatabaseJavaObject() {
+    database = new Database();
   }
 
-  public void addTablesToBddJavaObject() {
-    tableList = new ArrayList<Table>();
+  public void addTablesToDatabaseJavaObject() {
+    List<Table> tableList = new ArrayList<Table>();
 
     tableList.add(new Table("table_for_test"));
     tableList.add(new Table("empty_table_for_test"));
 
-    bdd.setBddTables(tableList);
+    database.setTables(tableList);
   }
 
-  public void addColumnsToBddJavaObject() {
-    tableList.get(0).addOneColumnToTable("COLUMNINTEGER");
-    tableList.get(0).addOneColumnToTable("COLUMNSTRING");
-    tableList.get(0).addOneColumnToTable("COLUMNTIMESTAMP");
-    tableList.get(1).addOneColumnToTable("ID");
-    tableList.get(1).addOneColumnToTable("COLSTRING");
-    tableList.get(1).addOneColumnToTable("COLTIMESTAMP");
+  public void addColumnsToDatabaseJavaObject() {
+    database.getTable(0).addColumn("COLUMNINTEGER");
+    database.getTable(0).addColumn("COLUMNSTRING");
+    database.getTable(0).addColumn("COLUMNTIMESTAMP");
+    database.getTable(1).addColumn("ID");
+    database.getTable(1).addColumn("COLSTRING");
+    database.getTable(1).addColumn("COLTIMESTAMP");
   }
 
-  public void addDatasToBddJavaObject() {
-    tableList.get(0).getColumns().get(0).addDataObjectInColumn(1);
-    tableList.get(0).getColumns().get(0).addDataObjectInColumn(2);
-    tableList.get(0).getColumns().get(1).addDataObjectInColumn("This is a first string for test");
-    tableList.get(0).getColumns().get(1).addDataObjectInColumn("This is a second string for test");
-    tableList.get(0).getColumns().get(2).addDataObjectInColumn(new Timestamp(123456));
-    tableList.get(0).getColumns().get(2).addDataObjectInColumn(new Timestamp(456789));
+  public void addDatasToDatabaseJavaObject() {
+    // during insertion the order is important:
+    // FIRST ROW
+    database.addData(0,0,8);
+    database.addData(0,1,"This is a first string for test");
+    database.addData(0,2,new Timestamp(123456));
+    //SECOND ROW
+    database.addData(0,0,5);
+    database.addData(0,1,"This is a second string for test");
+    database.addData(0,2,new Timestamp(456789));
   }
 
-  public Bdd getJavaBddFromUtils() {
-    return this.bdd;
+  public Database getJavaDatabaseFromUtils() {
+    return this.database;
   }
 
 
