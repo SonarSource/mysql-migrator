@@ -5,6 +5,9 @@
  */
 package com.sonar.dbcopy;
 
+import java.io.IOException;
+import java.sql.SQLException;
+
 public class Main {
 
   private Main() {
@@ -22,17 +25,25 @@ public class Main {
       7=> sonar
   */
 
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) throws IOException {
 
     Database database = new Database();
 
     Connecter connecter = new Connecter();
-    connecter.doSourceConnection(args[0], args[1], args[2], args[3]);
-    connecter.doDestinationConnection(args[4], args[5], args[6], args[7]);
+    /** TRY WITH mySql port 13306 AS SOURCE (NEMO) AND posgresql:5432 AS SOURCE */
+    connecter.doSourceConnection(args[4], args[5], args[6], args[7]);
+    connecter.doDestinationConnection(args[0], args[1], args[2], args[3]);
+
+    /** TRY WITH postgresql port 5432 AS SOURCE AND mySql:13306 AS DEST */
+    //connecter.doSourceConnection(args[0], args[1], args[2], args[3]);
+    //connecter.doDestinationConnection(args[4], args[5], args[6], args[7]);
 
     MetadataGetter metadataGetter = new MetadataGetter();
     metadataGetter.getSchemaOfDatabaseSource(connecter.getConnectionSource(), database);
 
     new Reproducer(connecter, database);
+
+    connecter.closeSource();
+    connecter.closeDestination();
   }
 }

@@ -17,12 +17,12 @@ import static junit.framework.Assert.assertTrue;
 public class ConnecterTest {
 
   private Connecter connecter;
-  private DatabaseUtils databaseUtils;
+  private Utils utils;
 
   @Before
   public void createInstance() throws SQLException, ClassNotFoundException {
-    databaseUtils = new DatabaseUtils();
-    databaseUtils.makeDatabaseH2Withtables("sonar");
+    utils = new Utils();
+    utils.makeDatabaseH2Withtables("sonar");
 
     connecter = new Connecter();
     connecter.doSourceConnection("org.h2.Driver", "jdbc:h2:mem:sonar", "sonar", "sonar");
@@ -44,6 +44,6 @@ public class ConnecterTest {
 
   @After
   public void closeEveryThing() throws SQLException, ClassNotFoundException {
-    databaseUtils.getConnectionFromH2().close();
+    utils.getConnectionFromH2().close();
   }
 }

@@ -18,16 +18,20 @@ public class DataDropper {
   private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
   public void deleteDatas(Connection connectionDest, Database database) throws IOException, SQLException {
-    Statement statementToDelete = connectionDest.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT);
+    Statement statementToDelete = connectionDest.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_UPDATABLE);
     try {
       for (int indexTable = 0; indexTable < database.getNbTables(); indexTable++) {
         statementToDelete.execute("DELETE FROM " + database.getTableName(indexTable));
-        LOGGER.log(Level.INFO, "TABLES " + database.getTableName(indexTable) + " DELETED IN DESTINATION.");
+        LOGGER.log(Level.INFO, "TABLES  n° "+indexTable+": " + database.getTableName(indexTable) + " DELETED IN DESTINATION.");
       }
     } catch (SQLException e) {
       throw new DbException("Deleting datas from destination failed.", e);
     } finally {
+      LOGGER.log(Level.INFO, " | - - - - - - - - - - - - - - - - - - - - - - - - | ");
       statementToDelete.close();
+      LOGGER.log(Level.INFO, " | StatementToDelete is closed.                    | ");
+      LOGGER.log(Level.INFO, " | - - - - - - - - - - - - - - - - - - - - - - - - | ");
+
     }
   }
 }

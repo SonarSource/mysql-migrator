@@ -18,24 +18,25 @@ import static junit.framework.Assert.assertFalse;
 public class MetadataGetterTest {
 
   private MetadataGetter metadataGetter;
-  private DatabaseUtils databaseUtils;
+  private Utils utils;
   private Connection connection;
 
   @Before
   public void createInstance() throws SQLException, ClassNotFoundException {
     metadataGetter = new MetadataGetter();
 
-    databaseUtils = new DatabaseUtils();
-    databaseUtils.makeDatabaseH2Withtables("sonar");
-    connection = databaseUtils.getConnectionFromH2();
+    utils = new Utils();
+    utils.makeDatabaseH2Withtables("sonar");
+    connection = utils.getConnectionFromH2();
 
-    databaseUtils.makeDatabaseJavaObject();
+    utils.makeDatabaseJavaObject();
   }
 
   @Test
   public void testGetSchemaOfDatabaseSource() throws Exception {
-    Database database = databaseUtils.getJavaDatabaseFromUtils();
+    Database database = utils.getJavaDatabaseFromUtils();
     metadataGetter.getSchemaOfDatabaseSource(connection, database);
+
     assertEquals("TABLE_FOR_TEST", database.getTables().get(1).getName());
     assertEquals("EMPTY_TABLE_FOR_TEST", database.getTables().get(0).getName());
     assertEquals(2, database.getTables().size());

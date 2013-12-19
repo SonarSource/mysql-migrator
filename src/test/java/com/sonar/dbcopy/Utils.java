@@ -14,22 +14,20 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatabaseUtils {
+public class Utils {
 
   private Connection connection;
   private PreparedStatement preparedStatement;
   private Database database;
   private List<Table> tableList;
-  private String h2DatabaseName;
 
-  public DatabaseUtils() {
+  public Utils() {
   }
 
   /* H2 */
   public void makeDatabaseH2Withtables(String h2DatabaseName) throws SQLException, ClassNotFoundException {
-    this.h2DatabaseName = h2DatabaseName;
-    /* CREATE H2 DATABASE */
-    String connectionPoolParameters = "jdbc:h2:mem:" + this.h2DatabaseName + ";DB_CLOSE_ON_EXIT=-1;";
+    /* H2 */
+    String connectionPoolParameters = "jdbc:h2:mem:" + h2DatabaseName + ";DB_CLOSE_ON_EXIT=-1;";
 
     JdbcConnectionPool jdbcConnectionPool = JdbcConnectionPool.create(connectionPoolParameters, "sonar", "sonar");
 
@@ -81,7 +79,7 @@ public class DatabaseUtils {
     return this.connection;
   }
 
-  /* JAVA DATABASE */
+  /* JAVA */
   public void makeDatabaseJavaObject() {
     database = new Database();
   }

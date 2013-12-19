@@ -7,29 +7,24 @@ package com.sonar.dbcopy;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Reproducer {
 
-  private DataGetter dataGetter;
+  private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+  private DataReproducer dataReproducer;
+
 
   public Reproducer(Connecter connecter, Database database) throws IOException {
-
-    /* GET DATAS FROM SOURCE */
     try {
-        dataGetter = new DataGetter();
-        dataGetter.createStatement(connecter.getConnectionSource());
-        dataGetter.recordDatas(database);
-
-      /* DELETE CONTENT OF DESTINATION */
-        DataDropper dataDropper = new DataDropper();
-        dataDropper.deleteDatas(connecter.getConnectionDest(), database);
-
-
-      /* ADD DATAS TO DESTINATION */
-        DataPutInBase dataPutInBase = new DataPutInBase();
-        dataPutInBase.insertDatasToDestination(connecter.getConnectionDest(), database);
-
-      /* VERIFY IF DATAS ARE THE SAME */
+    /* DELETE CONTENT OF DESTINATION */
+      DataDropper dataDropper = new DataDropper();
+      dataDropper.deleteDatas(connecter.getConnectionDest(), database);
+    /* COPY DATAS */
+      dataReproducer = new DataReproducer();
+      dataReproducer.doCopy(connecter.getConnectionSource(), connecter.getConnectionDest(), database);
+    /* VERIFY IF DATAS ARE THE SAME */
       // TODO
       //DataVerifier dataVerifier = new DataVerifier();
       //dataVerifier.doVerification(connecter,database);
@@ -37,9 +32,20 @@ public class Reproducer {
     } catch (SQLException e) {
       throw new DbException("Problem when adding datas in database destination", e);
     } finally {
-      dataGetter.closeSourceStatement();
+      LOGGER.log(Level.INFO, " | - - - - - - - - - - - - - - - - - - - - - - - -  | ");
+      dataReproducer.closeResultSet();
+      LOGGER.log(Level.INFO, " | ResultSet from source has been closed.           | ");
+      dataReproducer.closeSourceStatement();
+      LOGGER.log(Level.INFO, " | Statement from source has been closed.           | ");
+      dataReproducer.closeDestPrepareStatement();
+      LOGGER.log(Level.INFO, " | PreStatement from destination has been closed.   | ");
       connecter.closeSource();
+      LOGGER.log(Level.INFO, " | Connection from source has been closed.          | ");
       connecter.closeDestination();
+      LOGGER.log(Level.INFO, " | Connection from destination has been closed.     | ");
+      LOGGER.log(Level.INFO, " | - - - - - - - - - - - - - - - - - - - - - - - -  | ");
+
+
     }
   }
 }

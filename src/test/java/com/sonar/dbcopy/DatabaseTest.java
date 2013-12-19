@@ -20,12 +20,12 @@ public class DatabaseTest {
 
   @Before
   public void createInstance() {
-    DatabaseUtils databaseUtils = new DatabaseUtils();
-    databaseUtils.makeDatabaseJavaObject();
-    databaseUtils.addTablesToDatabaseJavaObject();
-    databaseUtils.addColumnsToDatabaseJavaObject();
-    databaseUtils.addDatasToDatabaseJavaObject();
-    databaseJavaFromUtils = databaseUtils.getJavaDatabaseFromUtils();
+    Utils utils = new Utils();
+    utils.makeDatabaseJavaObject();
+    utils.addTablesToDatabaseJavaObject();
+    utils.addColumnsToDatabaseJavaObject();
+    utils.addDatasToDatabaseJavaObject();
+    databaseJavaFromUtils = utils.getJavaDatabaseFromUtils();
   }
 
   @Test

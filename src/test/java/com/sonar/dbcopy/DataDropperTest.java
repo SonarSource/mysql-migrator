@@ -23,16 +23,16 @@ public class DataDropperTest {
 
   @Before
   public void createInstance() throws SQLException, ClassNotFoundException {
-    DatabaseUtils databaseUtils = new DatabaseUtils();
-    databaseUtils.makeDatabaseH2Withtables("sonar");
-    databaseUtils.insertDatasInH2Tables();
-    connection = databaseUtils.getConnectionFromH2();
+    Utils utils = new Utils();
+    utils.makeDatabaseH2Withtables("sonar");
+    utils.insertDatasInH2Tables();
+    connection = utils.getConnectionFromH2();
 
-    databaseUtils.makeDatabaseJavaObject();
-    databaseUtils.addTablesToDatabaseJavaObject();
-    databaseUtils.addColumnsToDatabaseJavaObject();
-    databaseUtils.addDatasToDatabaseJavaObject();
-    database = databaseUtils.getJavaDatabaseFromUtils();
+    utils.makeDatabaseJavaObject();
+    utils.addTablesToDatabaseJavaObject();
+    utils.addColumnsToDatabaseJavaObject();
+    utils.addDatasToDatabaseJavaObject();
+    database = utils.getJavaDatabaseFromUtils();
 
     dataDropper = new DataDropper();
 
@@ -52,6 +52,7 @@ public class DataDropperTest {
     Statement statement = connection.createStatement();
     assertNotNull(statement);
     ResultSet resultSet = statement.executeQuery("SELECT * FROM table_for_test");
+    // IF DATAS HAVE BEEN DELETED .next() CAN'T BE USED
     assertThat(resultSet.next()).isFalse();
   }
 }

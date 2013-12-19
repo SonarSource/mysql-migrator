@@ -8,15 +8,19 @@ package com.sonar.dbcopy;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Connecter {
 
+  private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
   private Connection sourceConnection, destConnection;
 
   public Connecter() {
   }
 
   public void doSourceConnection(String driverSource, String urlSource, String user, String pwd) {
+    LOGGER.log(Level.INFO, "source url= " + urlSource);
     if (sourceConnection != null) {
       throw new IllegalStateException("Source Connection was already created.");
     } else {
@@ -32,6 +36,8 @@ public class Connecter {
   }
 
   public void doDestinationConnection(String driverDest, String urlDest, String user, String pwd) {
+    LOGGER.log(Level.INFO, "destination url= " + urlDest);
+
     if (destConnection != null) {
       throw new IllegalStateException("Destination Connection was already created.");
     } else {
