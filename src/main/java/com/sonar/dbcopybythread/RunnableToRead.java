@@ -46,7 +46,6 @@ public class RunnableToRead implements Runnable {
         String tableName = database.getTableName(indexTable);
         int nbColInTable = database.getNbColumnsInTable(indexTable);
         int nbRowsInTable = database.getTable(indexTable).getNbRows();
-        List<Column> columns = database.getTable(indexTable).getColumns();
 
     /* MAKE STATEMENTS  */
         sourceStatement = connectionSource.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
@@ -87,22 +86,22 @@ public class RunnableToRead implements Runnable {
       try {
         resultSet.close();
         LOGGER.log(Level.INFO, " | ResultSet to read datas from source is closed.                                  | ");
-      } catch (SQLException e) {
-        LOGGER.log(Level.INFO, " | ResultSet to read datas from source can't be closed or is already closed.       | ");
+      } catch (Exception e) {
+        LOGGER.log(Level.INFO, " | ResultSet to read datas from source can't be closed or is already closed.       | "+e);
       }
 
       try {
         sourceStatement.close();
         LOGGER.log(Level.INFO, " | SourceStatement to read datas from source is closed.                            | ");
-      } catch (SQLException e) {
-        LOGGER.log(Level.INFO, " | SourceStatement to read datas from source can't be closed or is already closed. | ");
+      } catch (Exception e) {
+        LOGGER.log(Level.INFO, " | SourceStatement to read datas from source can't be closed or is already closed. | "+e);
       }
 
       try {
         connectionSource.close();
         LOGGER.log(Level.INFO, " | ConnectionSource to read datas from source is closed.                           | ");
-      } catch (SQLException e) {
-        LOGGER.log(Level.INFO, " | ConnectionSource to read datas from source can't be closed or is already closed.| ");
+      } catch (Exception e) {
+        LOGGER.log(Level.INFO, " | ConnectionSource to read datas from source can't be closed or is already closed.| "+e);
       }
 
       LOGGER.log(Level.INFO, " | - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - | ");

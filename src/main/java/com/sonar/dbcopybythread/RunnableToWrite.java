@@ -60,9 +60,9 @@ public class RunnableToWrite implements Runnable {
         preparedStatement = connectionDest.prepareStatement(sqlRequest);
 
     /* ADD EACH OBJECT BY ROW */
-        for (int indexRow = 0; indexRow < database.getTable(indexTable).getNbRows(); indexRow++) {
+        for (int indexRow = 0; indexRow < nbRowsInTable; indexRow++) {
           counterOfRows++;
-          for (int indexColumn = 0; indexColumn < database.getNbColumnsInTable(indexTable); indexColumn++) {
+          for (int indexColumn = 0; indexColumn < nbColInTable; indexColumn++) {
             while (objectToInsert == null) {
               objectToInsert = database.getColumn(indexTable, indexColumn).pullData();
             }
@@ -94,15 +94,15 @@ public class RunnableToWrite implements Runnable {
       try {
         preparedStatement.close();
         LOGGER.log(Level.INFO, " | PreparedStatement to write in destination is closed.                             | ");
-      } catch (SQLException e) {
-        LOGGER.log(Level.INFO, "PreparedStatement to write in destination can not be closed or is already closed.   |");
+      } catch (Exception e) {
+        LOGGER.log(Level.INFO, "PreparedStatement to write in destination can not be closed or is already closed.   | "+e);
       }
 
       try {
         connectionDest.close();
         LOGGER.log(Level.INFO, " | ConnectionDest is closed.                                                        | ");
-      } catch (SQLException e) {
-        LOGGER.log(Level.INFO, "ConnectionDest  to write in destination can not be closed or is already closed.     |");
+      } catch (Exception e) {
+        LOGGER.log(Level.INFO, "ConnectionDest  to write in destination can not be closed or is already closed.     | "+e);
       }
 
       LOGGER.log(Level.INFO, " | - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -|");

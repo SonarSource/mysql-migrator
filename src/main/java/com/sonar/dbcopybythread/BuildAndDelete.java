@@ -15,7 +15,7 @@ public class BuildAndDelete {
 
   private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-  public BuildAndDelete(DataConnecterByThread dc, Database database) {
+  public void execute(DataConnecterByThread dc, Database database) {
 
     Thread threadToMetadata = new Thread(new RunnableToGetMetadata(dc, database));
     threadToMetadata.start();

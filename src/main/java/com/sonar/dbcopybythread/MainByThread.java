@@ -9,9 +9,6 @@ import com.sonar.dbcopyutils.Database;
 
 public class MainByThread {
 
-  private MainByThread() {
-  }
-
   /*
       arg[i]
       0=> org.postgresql.Driver
@@ -34,9 +31,11 @@ public class MainByThread {
     /** TRY WITH postgresql port 15432 AS SOURCE AND mySql:13306 AS DEST */
     //DataConnecterByThread dataConnecterByThread = new DataConnecterByThread(args[0], args[1], args[2], args[3],args[4], args[5], args[6], args[7]);
 
-    new BuildAndDelete(dataConnecterByThread,database);
+    BuildAndDelete buildAndDelete = new BuildAndDelete();
+    buildAndDelete.execute(dataConnecterByThread,database);
 
-    new ReproducerByThread(dataConnecterByThread, database);
+    ReproducerByThread reproducerByThread = new ReproducerByThread();
+    reproducerByThread.execute(dataConnecterByThread, database);
 
   }
 }

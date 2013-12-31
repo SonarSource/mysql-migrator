@@ -51,15 +51,15 @@ public class RunnableToDelete implements Runnable {
       try {
         statementToDelete.close();
         LOGGER.log(Level.INFO, " | StatementToDelete is closed.                                                                   | ");
-      } catch (SQLException e) {
-        LOGGER.log(Level.INFO, "Statement to delete datas from database destination can not be closed or is already closed.       |");
+      } catch (Exception e) {
+        LOGGER.log(Level.INFO, "Statement to delete datas from database destination can not be closed or is already closed.       | "+e);
       }
 
       try {
         connectionDest.close();
         LOGGER.log(Level.INFO, " | ConnectionDest is closed.                                                                      | ");
-      } catch (SQLException e) {
-        LOGGER.log(Level.INFO, "ConnectionDest  to delete datas from database destination can not be closed or is already closed. |");
+      } catch (Exception e) {
+        LOGGER.log(Level.INFO, "ConnectionDest  to delete datas from database destination can not be closed or is already closed. | "+e);
       }
 
       LOGGER.log(Level.INFO, " | - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -| ");

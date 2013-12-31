@@ -91,36 +91,36 @@ public class RunnableToGetMetadata implements Runnable{
       try {
         resultSetRows.close();
         LOGGER.log(Level.INFO, " | ResultSetRows is closed.                        | ");
-      } catch (SQLException e) {
-        LOGGER.log(Level.INFO, " | ResultSetRows can't be closed.                  | ");
+      } catch (Exception e) {
+        LOGGER.log(Level.INFO, " | ResultSetRows can't be closed.                  | "+e);
       }
 
       try {
         resultSetTables.close();
         LOGGER.log(Level.INFO, " | ResultSetTables is closed.                      | ");
-      }catch (SQLException e){
-        LOGGER.log(Level.INFO, " | ResultSetTables can't be closed.                | ");
+      }catch (Exception e){
+        LOGGER.log(Level.INFO, " | ResultSetTables can't be closed.                | "+e);
       }
 
       try {
         resultSetCol.close();
         LOGGER.log(Level.INFO, " | ResultSetCol is closed.                         | ");
-      }catch (SQLException e){
-        LOGGER.log(Level.INFO, " | ResultSetCol can't be closed.                   | ");
+      }catch (Exception e){
+        LOGGER.log(Level.INFO, " | ResultSetCol can't be closed.                   | "+e);
       }
 
       try {
         statementSource.close();
         LOGGER.log(Level.INFO, " | StatementSource is closed.                      | ");
-      }catch (SQLException e){
-        LOGGER.log(Level.INFO, " | StatementSource can't be closed.                | ");
+      }catch (Exception e){
+        LOGGER.log(Level.INFO, " | StatementSource can't be closed.                | "+e);
       }
 
       try {
         connectionSource.close();
         LOGGER.log(Level.INFO, " | ConnectionSource is closed.                     | ");
-      }catch (SQLException e){
-        LOGGER.log(Level.INFO, " | ConnectionSource can't be closed.               | ");
+      }catch (Exception e){
+        LOGGER.log(Level.INFO, " | ConnectionSource can't be closed.               | "+e);
       }
 
       LOGGER.log(Level.INFO, " | - - - - - - - - - - - - - - - - - - - - - - - - | ");

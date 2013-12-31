@@ -15,8 +15,7 @@ public class ReproducerByThread {
 
   private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-  public ReproducerByThread(DataConnecterByThread dataConnecterByThread, Database database) {
-
+  public void execute(DataConnecterByThread dataConnecterByThread, Database database) {
 
     /* THREAD TO read CONTENT OF SOURCE */
     Thread threadToread = new Thread(new RunnableToRead(dataConnecterByThread, database));
