@@ -3,22 +3,31 @@
  * All rights reserved
  * mailto:contact AT sonarsource DOT com
  */
-package com.sonar.dbcopy;
+package com.sonar.dbcopybythread;
+
+import com.sonar.dbcopyutils.Database;
+import com.sonar.dbcopyutils.DbException;
 
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class MetadataGetter {
+public class RunnableToGetMetadata implements Runnable{
 
   private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-  private Statement statementSource;
-  private ResultSet resultSetTables, resultSetCol, resultSetRows;
+  private Database database;
+  private  DataConnecterByThread dc;
 
-  public MetadataGetter() {
+  public RunnableToGetMetadata(DataConnecterByThread dc, Database db) {
+    this.dc = dc;
+    this.database = db;
   }
 
-  public void getSchemaOfDatabaseSource(Connection connectionSource, Database database) {
+  public void run() {
+    Connection connectionSource = new ConnecterByThread().doSourceConnection(this.dc);
+    Statement statementSource;
+    ResultSet resultSetTables = null, resultSetCol = null, resultSetRows = null;
+
     try {
       statementSource = connectionSource.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
     } catch (SQLException e) {
@@ -70,6 +79,7 @@ public class MetadataGetter {
         while (resultSetRows.next()) {
           database.getTable(indexTable).setNbRows(resultSetRows.getInt(1));
         }
+        database.getTable(indexTable).setIsBuilt(true);
         resultSetRows.close();
       }
 
@@ -77,42 +87,43 @@ public class MetadataGetter {
     } catch (SQLException e) {
       throw new DbException("Problem to get schema from database source.", e);
     } finally {
+      LOGGER.log(Level.INFO, " | - - - - - - - - - - - - - - - - - - - - - - - - | ");
       try {
-        LOGGER.log(Level.INFO, " | - - - - - - - - - - - - - - - - - - - - - - - - | ");
         resultSetRows.close();
         LOGGER.log(Level.INFO, " | ResultSetRows is closed.                        | ");
+      } catch (SQLException e) {
+        LOGGER.log(Level.INFO, " | ResultSetRows can't be closed.                  | ");
+      }
+
+      try {
         resultSetTables.close();
         LOGGER.log(Level.INFO, " | ResultSetTables is closed.                      | ");
+      }catch (SQLException e){
+        LOGGER.log(Level.INFO, " | ResultSetTables can't be closed.                | ");
+      }
+
+      try {
         resultSetCol.close();
         LOGGER.log(Level.INFO, " | ResultSetCol is closed.                         | ");
+      }catch (SQLException e){
+        LOGGER.log(Level.INFO, " | ResultSetCol can't be closed.                   | ");
+      }
+
+      try {
         statementSource.close();
         LOGGER.log(Level.INFO, " | StatementSource is closed.                      | ");
-        LOGGER.log(Level.INFO, " | - - - - - - - - - - - - - - - - - - - - - - - - | ");
-      } catch (SQLException e) {
-        throw new DbException("Problem to close Metadata objects.", e);
+      }catch (SQLException e){
+        LOGGER.log(Level.INFO, " | StatementSource can't be closed.                | ");
       }
 
+      try {
+        connectionSource.close();
+        LOGGER.log(Level.INFO, " | ConnectionSource is closed.                     | ");
+      }catch (SQLException e){
+        LOGGER.log(Level.INFO, " | ConnectionSource can't be closed.               | ");
+      }
+
+      LOGGER.log(Level.INFO, " | - - - - - - - - - - - - - - - - - - - - - - - - | ");
     }
   }
-/*
-  public void closeStatementAndResultSet() {
-    try {
-      LOGGER.log(Level.INFO, " - - - - - - CLOSE METADATA OBJECTS - - - - - - - - ");
-      if (resultSetCol!=null) {
-        resultSetCol.close();
-      }
-      LOGGER.log(Level.INFO, "ResultSetCol from source in metadata getter has been closed.");
-
-      if (!resultSetTables.isClosed()) {
-        resultSetTables.close();
-      }
-      LOGGER.log(Level.INFO, "ResultSetTables from source in metadata getter has been closed.");
-
-      statementSource.close();
-      LOGGER.log(Level.INFO, "Statement from source in metadata getter has been closed.");
-      LOGGER.log(Level.INFO, " - - - - - - - - - - - - - - - - - - - - - - - - - - ");
-    } catch (SQLException e) {
-      throw new DbException("Closing of  statement source or resultset from metadata getter failed.", e);
-    }
-  }   */
 }

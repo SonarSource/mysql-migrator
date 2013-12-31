@@ -5,6 +5,8 @@
  */
 package com.sonar.dbcopy;
 
+import com.sonar.dbcopyutils.Database;
+import com.sonar.dbcopyutils.Table;
 import org.junit.Before;
 import org.junit.Test;
 

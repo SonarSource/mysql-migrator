@@ -3,7 +3,9 @@
  * All rights reserved
  * mailto:contact AT sonarsource DOT com
  */
-package com.sonar.dbcopy;
+package com.sonar.dbcopyutils;
+
+import com.sonar.dbcopyutils.Column;
 
 import java.util.List;
 
