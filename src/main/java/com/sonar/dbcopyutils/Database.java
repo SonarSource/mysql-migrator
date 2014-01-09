@@ -22,14 +22,6 @@ public class Database {
     return table;
   }
 
-  public void addData(int indexTable, int indexColumn, Object data) {
-    this.getColumn(indexTable, indexColumn).addData(data);
-  }
-
-  public Object getData(int indexTable, int indexColumn, int indexRow) {
-    return getColumn(indexTable, indexColumn).getDataList().get(indexRow);
-  }
-
   public Column getColumn(int indexTable, int indexColumn) {
     return tablesList.get(indexTable).getColumns().get(indexColumn);
   }

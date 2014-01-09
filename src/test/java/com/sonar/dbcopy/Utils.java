@@ -104,18 +104,6 @@ public class Utils {
     database.getTable(1).addColumn("COLTIMESTAMP");
   }
 
-  public void addDatasToDatabaseJavaObject() {
-    // during insertion the order is important:
-    // FIRST ROW
-    database.addData(0,0,8);
-    database.addData(0,1,"This is a first string for test");
-    database.addData(0,2,new Timestamp(123456));
-    //SECOND ROW
-    database.addData(0,0,5);
-    database.addData(0,1,"This is a second string for test");
-    database.addData(0,2,new Timestamp(456789));
-  }
-
   public Database getJavaDatabaseFromUtils() {
     return this.database;
   }

@@ -5,8 +5,8 @@
  */
 package com.sonar.dbcopyutils;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.sonar.simplify.DbException;
+
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -19,13 +19,11 @@ public class Column {
   //TODO autoincrementwould be needed on Oracle
   private boolean isAutoIncrement;
   private Sequence sequenceIfId = null;
-  private List<Object> dataList;
   public BlockingQueue<Object> queue;
 
   public Column(String name) {
     this.name = name;
-    dataList = new ArrayList<Object>();
-    queue = new ArrayBlockingQueue<Object>(30000);
+    queue = new ArrayBlockingQueue<Object>(4);
   }
 
   //----- MULTITHREADING -----//
@@ -45,15 +43,11 @@ public class Column {
   public Object pullData() {
     return queue.poll();
   }
+
+  public void removeQueue(){
+    this.queue.clear();
+  }
   //----- END MULTITHREADING -----//
-
-  public List<Object> getDataList() {
-    return this.dataList;
-  }
-
-  public Object getData(int index) {
-    return dataList.get(index);
-  }
 
   public String getName() {
     return this.name;
@@ -88,9 +82,6 @@ public class Column {
     this.sequenceIfId = new Sequence(tableName + "_id_seq");
   }
 
-  public void addData(Object object) {
-    this.dataList.add(object);
-  }
 
   // isNullable : columnNoNulls=0, columnNullable=1 or columnNullableUnknown=2
   public void addCharacteristic(String type, int size, int isNullable) {

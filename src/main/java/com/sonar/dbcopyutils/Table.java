@@ -7,6 +7,7 @@ package com.sonar.dbcopyutils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 
 public class Table {
 
@@ -52,4 +53,9 @@ public class Table {
     return this.columns;
   }
 
+  public void destructContentTable() {
+    for (int indexColumn = 0; indexColumn < columns.size(); indexColumn++) {
+      this.getColumns().get(indexColumn).removeQueue();
+    }
+  }
 }
