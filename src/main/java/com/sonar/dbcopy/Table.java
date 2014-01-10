@@ -3,30 +3,34 @@
  * All rights reserved
  * mailto:contact AT sonarsource DOT com
  */
-package com.sonar.dbcopyutils;
+
+package com.sonar.dbcopy;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
 
 public class Table {
 
   private String tableName;
   private int nbRows;
-  private List<Column> columns;
+  private List<String> columns;
   private boolean isBuilt;
+
 
   public Table(String tableName) {
     this.tableName = tableName;
     this.nbRows = 0;
-    columns = new ArrayList<Column>();
+    columns = new ArrayList<String>();
     isBuilt = false;
+
   }
 
-  public Column addColumn(String columnName) {
-    Column columnToAdd = new Column(columnName);
-    columns.add(columnToAdd);
-    return columnToAdd;
+  public int getNbColumns() {
+    return columns.size();
+  }
+
+  public void addColumn(String columnName) {
+    columns.add(columnName);
   }
 
   public String getName() {
@@ -49,13 +53,11 @@ public class Table {
     this.isBuilt = bool;
   }
 
-  public List<Column> getColumns() {
+  public List<String> getColumns() {
     return this.columns;
   }
 
-  public void destructContentTable() {
-    for (int indexColumn = 0; indexColumn < columns.size(); indexColumn++) {
-      this.getColumns().get(indexColumn).removeQueue();
-    }
+  public String getColumnName(int indexColumn) {
+    return columns.get(indexColumn);
   }
 }

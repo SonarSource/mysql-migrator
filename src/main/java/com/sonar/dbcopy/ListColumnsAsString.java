@@ -3,27 +3,23 @@
  * All rights reserved
  * mailto:contact AT sonarsource DOT com
  */
-package com.sonar.dbcopyutils;
-
-import com.sonar.dbcopyutils.Column;
-
-import java.util.List;
+package com.sonar.dbcopy;
 
 public class ListColumnsAsString {
 
-  private List<Column> columnList;
+  private Table table;
   private int nbColumns;
 
-  public ListColumnsAsString(List<Column> list) {
-    columnList = list;
-    nbColumns = columnList.size();
+  public ListColumnsAsString(Table table) {
+    this.table = table;
+    nbColumns = table.getNbColumns();
   }
 
   public String makeColumnString() {
     StringBuilder stringBuilder = new StringBuilder();
     for (int indexColumn = 0; indexColumn < nbColumns; indexColumn++) {
       stringBuilder.append(",");
-      stringBuilder.append(columnList.get(indexColumn).getName());
+      stringBuilder.append(table.getColumnName(indexColumn));
     }
     String columnsAsString = stringBuilder.toString();
     columnsAsString = columnsAsString.substring(1);
@@ -37,9 +33,5 @@ public class ListColumnsAsString {
       stringBuilder.append(",?");
     }
     return stringBuilder.toString();
-  }
-
-  public int getNbColumns() {
-    return nbColumns;
   }
 }

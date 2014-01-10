@@ -3,7 +3,7 @@
  * All rights reserved
  * mailto:contact AT sonarsource DOT com
  */
-package com.sonar.dbcopyutils;
+package com.sonar.dbcopy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,24 +22,8 @@ public class Database {
     return table;
   }
 
-  public Column getColumn(int indexTable, int indexColumn) {
-    return tablesList.get(indexTable).getColumns().get(indexColumn);
-  }
-
-  public List<Table> getTables() {
-    return tablesList;
-  }
-
-  public void setTables(List<Table> databaseTables) {
-    this.tablesList = databaseTables;
-  }
-
   public String getTableName(int indexTable) {
     return tablesList.get(indexTable).getName();
-  }
-
-  public int getNbColumnsInTable(int indexTable) {
-    return tablesList.get(indexTable).getColumns().size();
   }
 
   public int getNbTables() {
@@ -48,5 +32,9 @@ public class Database {
 
   public Table getTable(int indexTable) {
     return tablesList.get(indexTable);
+  }
+
+  public void setTables(List<Table> databaseTables) {
+    this.tablesList = databaseTables;
   }
 }

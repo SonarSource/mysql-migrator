@@ -3,7 +3,7 @@
  * All rights reserved
  * mailto:contact AT sonarsource DOT com
  */
-package com.sonar.simplify;
+package com.sonar.dbcopy;
 
 public class DbException extends RuntimeException {
 
