@@ -14,15 +14,11 @@ public class Table {
   private String tableName;
   private int nbRows;
   private List<String> columns;
-  private boolean isBuilt;
-
 
   public Table(String tableName) {
     this.tableName = tableName;
     this.nbRows = 0;
     columns = new ArrayList<String>();
-    isBuilt = false;
-
   }
 
   public int getNbColumns() {
@@ -43,18 +39,6 @@ public class Table {
 
   public void setNbRows(int nbRows) {
     this.nbRows = nbRows;
-  }
-
-  public boolean getIsBuilt() {
-    return isBuilt;
-  }
-
-  public void setIsBuilt(boolean bool) {
-    this.isBuilt = bool;
-  }
-
-  public List<String> getColumns() {
-    return this.columns;
   }
 
   public String getColumnName(int indexColumn) {

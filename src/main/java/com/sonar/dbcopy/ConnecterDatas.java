@@ -8,48 +8,30 @@ package com.sonar.dbcopy;
 
 public class ConnecterDatas {
 
-  private String driverSource, urlSource, userSource, pwdSource, driverDest, urlDest, userDest, pwdDest;
+  private String driver, url, user, pwd;
 
-  public ConnecterDatas(String driverSource, String urlSource, String userSource, String pwdSource, String driverDest, String urlDest, String userDest, String pwdDest) {
-    this.driverSource = driverSource;
-    this.urlSource = urlSource;
-    this.userSource = userSource;
-    this.pwdSource = pwdSource;
-    this.driverDest = driverDest;
-    this.urlDest = urlDest;
-    this.userDest = userDest;
-    this.pwdDest = pwdDest;
+  public ConnecterDatas(String driver, String url, String user, String pwd) {
+    this.driver = driver;
+    this.url = url;
+    this.user = user;
+    this.pwd = pwd;
+
   }
 
-  public String getUrlSource() {
-    return urlSource;
+  public String getUrl() {
+    return url;
   }
 
-  public String getDriverSource() {
-    return driverSource;
+  public String getDriver() {
+    return driver;
   }
 
-  public String getUserSource() {
-    return userSource;
+  public String getUser() {
+    return user;
   }
 
-  public String getPwdSource() {
-    return pwdSource;
+  public String getPwd() {
+    return pwd;
   }
 
-  public String getDriverDest() {
-    return driverDest;
-  }
-
-  public String getUrlDest() {
-    return urlDest;
-  }
-
-  public String getUserDest() {
-    return userDest;
-  }
-
-  public String getPwdDest() {
-    return pwdDest;
-  }
 }

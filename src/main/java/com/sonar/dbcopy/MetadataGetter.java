@@ -9,29 +9,24 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 
-public class MetadataGetter implements Runnable {
+public class MetadataGetter {
 
   private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
   private Database database;
-  private ConnecterDatas dc;
+  private ConnecterDatas cd;
 
-  public MetadataGetter(ConnecterDatas dc, Database db) {
-    this.dc = dc;
+  public MetadataGetter(ConnecterDatas cd, Database db) {
+    this.cd = cd;
     this.database = db;
   }
 
-  public void run() {
-    Connection connectionSource = new Connecter().doSourceConnection(this.dc);
-    Statement statementSource;
+  public void execute() {
+    Connection connectionSource = new Connecter().doConnection(this.cd);
+    Statement statementSource = null;
     ResultSet resultSetTables = null, resultSetCol = null, resultSetRows = null;
-
     try {
       statementSource = connectionSource.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-    } catch (SQLException e) {
-      throw new DbException("Creation of statement source to get schema failed", e);
-    }
 
-    try {
       /* WARNING TO GET TABLES FROM METADATA IN DEPENDS ON THE DATABASE VENDOR */
       String schema;
       DatabaseMetaData metaData = connectionSource.getMetaData();
@@ -50,17 +45,16 @@ public class MetadataGetter implements Runnable {
       }
       /* GET TABLES FROM SCHEMA */
       resultSetTables = metaData.getTables(connectionSource.getCatalog(), schema, "%", new String[]{"TABLE"});
-
       if (!resultSetTables.isBeforeFirst()) {
         throw new DbException("*** ERROR : NO DATA FOUND IN DATABASE SOURCE ***", new Exception());
       } else {
         while (resultSetTables.next()) {
-          database.addTable(resultSetTables.getString("TABLE_NAME"));
-          LOGGER.info("TABLE " + resultSetTables.getString("TABLE_NAME") + " FOUND");
+          String tableName = resultSetTables.getString("TABLE_NAME");
+          database.addTable(tableName);
+          LOGGER.info("FOUND : " + tableName + ".");
         }
       }
       resultSetTables.close();
-
       /* GET COLUMNS FROM TABLES */
       for (int indexTable = 0; indexTable < database.getNbTables(); indexTable++) {
         resultSetCol = metaData.getColumns(null, null, database.getTableName(indexTable), "%");
@@ -69,49 +63,41 @@ public class MetadataGetter implements Runnable {
         }
         resultSetCol.close();
       }
-
       /* GET NB ROWS BY TABLE */
       for (int indexTable = 0; indexTable < database.getNbTables(); indexTable++) {
         resultSetRows = statementSource.executeQuery("SELECT COUNT(*) FROM " + database.getTableName(indexTable));
         while (resultSetRows.next()) {
           database.getTable(indexTable).setNbRows(resultSetRows.getInt(1));
         }
-        database.getTable(indexTable).setIsBuilt(true);
         resultSetRows.close();
       }
-
-
     } catch (SQLException e) {
       throw new DbException("Problem to get schema from database source.", e);
     } finally {
       LOGGER.info(" | - - - - - - - - - - - - - - - - - - - - - - - - - - - |  ");
       try {
         resultSetRows.close();
-      } catch (Exception e) {
+      } catch (SQLException e) {
         LOGGER.error(" | ResultSetRows can't be closed or is already closed.   |" + e);
       }
-
       try {
         resultSetTables.close();
-      } catch (Exception e) {
+      } catch (SQLException e) {
         LOGGER.error(" | ResultSetTables can't be closed or is already closed. | " + e);
       }
-
       try {
         resultSetCol.close();
-      } catch (Exception e) {
+      } catch (SQLException e) {
         LOGGER.error(" | ResultSetCol can't be closed or is already closed.    | " + e);
       }
-
       try {
         statementSource.close();
-      } catch (Exception e) {
+      } catch (SQLException e) {
         LOGGER.error(" | StatementSource can't be closed or is already closed. | " + e);
       }
-
       try {
         connectionSource.close();
-      } catch (Exception e) {
+      } catch (SQLException e) {
         LOGGER.error(" | ConnectionSource can't be closed or is already closed.| " + e);
       }
       LOGGER.info(" | Everything is closed in MetadataGetter.               | ");

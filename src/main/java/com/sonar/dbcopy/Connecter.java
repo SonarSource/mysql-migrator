@@ -12,23 +12,10 @@ import java.sql.SQLException;
 
 public class Connecter {
 
-  public Connection doSourceConnection(ConnecterDatas dc) {
+  public Connection doConnection(ConnecterDatas dc) {
     try {
-      Class.forName(dc.getDriverSource());
-      Connection sourceConnection = DriverManager.getConnection(dc.getUrlSource(), dc.getUserSource(), dc.getPwdSource());
-      return sourceConnection;
-    } catch (SQLException e) {
-      throw new DbException("Open source connection failed.", e);
-    } catch (ClassNotFoundException e) {
-      throw new DbException("Impossible to get the jdbc Driver Source.", e);
-    }
-  }
-
-  public Connection doDestinationConnection(ConnecterDatas dc) {
-    try {
-      Class.forName(dc.getDriverDest());
-      Connection destConnection = DriverManager.getConnection(dc.getUrlDest(), dc.getUserDest(), dc.getPwdDest());
-      return destConnection;
+      Class.forName(dc.getDriver());
+      return DriverManager.getConnection(dc.getUrl(), dc.getUser(), dc.getPwd());
     } catch (SQLException e) {
       throw new DbException("Open source connection failed.", e);
     } catch (ClassNotFoundException e) {

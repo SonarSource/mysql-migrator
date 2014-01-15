@@ -16,10 +16,9 @@ public class Database {
     tablesList = new ArrayList<Table>();
   }
 
-  public Table addTable(String tableName) {
+  public void addTable(String tableName) {
     Table table = new Table(tableName);
     tablesList.add(table);
-    return table;
   }
 
   public String getTableName(int indexTable) {
@@ -32,9 +31,5 @@ public class Database {
 
   public Table getTable(int indexTable) {
     return tablesList.get(indexTable);
-  }
-
-  public void setTables(List<Table> databaseTables) {
-    this.tablesList = databaseTables;
   }
 }

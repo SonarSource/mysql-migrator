@@ -99,7 +99,7 @@
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>com.sonar.dbcopy.Main</mainClass>
+              <mainClass>com.sonar.dbcopy.StartApp</mainClass>
             </manifest>
           </archive>
         </configuration>

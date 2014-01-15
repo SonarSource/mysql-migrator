@@ -16,11 +16,11 @@ import java.sql.Statement;
 public class Deleter {
 
   private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-  private ConnecterDatas dc;
+  private ConnecterDatas dcDest;
   private Database database;
 
-  public Deleter(ConnecterDatas dc, Database db) {
-    this.dc = dc;
+  public Deleter(ConnecterDatas dcDest, Database db) {
+    this.dcDest = dcDest;
     this.database = db;
   }
 
@@ -28,12 +28,12 @@ public class Deleter {
     Statement statementToDelete = null;
     Connection connectionDest = null;
     try {
-      connectionDest = new Connecter().doDestinationConnection(this.dc);
+      connectionDest = new Connecter().doConnection(dcDest);
       statementToDelete = connectionDest.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
 
       for (int indexTable = 0; indexTable < this.database.getNbTables(); indexTable++) {
         statementToDelete.execute("DELETE FROM " + this.database.getTableName(indexTable));
-        LOGGER.info("DELETED                                                : " + indexTable + "   " + this.database.getTableName(indexTable));
+        LOGGER.info("DELETE: " + indexTable + "   " + this.database.getTableName(indexTable));
       }
       statementToDelete.close();
 
@@ -41,19 +41,16 @@ public class Deleter {
       throw new DbException("Deleting datas from destination failed.", e);
     } finally {
       LOGGER.info(" | - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -| ");
-
       try {
         statementToDelete.close();
-      } catch (Exception e) {
+      } catch (SQLException e) {
         LOGGER.info("Statement to delete datas from database destination can not be closed or is already closed.       | " + e);
       }
-
       try {
         connectionDest.close();
-      } catch (Exception e) {
+      } catch (SQLException e) {
         LOGGER.info("ConnectionDest  to delete datas from database destination can not be closed or is already closed. | " + e);
       }
-
       LOGGER.info(" | Everything is closed in Deleter.                                                               | ");
       LOGGER.info(" | - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -| ");
     }
