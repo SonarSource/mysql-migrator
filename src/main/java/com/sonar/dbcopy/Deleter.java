@@ -18,7 +18,6 @@ public class Deleter {
   private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
   private ConnecterDatas dcDest;
   private Database database;
-  private Closer closer;
 
   public Deleter(ConnecterDatas dcDest, Database db) {
     this.dcDest = dcDest;
@@ -26,7 +25,7 @@ public class Deleter {
   }
 
   public void execute() {
-    closer = new Closer("Deleter");
+    Closer closer = new Closer("Deleter");
 
     Statement statementToDelete = null;
     Connection connectionDest = null;

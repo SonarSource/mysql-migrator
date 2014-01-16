@@ -15,7 +15,6 @@ public class Reproducer {
   private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
   private ConnecterDatas dcSource, dcDest;
   private Database database;
-  private Closer closer;
 
   public Reproducer(ConnecterDatas dcSource, ConnecterDatas dcDest, Database database) {
     this.dcSource = dcSource;
@@ -24,7 +23,7 @@ public class Reproducer {
   }
 
   public void execute() {
-    closer =new Closer("Reproducer");
+    Closer closer =new Closer("Reproducer");
 
     Statement sourceStatement = null;
     PreparedStatement destinationStatement = null;

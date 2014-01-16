@@ -7,6 +7,10 @@ package com.sonar.dbcopy;
 
 public class StartApp {
 
+  private StartApp() {
+    // empty because only use the static method main
+  }
+
   public static void main(String[] args) {
 
     Database database = new Database();
