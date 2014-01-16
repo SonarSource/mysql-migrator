@@ -14,6 +14,7 @@ public class MetadataGetter {
   private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
   private Database database;
   private ConnecterDatas cd;
+  private Closer closer;
 
   public MetadataGetter(ConnecterDatas cd, Database db) {
     this.cd = cd;
@@ -21,9 +22,11 @@ public class MetadataGetter {
   }
 
   public void execute() {
+    closer = new Closer("MetadataGetter");
+
     Connection connectionSource = new Connecter().doConnection(this.cd);
     Statement statementSource = null;
-    ResultSet resultSetTables = null, resultSetCol = null, resultSetRows = null;
+    ResultSet resultSetTables = null;
     try {
       statementSource = connectionSource.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
@@ -35,7 +38,7 @@ public class MetadataGetter {
       /* GET TABLES FROM SCHEMA AND ADD TO DATABASE */
       resultSetTables = metaData.getTables(connectionSource.getCatalog(), schema, "%", new String[]{"TABLE"});
       this.addTables(resultSetTables);
-      resultSetTables.close();
+      closer.closeResultSet(resultSetTables);
 
       /* GET COLUMNS FROM TABLES */
       this.addColumns(metaData);
@@ -46,34 +49,16 @@ public class MetadataGetter {
     } catch (SQLException e) {
       throw new DbException("Problem to get schema from database source.", e);
     } finally {
-      try {
-        if (resultSetTables != null) {
-          resultSetTables.close();
-        }
-      } catch (SQLException e) {
-        LOGGER.error("ResultSetTables can't be closed or is already closed in MetadataGetter." + e);
-      }
-      try {
-        if (statementSource != null) {
-          statementSource.close();
-        }
-      } catch (SQLException e) {
-        LOGGER.error("StatementSource can't be closed or is already closed in MetadataGetter." + e);
-      }
-      try {
-        if (connectionSource != null) {
-          connectionSource.close();
-        }
-      } catch (SQLException e) {
-        LOGGER.error("ConnectionSource can't be closed or is already closed in MetadataGetter." + e);
-      }
+      closer.closeResultSet(resultSetTables);
+      closer.closeStatement(statementSource);
+      closer.closeConnection(connectionSource);
       LOGGER.info("Everything is closed in MetadataGetter.");
     }
   }
 
   private void addTables(ResultSet resultSetTables) throws SQLException {
     if (!resultSetTables.isBeforeFirst()) {
-      throw new DbException("*** ERROR : NO DATA FOUND IN DATABASE SOURCE ***", new Exception());
+      throw new DbException("*** ERROR : NO DATA FOUND IN DATABASE SOURCE ***", new Exception("resultset is empty"));
     } else {
       while (resultSetTables.next()) {
         String tableName = resultSetTables.getString("TABLE_NAME");
@@ -91,18 +76,12 @@ public class MetadataGetter {
         while (resultSetCol.next()) {
           database.getTable(indexTable).addColumn(resultSetCol.getString("COLUMN_NAME"));
         }
-        resultSetCol.close();
+        closer.closeResultSet(resultSetCol);
       }
     } catch (SQLException e) {
-      throw new DbException("Problem to get schema from database source.", e);
+      throw new DbException("Problem to add columns in MetadataGetter.", e);
     } finally {
-      try {
-        if (resultSetCol != null) {
-          resultSetCol.close();
-        }
-      } catch (SQLException e) {
-        LOGGER.error("ResultSetRows can't be closed or is already closed in MetadataGetter." + e);
-      }
+      closer.closeResultSet(resultSetCol);
     }
   }
 
@@ -114,18 +93,12 @@ public class MetadataGetter {
         while (resultSetRows.next()) {
           database.getTable(indexTable).setNbRows(resultSetRows.getInt(1));
         }
-        resultSetRows.close();
+        closer.closeResultSet(resultSetRows);
       }
     } catch (SQLException e) {
-      throw new DbException("Problem to get schema from database source.", e);
+      throw new DbException("Problem to add number of rows in MetadataGetter.", e);
     } finally {
-      try {
-        if (resultSetRows != null) {
-          resultSetRows.close();
-        }
-      } catch (SQLException e) {
-        LOGGER.error("ResultSetRows can't be closed or is already closed in MetadataGetter." + e);
-      }
+      closer.closeResultSet(resultSetRows);
     }
   }
 }

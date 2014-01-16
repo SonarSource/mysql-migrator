@@ -7,9 +7,6 @@ package com.sonar.dbcopy;
 
 public class StartApp {
 
-  public StartApp() {
-  }
-
   public static void main(String[] args) {
 
     Database database = new Database();
@@ -24,7 +21,7 @@ public class StartApp {
     Deleter deleter = new Deleter(connecterDatasDest, database);
     deleter.execute();
 
-    ReproducerByTable reproducerByTable = new ReproducerByTable(connecterDatasSource, connecterDatasDest, database);
-    reproducerByTable.execute();
+    Reproducer reproducer = new Reproducer(connecterDatasSource, connecterDatasDest, database);
+    reproducer.execute();
   }
 }

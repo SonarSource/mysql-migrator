@@ -10,19 +10,22 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 
-public class ReproducerByTable {
+public class Reproducer {
 
   private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
   private ConnecterDatas dcSource, dcDest;
   private Database database;
+  private Closer closer;
 
-  public ReproducerByTable(ConnecterDatas dcSource, ConnecterDatas dcDest, Database database) {
+  public Reproducer(ConnecterDatas dcSource, ConnecterDatas dcDest, Database database) {
     this.dcSource = dcSource;
     this.dcDest = dcDest;
     this.database = database;
   }
 
   public void execute() {
+    closer =new Closer("Reproducer");
+
     Statement sourceStatement = null;
     PreparedStatement destinationStatement = null;
     ResultSet resultSetSource = null;
@@ -58,50 +61,18 @@ public class ReproducerByTable {
         LOGGER.info("FINISH : " + indexTable + "   " + tableName + ".");
 
         /* CLOSE STATEMENTS AND RESULTSET FROM THIS TABLE */
-        resultSetSource.close();
-        sourceStatement.close();
-        destinationStatement.close();
-
-
+        closer.closeResultSet(resultSetSource);
+        closer.closeStatement(sourceStatement);
+        closer.closeStatement(destinationStatement);
       }
     } catch (SQLException e) {
       throw new DbException("Problem when reading datas from source in Reproducer", e);
     } finally {
-      try {
-        if(resultSetSource!=null){
-          resultSetSource.close();
-        }
-      } catch (SQLException e) {
-        LOGGER.error("ResultSet source can't be closed or is already closed in Reproducer." + e);
-      }
-      try {
-        if(sourceStatement!=null){
-          sourceStatement.close();
-        }
-      } catch (SQLException e) {
-        LOGGER.error("Statement source can't be closed or is already closed in Reproducer." + e);
-      }
-      try {
-        if(destinationStatement!=null){
-          destinationStatement.close();
-        }
-      } catch (SQLException e) {
-        LOGGER.error("Statement destination can't be closed or is already closed in Reproducer." + e);
-      }
-      try {
-        if(connectionSource!=null){
-          connectionSource.close();
-        }
-      } catch (SQLException e) {
-        LOGGER.error("Connection source can't be closed or is already closed in Reproducer." + e);
-      }
-      try {
-        if(connectionDestination!=null){
-          connectionDestination.close();
-        }
-      } catch (SQLException e) {
-        LOGGER.error("Connection to write  datas from source can't be closed or is already closed." + e);
-      }
+      closer.closeResultSet(resultSetSource);
+      closer.closeStatement(sourceStatement);
+      closer.closeStatement(destinationStatement);
+      closer.closeConnection(connectionSource);
+      closer.closeConnection(connectionDestination);
       LOGGER.info("EveryThing is finally closed.");
     }
   }

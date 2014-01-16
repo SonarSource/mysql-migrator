@@ -35,8 +35,8 @@ public class ReproducerAndLoopWriterTest {
     cdSource = new ConnecterDatas("org.h2.Driver", "jdbc:h2:mem:source;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     cdDest = new ConnecterDatas("org.h2.Driver", "jdbc:h2:mem:destination;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
 
-    ReproducerByTable reproducerByTable = new ReproducerByTable(cdSource, cdDest, database);
-    reproducerByTable.execute();
+    Reproducer reproducer = new Reproducer(cdSource, cdDest, database);
+    reproducer.execute();
   }
 
   @Test
