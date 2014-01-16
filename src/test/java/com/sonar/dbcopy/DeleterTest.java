@@ -25,11 +25,11 @@ public class DeleterTest {
   public void setUp() {
     Utils utils = new Utils();
 
-    ConnecterDatas cdSource = new ConnecterDatas("org.h2.Driver", "jdbc:h2:mem:source;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    ConnecterDatas cdSource = new ConnecterDatas("org.h2.Driver", "jdbc:h2:mem:filledDatabase;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
 
     database = utils.makeDatabase();  // build dabase with metadatas
 
-    connection = utils.makeH2Source(); // build a filled  H2 database
+    connection = utils.makeFilledH2("filledDatabase"); // build a filled  H2 database
 
     new Deleter(cdSource, database).execute();
 

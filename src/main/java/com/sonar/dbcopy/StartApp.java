@@ -7,6 +7,9 @@ package com.sonar.dbcopy;
 
 public class StartApp {
 
+  public StartApp() {
+  }
+
   public static void main(String[] args) {
 
     Database database = new Database();

@@ -65,36 +65,44 @@ public class ReproducerByTable {
 
       }
     } catch (SQLException e) {
-      throw new DbException("problem when reading datas from source in Reproducer", e);
+      throw new DbException("Problem when reading datas from source in Reproducer", e);
     } finally {
-      LOGGER.info(" | - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - | ");
       try {
-        resultSetSource.close();
+        if(resultSetSource!=null){
+          resultSetSource.close();
+        }
       } catch (SQLException e) {
-        LOGGER.error(" | ResultSet to read datas from source can't be closed or is already closed.       | " + e);
+        LOGGER.error("ResultSet source can't be closed or is already closed in Reproducer." + e);
       }
       try {
-        sourceStatement.close();
+        if(sourceStatement!=null){
+          sourceStatement.close();
+        }
       } catch (SQLException e) {
-        LOGGER.error(" | SourceStatement to read datas from source can't be closed or is already closed. | " + e);
+        LOGGER.error("Statement source can't be closed or is already closed in Reproducer." + e);
       }
       try {
-        destinationStatement.close();
+        if(destinationStatement!=null){
+          destinationStatement.close();
+        }
       } catch (SQLException e) {
-        LOGGER.error(" | Statement to write  datas from source can't be closed or is already closed.     | " + e);
+        LOGGER.error("Statement destination can't be closed or is already closed in Reproducer." + e);
       }
       try {
-        connectionSource.close();
+        if(connectionSource!=null){
+          connectionSource.close();
+        }
       } catch (SQLException e) {
-        LOGGER.error(" | ConnectionSource to read datas from source can't be closed or is already closed.| " + e);
+        LOGGER.error("Connection source can't be closed or is already closed in Reproducer." + e);
       }
       try {
-        connectionDestination.close();
+        if(connectionDestination!=null){
+          connectionDestination.close();
+        }
       } catch (SQLException e) {
-        LOGGER.error(" | Connection to write  datas from source can't be closed or is already closed.    | " + e);
+        LOGGER.error("Connection to write  datas from source can't be closed or is already closed." + e);
       }
-      LOGGER.info(" | EveryThing is finally closed.                                                   | ");
-      LOGGER.info(" | - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - | ");
+      LOGGER.info("EveryThing is finally closed.");
     }
   }
 }

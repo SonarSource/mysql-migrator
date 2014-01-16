@@ -25,8 +25,8 @@ public class ReproducerAndLoopWriterTest {
   @Before
   public void setUp() throws Exception {
     Utils utils = new Utils();
-    connectionSource = utils.makeH2Source();
-    connectionDest = utils.makeH2Dest();
+    connectionSource = utils.makeFilledH2("source");
+    connectionDest = utils.makeEmptyH2("destination");
 
     Database database = utils.makeDatabase();
 

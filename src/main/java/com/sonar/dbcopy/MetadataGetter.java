@@ -27,35 +27,65 @@ public class MetadataGetter {
     try {
       statementSource = connectionSource.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
-      /* WARNING TO GET TABLES FROM METADATA IN DEPENDS ON THE DATABASE VENDOR */
-      String schema;
+      /* WARNING !! TO GET TABLES FROM METADATA IN DEPENDS ON THE DATABASE VENDOR */
       DatabaseMetaData metaData = connectionSource.getMetaData();
-      if ("jdbc:po".equals(metaData.getURL().substring(0, 7))) {
-        schema = "public";
-      } else if ("jdbc:h2".equals(metaData.getURL().substring(0, 7))) {
-        schema = null;
-      } else if ("jdbc:my".equals(metaData.getURL().substring(0, 7))) {
-        schema = null;
-      } else if ("jdbc:or".equals(metaData.getURL().substring(0, 7))) {
-        schema = null;
-      } else if ("jdbc:sq".equals(metaData.getURL().substring(0, 7))) {
-        schema = null;
-      } else {
-        schema = null;
-      }
-      /* GET TABLES FROM SCHEMA */
+      SchemaRelatedToVendor schemaRelatedToVendor = new SchemaRelatedToVendor();
+      String schema = schemaRelatedToVendor.getSchema(metaData.getURL().substring(0, 7));
+
+      /* GET TABLES FROM SCHEMA AND ADD TO DATABASE */
       resultSetTables = metaData.getTables(connectionSource.getCatalog(), schema, "%", new String[]{"TABLE"});
-      if (!resultSetTables.isBeforeFirst()) {
-        throw new DbException("*** ERROR : NO DATA FOUND IN DATABASE SOURCE ***", new Exception());
-      } else {
-        while (resultSetTables.next()) {
-          String tableName = resultSetTables.getString("TABLE_NAME");
-          database.addTable(tableName);
-          LOGGER.info("FOUND : " + tableName + ".");
-        }
-      }
+      this.addTables(resultSetTables);
       resultSetTables.close();
+
       /* GET COLUMNS FROM TABLES */
+      this.addColumns(metaData);
+
+      /* GET NB ROWS BY TABLE */
+      this.addNbRowInTables(statementSource);
+
+    } catch (SQLException e) {
+      throw new DbException("Problem to get schema from database source.", e);
+    } finally {
+      try {
+        if (resultSetTables != null) {
+          resultSetTables.close();
+        }
+      } catch (SQLException e) {
+        LOGGER.error("ResultSetTables can't be closed or is already closed in MetadataGetter." + e);
+      }
+      try {
+        if (statementSource != null) {
+          statementSource.close();
+        }
+      } catch (SQLException e) {
+        LOGGER.error("StatementSource can't be closed or is already closed in MetadataGetter." + e);
+      }
+      try {
+        if (connectionSource != null) {
+          connectionSource.close();
+        }
+      } catch (SQLException e) {
+        LOGGER.error("ConnectionSource can't be closed or is already closed in MetadataGetter." + e);
+      }
+      LOGGER.info("Everything is closed in MetadataGetter.");
+    }
+  }
+
+  private void addTables(ResultSet resultSetTables) throws SQLException {
+    if (!resultSetTables.isBeforeFirst()) {
+      throw new DbException("*** ERROR : NO DATA FOUND IN DATABASE SOURCE ***", new Exception());
+    } else {
+      while (resultSetTables.next()) {
+        String tableName = resultSetTables.getString("TABLE_NAME");
+        database.addTable(tableName);
+        LOGGER.info("FOUND : " + tableName + ".");
+      }
+    }
+  }
+
+  private void addColumns(DatabaseMetaData metaData) {
+    ResultSet resultSetCol = null;
+    try {
       for (int indexTable = 0; indexTable < database.getNbTables(); indexTable++) {
         resultSetCol = metaData.getColumns(null, null, database.getTableName(indexTable), "%");
         while (resultSetCol.next()) {
@@ -63,7 +93,22 @@ public class MetadataGetter {
         }
         resultSetCol.close();
       }
-      /* GET NB ROWS BY TABLE */
+    } catch (SQLException e) {
+      throw new DbException("Problem to get schema from database source.", e);
+    } finally {
+      try {
+        if (resultSetCol != null) {
+          resultSetCol.close();
+        }
+      } catch (SQLException e) {
+        LOGGER.error("ResultSetRows can't be closed or is already closed in MetadataGetter." + e);
+      }
+    }
+  }
+
+  private void addNbRowInTables(Statement statementSource) {
+    ResultSet resultSetRows = null;
+    try {
       for (int indexTable = 0; indexTable < database.getNbTables(); indexTable++) {
         resultSetRows = statementSource.executeQuery("SELECT COUNT(*) FROM " + database.getTableName(indexTable));
         while (resultSetRows.next()) {
@@ -74,34 +119,13 @@ public class MetadataGetter {
     } catch (SQLException e) {
       throw new DbException("Problem to get schema from database source.", e);
     } finally {
-      LOGGER.info(" | - - - - - - - - - - - - - - - - - - - - - - - - - - - |  ");
       try {
-        resultSetRows.close();
+        if (resultSetRows != null) {
+          resultSetRows.close();
+        }
       } catch (SQLException e) {
-        LOGGER.error(" | ResultSetRows can't be closed or is already closed.   |" + e);
+        LOGGER.error("ResultSetRows can't be closed or is already closed in MetadataGetter." + e);
       }
-      try {
-        resultSetTables.close();
-      } catch (SQLException e) {
-        LOGGER.error(" | ResultSetTables can't be closed or is already closed. | " + e);
-      }
-      try {
-        resultSetCol.close();
-      } catch (SQLException e) {
-        LOGGER.error(" | ResultSetCol can't be closed or is already closed.    | " + e);
-      }
-      try {
-        statementSource.close();
-      } catch (SQLException e) {
-        LOGGER.error(" | StatementSource can't be closed or is already closed. | " + e);
-      }
-      try {
-        connectionSource.close();
-      } catch (SQLException e) {
-        LOGGER.error(" | ConnectionSource can't be closed or is already closed.| " + e);
-      }
-      LOGGER.info(" | Everything is closed in MetadataGetter.               | ");
-      LOGGER.info(" | - - - - - - - - - - - - - - - - - - - - - - - - - - - | ");
     }
   }
 }

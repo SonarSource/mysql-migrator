@@ -18,11 +18,17 @@ public class Utils {
   }
 
   /* H2 */
-  private Connection makeH2(String dataBaseName) throws SQLException, ClassNotFoundException {
+  public Connection makeH2(String dataBaseName) throws SQLException, ClassNotFoundException {
 
     String connectionPoolParameters = "jdbc:h2:mem:" + dataBaseName + ";DB_CLOSE_ON_EXIT=-1;";
     JdbcConnectionPool jdbcConnectionPool = JdbcConnectionPool.create(connectionPoolParameters, "sonar", "sonar");
     Connection connection = jdbcConnectionPool.getConnection();
+    return connection;
+  }
+
+  private Connection makeH2WithTables(String dataBaseName) throws SQLException, ClassNotFoundException {
+
+    Connection connection = makeH2(dataBaseName);
 
     PreparedStatement preparedStatement = null;
     try {
@@ -44,11 +50,11 @@ public class Utils {
     }
   }
 
-  public Connection makeH2Source() {
+  public Connection makeFilledH2(String databaseName) {
 
     PreparedStatement preparedStatement = null;
     try {
-      Connection connection = this.makeH2("source");
+      Connection connection = this.makeH2WithTables(databaseName);
 
       /* PREPARE STATEMENT TO INSERT DATAS */
       String stringToInsert = "INSERT INTO table_for_test (COLUMNINTEGER , COLUMNSTRING , COLUMNTIMESTAMP ) VALUES (?,?,?)";
@@ -91,9 +97,9 @@ public class Utils {
     }
   }
 
-  public Connection makeH2Dest() {
+  public Connection makeEmptyH2(String databaseName) {
     try {
-      return this.makeH2("destination");
+      return this.makeH2WithTables(databaseName);
     } catch (SQLException e) {
       throw new DbException("Problem to insert data in H2 for test", e);
     } catch (ClassNotFoundException e) {

@@ -40,19 +40,21 @@ public class Deleter {
     } catch (SQLException e) {
       throw new DbException("Deleting datas from destination failed.", e);
     } finally {
-      LOGGER.info(" | - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -| ");
       try {
-        statementToDelete.close();
+        if(statementToDelete!=null){
+          statementToDelete.close();
+        }
       } catch (SQLException e) {
-        LOGGER.info("Statement to delete datas from database destination can not be closed or is already closed.       | " + e);
+        LOGGER.error("Statement destination can not be closed or is already closed in Deleter." + e);
       }
       try {
-        connectionDest.close();
+        if(connectionDest!=null){
+          connectionDest.close();
+        }
       } catch (SQLException e) {
-        LOGGER.info("ConnectionDest  to delete datas from database destination can not be closed or is already closed. | " + e);
+        LOGGER.error("Connection destination can not be closed or is already closed in Deleter." + e);
       }
-      LOGGER.info(" | Everything is closed in Deleter.                                                               | ");
-      LOGGER.info(" | - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -| ");
+      LOGGER.info("Everything is closed in Deleter.");
     }
   }
 }

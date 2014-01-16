@@ -13,28 +13,31 @@ import org.junit.Test;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import static org.fest.assertions.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 public class MetadataGetterTest {
 
   private MetadataGetter mdg;
   private Database database;
-  private Connection connectionSource;
+  private Connection connectionForFilled, connectionWithoutTable;
 
   @Before
-  public void setUp() {
+  public void setUp() throws SQLException, ClassNotFoundException {
     Utils utils = new Utils();
     database = new Database();
-    connectionSource = utils.makeH2Source();
-
-    ConnecterDatas cdSource = new ConnecterDatas("org.h2.Driver", "jdbc:h2:mem:source;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
-    mdg = new MetadataGetter(cdSource, database);
-    mdg.execute();
+    connectionForFilled = utils.makeFilledH2("filledDatabase");
+    connectionWithoutTable = utils.makeH2("withoutTables");
   }
 
   @Test
-  public void testExecute() throws Exception {
+  public void testFilledDatabase() throws Exception {
+    ConnecterDatas cdSource = new ConnecterDatas("org.h2.Driver", "jdbc:h2:mem:filledDatabase;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    mdg = new MetadataGetter(cdSource, database);
+    mdg.execute();
+
     assertNotNull(mdg);
     assertEquals(2, database.getNbTables());
 
@@ -51,10 +54,22 @@ public class MetadataGetterTest {
     assertEquals("COLUMNTIMESTAMP", database.getTable(1).getColumnName(2));
   }
 
+  @Test
+  public void testWithoutTablesDataBase() throws Exception {
+    ConnecterDatas cdSource = new ConnecterDatas("org.h2.Driver", "jdbc:h2:mem:withoutTables;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    try {
+      mdg = new MetadataGetter(cdSource, database);
+      mdg.execute();
+      fail();
+    } catch (Exception e) {
+      assertThat(e).isInstanceOf(DbException.class).hasMessage("*** ERROR : NO DATA FOUND IN DATABASE SOURCE ***");
+    }
+  }
+
   @After
   public void tearDown() {
     try {
-      connectionSource.close();
+      connectionForFilled.close();
     } catch (SQLException e) {
       throw new DbException("Impossible to close H2 connection.", e);
     }
