@@ -13,66 +13,57 @@ import java.sql.*;
 public class Reproducer {
 
   private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-  private ConnecterDatas dcSource, dcDest;
+  private ConnecterDatas cdSource, cdDest;
   private Database database;
 
-  public Reproducer(ConnecterDatas dcSource, ConnecterDatas dcDest, Database database) {
-    this.dcSource = dcSource;
-    this.dcDest = dcDest;
+  public Reproducer(ConnecterDatas cdSource, ConnecterDatas cdDest, Database database) {
+    this.cdSource = cdSource;
+    this.cdDest = cdDest;
     this.database = database;
   }
 
   public void execute() {
     Closer closer =new Closer("Reproducer");
+    ModifySqlServerOption modifySqlServerOption = null;
 
-    Statement sourceStatement = null;
-    PreparedStatement destinationStatement = null;
-    ResultSet resultSetSource = null;
-
-    /* DO CONNECTION SOURCE AND DESTINATION */
-    Connection connectionSource = new Connecter().doConnection(dcSource);
-    Connection connectionDestination = new Connecter().doConnection(dcDest);
+    Connection connectionSource = new Connecter().doConnection(cdSource);
+    Connection connectionDestination = new Connecter().doConnection(cdDest);
     try {
       connectionDestination.setAutoCommit(false);
+      if ("net.sourceforge.jtds.jdbc.Driver".equals(cdDest.getDriver())) {
+        modifySqlServerOption =new ModifySqlServerOption();
+      }
 
-      /* FOR EACH TABLE */
       for (int indexTable = 0; indexTable < database.getNbTables(); indexTable++) {
-        /* GET INFORMATION */
+
         Table table = database.getTable(indexTable);
         String tableName = table.getName();
         int nbColInTable = table.getNbColumns();
         int nbRowsInTable = table.getNbRows();
 
-        /* MAKE STRINGS TO PUT IN SQL INSERT REQUEST */
-        ListColumnsAsString lcas = new ListColumnsAsString(table);
+        if ("net.sourceforge.jtds.jdbc.Driver".equals(cdDest.getDriver())) {
+          modifySqlServerOption.modifyIdentityInsert(connectionDestination,tableName, "ON");
+        }
+
+
+          ListColumnsAsString lcas = new ListColumnsAsString(table);
         String sqlRequest = "INSERT INTO " + tableName + " (" + lcas.makeColumnString() + ") VALUES(" + lcas.makeQuestionMarkString() + ");";
 
-        /* MAKE STATEMENTS AND RESULTSET */
-        sourceStatement = connectionSource.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-        sourceStatement.setFetchSize(1);
-        destinationStatement = connectionDestination.prepareStatement(sqlRequest);
-        resultSetSource = sourceStatement.executeQuery("SELECT * FROM " + tableName);
+        LOGGER.info("START COPY IN : " + indexTable + "   " + tableName + ".");
+        LoopWriter loopWriter = new LoopWriter(nbColInTable, indexTable, tableName, nbRowsInTable,sqlRequest);
+        loopWriter.readAndWrite(connectionSource,connectionDestination);
+        LOGGER.info("DATA COPIED IN : " + indexTable + "   " + tableName + ".");
 
-        /* ITERATE ON SOURCE RESULTSET AND INSERT IN DESTINATION PREPARED STATEMENT */
-        LOGGER.info("START : " + indexTable + "   " + tableName + ".");
-        LoopWriter loopWriter = new LoopWriter(nbColInTable, indexTable, tableName, nbRowsInTable);
-        loopWriter.readAndWrite(resultSetSource, destinationStatement, connectionDestination);
-        LOGGER.info("FINISH : " + indexTable + "   " + tableName + ".");
-
-        /* CLOSE STATEMENTS AND RESULTSET FROM THIS TABLE */
-        closer.closeResultSet(resultSetSource);
-        closer.closeStatement(sourceStatement);
-        closer.closeStatement(destinationStatement);
+        if ("net.sourceforge.jtds.jdbc.Driver".equals(cdDest.getDriver())) {
+          modifySqlServerOption.modifyIdentityInsert(connectionDestination,tableName, "OFF");
+        }
       }
     } catch (SQLException e) {
       throw new DbException("Problem when reading datas from source in Reproducer", e);
     } finally {
-      closer.closeResultSet(resultSetSource);
-      closer.closeStatement(sourceStatement);
-      closer.closeStatement(destinationStatement);
       closer.closeConnection(connectionSource);
       closer.closeConnection(connectionDestination);
-      LOGGER.info("EveryThing is finally closed.");
+      LOGGER.info("EveryThing is finally closed in Reproducer.");
     }
   }
 }
