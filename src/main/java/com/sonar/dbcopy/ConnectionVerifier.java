@@ -12,7 +12,7 @@ import java.sql.SQLException;
 
 public class ConnectionVerifier {
 
-  public void databaseIsReached(ConnecterDatas cd) {
+    public void databaseIsReached(ConnecterDatas cd) {
     Connection connection = null;
     Closer closer = new Closer("ConnectionVerifier");
     try {

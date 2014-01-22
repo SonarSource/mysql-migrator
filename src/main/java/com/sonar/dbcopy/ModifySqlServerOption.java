@@ -5,26 +5,30 @@
  */
 package com.sonar.dbcopy;
 
-import org.slf4j.LoggerFactory;
-
 import java.sql.*;
 
 public class ModifySqlServerOption {
 
-  private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-
-  public void modifyIdentityInsert(Connection connection, String tableName, String onOroff) throws SQLException {
+  public void modifyIdentityInsert(Connection connection, String tableName, String onOroff) {
     Closer closer = new Closer("ModifySqlServerOption");
+    ResultSet rs = null;
+    Statement statement = null;
+    try {
+      DatabaseMetaData dm = connection.getMetaData();
+      rs = dm.getPrimaryKeys(null, null, tableName);
 
-    DatabaseMetaData dm = connection.getMetaData();
-    ResultSet rs = dm.getPrimaryKeys(null, null, tableName);
+      if (rs.isBeforeFirst()) {
+        closer.closeResultSet(rs);
 
-    if (rs.isBeforeFirst()) {
+        statement = connection.createStatement();
+        String request = "SET IDENTITY_INSERT " + tableName + " " + onOroff + " ;";
+        statement.execute(request);
+        closer.closeStatement(statement);
+      }
+    } catch (SQLException e) {
+      throw new DbException("Problem in ModifySqlServerOption", e);
+    } finally {
       closer.closeResultSet(rs);
-
-      Statement statement = connection.createStatement();
-      String request = "SET IDENTITY_INSERT " + tableName + " " + onOroff + " ;";
-      statement.execute(request);
       closer.closeStatement(statement);
     }
 
