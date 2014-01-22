@@ -1,4 +1,3 @@
-
 /*
  * Copyright (C) 2013 SonarSource SA
  * All rights reserved
@@ -6,7 +5,6 @@
  */
 package com.sonar.dbcopy;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 

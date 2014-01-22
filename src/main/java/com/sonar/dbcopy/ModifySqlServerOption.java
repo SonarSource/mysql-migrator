@@ -18,9 +18,10 @@ public class ModifySqlServerOption {
 
     DatabaseMetaData dm = connection.getMetaData();
     ResultSet rs = dm.getPrimaryKeys(null, null, tableName);
+
     if (rs.isBeforeFirst()) {
-      System.err.println(" ********* PK");
       closer.closeResultSet(rs);
+
       Statement statement = connection.createStatement();
       String request = "SET IDENTITY_INSERT " + tableName + " " + onOroff + " ;";
       statement.execute(request);

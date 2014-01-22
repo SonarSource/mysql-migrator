@@ -15,7 +15,6 @@ public class ConnecterDatas {
     this.url = url;
     this.user = user;
     this.pwd = pwd;
-
   }
 
   public String getUrl() {

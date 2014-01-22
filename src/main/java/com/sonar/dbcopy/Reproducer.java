@@ -8,7 +8,8 @@ package com.sonar.dbcopy;
 
 import org.slf4j.LoggerFactory;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class Reproducer {
 
@@ -23,15 +24,19 @@ public class Reproducer {
   }
 
   public void execute() {
-    Closer closer =new Closer("Reproducer");
+    Closer closer = new Closer("Reproducer");
     ModifySqlServerOption modifySqlServerOption = null;
+    boolean destinationIsSqlServer;
 
     Connection connectionSource = new Connecter().doConnection(cdSource);
     Connection connectionDestination = new Connecter().doConnection(cdDest);
+
     try {
+      destinationIsSqlServer = "jdbc:sq".equals(connectionDestination.getMetaData().getURL().substring(0, 7));
       connectionDestination.setAutoCommit(false);
-      if ("net.sourceforge.jtds.jdbc.Driver".equals(cdDest.getDriver())) {
-        modifySqlServerOption =new ModifySqlServerOption();
+
+      if (destinationIsSqlServer) {
+        modifySqlServerOption = new ModifySqlServerOption();
       }
 
       for (int indexTable = 0; indexTable < database.getNbTables(); indexTable++) {
@@ -41,21 +46,20 @@ public class Reproducer {
         int nbColInTable = table.getNbColumns();
         int nbRowsInTable = table.getNbRows();
 
-        if ("net.sourceforge.jtds.jdbc.Driver".equals(cdDest.getDriver())) {
-          modifySqlServerOption.modifyIdentityInsert(connectionDestination,tableName, "ON");
+        if (destinationIsSqlServer) {
+          modifySqlServerOption.modifyIdentityInsert(connectionDestination, tableName, "ON");
         }
 
-
-          ListColumnsAsString lcas = new ListColumnsAsString(table);
+        ListColumnsAsString lcas = new ListColumnsAsString(table);
         String sqlRequest = "INSERT INTO " + tableName + " (" + lcas.makeColumnString() + ") VALUES(" + lcas.makeQuestionMarkString() + ");";
 
         LOGGER.info("START COPY IN : " + indexTable + "   " + tableName + ".");
-        LoopWriter loopWriter = new LoopWriter(nbColInTable, indexTable, tableName, nbRowsInTable,sqlRequest);
-        loopWriter.readAndWrite(connectionSource,connectionDestination);
+        LoopWriter loopWriter = new LoopWriter(nbColInTable, indexTable, tableName, nbRowsInTable, sqlRequest);
+        loopWriter.readAndWrite(connectionSource, connectionDestination);
         LOGGER.info("DATA COPIED IN : " + indexTable + "   " + tableName + ".");
 
-        if ("net.sourceforge.jtds.jdbc.Driver".equals(cdDest.getDriver())) {
-          modifySqlServerOption.modifyIdentityInsert(connectionDestination,tableName, "OFF");
+        if (destinationIsSqlServer) {
+          modifySqlServerOption.modifyIdentityInsert(connectionDestination, tableName, "OFF");
         }
       }
     } catch (SQLException e) {

@@ -5,7 +5,10 @@
  */
 package com.sonar.dbcopy;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class ConnectionVerifier {
 
@@ -15,11 +18,12 @@ public class ConnectionVerifier {
     try {
       Class.forName(cd.getDriver());
       connection = DriverManager.getConnection(cd.getUrl(), cd.getUser(), cd.getPwd());
-      //System.err.println(connection.getMetaData().getDriverName());
+
       DatabaseMetaData metaData = connection.getMetaData();
-      if(metaData==null){
+      if (metaData == null) {
         throw new SQLException();
       }
+
     } catch (SQLException e) {
       throw new DbException("*** DATABASE CAN'T BE REACHED AT ADDRESS " + cd.getUrl() + " ***", e);
     } catch (ClassNotFoundException e) {

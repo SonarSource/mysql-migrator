@@ -12,14 +12,6 @@ public class SchemaRelatedToVendor {
     String schema;
     if ("jdbc:po".equals(vendorUrl)) {
       schema = "public";
-    } else if ("jdbc:h2".equals(vendorUrl)) {
-      schema = null;
-    } else if ("jdbc:my".equals(vendorUrl)) {
-      schema = null;
-    } else if ("jdbc:or".equals(vendorUrl)) {
-      schema = null;
-    } else if ("jdbc:sq".equals(vendorUrl)) {
-      schema = null;
     } else {
       schema = null;
     }

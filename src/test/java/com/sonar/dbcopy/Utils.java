@@ -120,6 +120,8 @@ public class Utils {
     database.getTable(1).addColumn("COLSTRING");
     database.getTable(1).addColumn("COLTIMESTAMP");
 
+    database.getTable(0).setNbRows(2);
+
     return database;
   }
 }
