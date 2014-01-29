@@ -32,7 +32,7 @@ public class Reproducer {
     Connection connectionDestination = new Connecter().doConnection(cdDest);
 
     try {
-      destinationIsSqlServer = "jdbc:sq".equals(connectionDestination.getMetaData().getURL().substring(0, 7));
+      destinationIsSqlServer = "jdbc:jt".equals(connectionDestination.getMetaData().getURL().substring(0, 7));
       connectionDestination.setAutoCommit(false);
 
       if (destinationIsSqlServer) {
