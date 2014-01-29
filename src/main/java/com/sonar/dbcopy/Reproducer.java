@@ -32,6 +32,8 @@ public class Reproducer {
     Connection connectionDestination = new Connecter().doConnection(cdDest);
 
     try {
+      System.err.println("******************************"+connectionDestination.getTypeMap());
+
       destinationIsSqlServer = "jdbc:jt".equals(connectionDestination.getMetaData().getURL().substring(0, 7));
       connectionDestination.setAutoCommit(false);
 
