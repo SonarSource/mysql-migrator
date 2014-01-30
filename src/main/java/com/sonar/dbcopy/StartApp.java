@@ -37,5 +37,6 @@ public class StartApp {
 
     Reproducer reproducer = new Reproducer(connecterDatasSource, connecterDatasDest, database);
     reproducer.execute();
+    LOGGER.info("*** THE COPY HAS FINISHED SUCCESSFULLY ***");
   }
 }
