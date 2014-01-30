@@ -32,9 +32,9 @@ public class Reproducer {
     Connection connectionDestination = new Connecter().doConnection(cdDest);
 
     try {
-      System.err.println("******************************"+connectionDestination.getTypeMap());
+      String urlBeginning =  connectionDestination.getMetaData().getURL().substring(0, 7);
+      destinationIsSqlServer = "jdbc:jt".equals(urlBeginning);
 
-      destinationIsSqlServer = "jdbc:jt".equals(connectionDestination.getMetaData().getURL().substring(0, 7));
       connectionDestination.setAutoCommit(false);
 
       if (destinationIsSqlServer) {
@@ -53,12 +53,15 @@ public class Reproducer {
         }
 
         ListColumnsAsString lcas = new ListColumnsAsString(table);
-        String sqlRequest = "INSERT INTO " + tableName + " (" + lcas.makeColumnString() + ") VALUES(" + lcas.makeQuestionMarkString() + ");";
+        String sqlRequest = "INSERT INTO " + tableName + " (" + lcas.makeColumnString() + ") VALUES(" + lcas.makeQuestionMarkString() + ")";
 
         LOGGER.info("START COPY IN : " + indexTable + "   " + tableName + ".");
         LoopWriter loopWriter = new LoopWriter(nbColInTable, indexTable, tableName, nbRowsInTable, sqlRequest);
         loopWriter.readAndWrite(connectionSource, connectionDestination);
         LOGGER.info("DATA COPIED IN : " + indexTable + "   " + tableName + ".");
+
+        SequenceReseter sequenceReseter = new SequenceReseter(urlBeginning,tableName,connectionDestination);
+        sequenceReseter.execute();
 
         if (destinationIsSqlServer) {
           modifySqlServerOption.modifyIdentityInsert(connectionDestination, tableName, "OFF");

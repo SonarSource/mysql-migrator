@@ -25,9 +25,9 @@ public class StartApp {
     /* VERIFY CONNECTION */
     ConnectionVerifier connectionVerifier = new ConnectionVerifier();
     connectionVerifier.databaseIsReached(connecterDatasSource);
-    LOGGER.info("Database source has been reached.");
+    LOGGER.info("Database SOURCE  has been reached at :         "+connecterDatasSource.getUrl());
     connectionVerifier.databaseIsReached(connecterDatasDest);
-    LOGGER.info("Database destination has been reached.");
+    LOGGER.info("Database DESTINATION has been reached at :     "+connecterDatasDest.getUrl());
 
     MetadataGetter metadataGetter = new MetadataGetter(connecterDatasSource, database);
     metadataGetter.execute();
