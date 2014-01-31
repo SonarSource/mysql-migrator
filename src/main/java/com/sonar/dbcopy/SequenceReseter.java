@@ -21,7 +21,34 @@ public class SequenceReseter {
     this.urlbeginning = urlbeginning;
   }
 
-  private void makeRequestrelatedToVendor() {
+  public void execute() {
+
+    Closer closer = new Closer("SequenceReseter");
+    Statement statement = null;
+    ResultSet resultSet = null;
+
+    try {
+      DatabaseMetaData dm = connectionDest.getMetaData();
+      resultSet = dm.getPrimaryKeys(null, null, tableName);
+      // if resultset is not null that means there is a primary key
+      if (resultSet.isBeforeFirst()) {
+        closer.closeResultSet(resultSet);
+        makeRequestRelatedToVendor();
+
+        statement = connectionDest.createStatement();
+        statement.execute(sqlRequest);
+
+        LOGGER.info("The sequence for table " + tableName + " has been adjusted to the last id.");
+      }
+    } catch (SQLException e) {
+      throw new DbException("Problem to reset autoincrement with last id in SequenceReseter.", e);
+    } finally {
+      closer.closeResultSet(resultSet);
+      closer.closeStatement(statement);
+    }
+  }
+
+  private void makeRequestRelatedToVendor() {
     if ("jdbc:jt".equals(urlbeginning)) {
       sqlRequest = "dbcc checkident(" + tableName + ",reseed," + getIdMaxPlusOne() + ");";
     } else if ("jdbc:or".equals(urlbeginning)) {
@@ -33,37 +60,6 @@ public class SequenceReseter {
     } else {
       throw new DbException("Url does not correspond to a correct format to reset auto increment id.", new Exception());
     }
-  }
-
-  public void execute() {
-
-    Closer closer = new Closer("SequenceReseter");
-    Statement statement = null;
-    ResultSet resultSet = null;
-    try {
-      DatabaseMetaData dm = connectionDest.getMetaData();
-      resultSet = dm.getPrimaryKeys(null, null, tableName);
-
-      if (resultSet.isBeforeFirst()) {
-        closer.closeResultSet(resultSet);
-        makeRequestrelatedToVendor();
-
-
-        statement = connectionDest.createStatement();
-        statement.execute(sqlRequest);
-        LOGGER.info("The sequence for table "+tableName+ " has been adjusted to the last id.");
-
-      }
-
-
-    } catch (SQLException e) {
-      throw new DbException("Problem to reset autoincrement with last id in SequenceReseter", e);
-    } finally {
-      closer.closeResultSet(resultSet);
-      closer.closeStatement(statement);
-
-    }
-
   }
 
   private long getIdMaxPlusOne() {

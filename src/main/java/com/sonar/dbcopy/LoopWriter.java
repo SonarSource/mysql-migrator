@@ -29,7 +29,7 @@ public class LoopWriter {
     Statement sourceStatement = null;
     PreparedStatement destinationStatement = null;
     ResultSet resultSetSource = null;
-    int lineWritten = 0, nbCommit = 0;
+    int lineWritten = 0, nbCommit = 0, nbLog = 0;
     Object objectGetted;
 
     try {
@@ -50,10 +50,15 @@ public class LoopWriter {
         }
         destinationStatement.addBatch();
 
-        if (lineWritten > 1000 * nbCommit) {
+        if (lineWritten > 1000 * nbLog) {
+          LOGGER.info("COPYING... : " + indexTable + "   " + tableName + " LINES " + lineWritten + " / " + nbRowsInTable);
+          nbLog++;
+        }
+
+        if (lineWritten > 10 * nbCommit) {
           destinationStatement.executeBatch();
           connectionDestination.commit();
-          LOGGER.info("COPYING... : " + indexTable + "   " + tableName + " LINES " + lineWritten + " / " + nbRowsInTable);
+
           nbCommit++;
         }
       }
