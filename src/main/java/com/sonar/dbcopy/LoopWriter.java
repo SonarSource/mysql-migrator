@@ -30,7 +30,8 @@ public class LoopWriter {
     PreparedStatement destinationStatement = null;
     ResultSet resultSetSource = null;
     int lineWritten = 0, nbCommit = 0, nbLog = 0;
-    Object objectGetted;
+    Object objectGetted = null;
+    int indexColumn=0;
 
     try {
       sourceStatement = connectionSource.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
@@ -40,7 +41,7 @@ public class LoopWriter {
 
       while (resultSetSource.next()) {
         lineWritten++;
-        for (int indexColumn = 0; indexColumn < nbColInTable; indexColumn++) {
+        for (indexColumn = 0; indexColumn < nbColInTable; indexColumn++) {
           objectGetted = resultSetSource.getObject(indexColumn + 1);
           if (objectGetted == null) {
             destinationStatement.setObject(indexColumn + 1, null);
@@ -54,20 +55,20 @@ public class LoopWriter {
           LOGGER.info("COPYING... : " + indexTable + "   " + tableName + " LINES " + lineWritten + " / " + nbRowsInTable);
           nbLog++;
         }
-
+//      COMMIT EACH 10 ROWS
         if (lineWritten > 10 * nbCommit) {
           destinationStatement.executeBatch();
           connectionDestination.commit();
-
           nbCommit++;
         }
       }
+//      MUST COMMIT LAST ROWS
       destinationStatement.executeBatch();
       connectionDestination.commit();
       closer.closeStatement(destinationStatement);
 
     } catch (SQLException e) {
-      throw new DbException("Problem in LoopWriter", e);
+      throw new DbException("Problem in LoopWriter for TABLE : "+tableName+" in COLUMN ("+indexColumn+") at ROW ("+lineWritten+") for OBJECT ("+objectGetted+")", e);
     } finally {
       closer.closeResultSet(resultSetSource);
       closer.closeStatement(sourceStatement);

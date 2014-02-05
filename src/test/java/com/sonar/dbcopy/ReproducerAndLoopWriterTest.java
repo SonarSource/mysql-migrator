@@ -28,15 +28,16 @@ public class ReproducerAndLoopWriterTest {
     connectionSource = utils.makeFilledH2("source");
     connectionDest = utils.makeEmptyH2("destination");
 
-    Database database = utils.makeDatabase();
+    Database databaseSource = utils.makeDatabase();
+    Database databaseDest =   utils.makeDatabase();
 
     /* BE CAREFUL AT THE H2 DATABASE NAME: "source" AND "destination" */
 
     cdSource = new ConnecterDatas("org.h2.Driver", "jdbc:h2:mem:source;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     cdDest = new ConnecterDatas("org.h2.Driver", "jdbc:h2:mem:destination;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
 
-    Reproducer reproducer = new Reproducer(cdSource, cdDest, database);
-    reproducer.execute();
+    Reproducer reproducer = new Reproducer(cdSource, cdDest, databaseSource);
+    reproducer.execute(databaseDest);
   }
 
   @Test

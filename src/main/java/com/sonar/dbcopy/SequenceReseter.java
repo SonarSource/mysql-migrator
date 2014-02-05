@@ -38,10 +38,10 @@ public class SequenceReseter {
         statement = connectionDest.createStatement();
         statement.execute(sqlRequest);
 
-        LOGGER.info("The sequence for table " + tableName + " has been adjusted to the last id.");
+        LOGGER.info("SEQUENCE RESETED IN : " + tableName);
       }
     } catch (SQLException e) {
-      throw new DbException("Problem to reset autoincrement with last id in SequenceReseter.", e);
+      throw new DbException("Problem to execute the reset autoincrement request with last id :"+sqlRequest+" at TABLE : "+tableName+".", e);
     } finally {
       closer.closeResultSet(resultSet);
       closer.closeStatement(statement);
@@ -58,7 +58,7 @@ public class SequenceReseter {
     } else if ("jdbc:my".equals(urlbeginning)) {
       sqlRequest = "ALTER TABLE " + tableName + " AUTO_INCREMENT = " + getIdMaxPlusOne() + ";";
     } else {
-      throw new DbException("Url does not correspond to a correct format to reset auto increment id.", new Exception());
+      throw new DbException("URL : "+urlbeginning+" does not correspond to a correct format to reset auto increment id.", new Exception());
     }
   }
 
@@ -75,7 +75,7 @@ public class SequenceReseter {
       }
       return idMaxToReturn + 1;
     } catch (SQLException e) {
-      throw new DbException("Problem to get id max in Sequence Reseter.", new Exception());
+      throw new DbException("Problem with sql request to select id max in Sequence Reseter at TABLE : "+tableName+".", new Exception());
     } finally {
       closer.closeResultSet(resultSet);
       closer.closeStatement(statement);

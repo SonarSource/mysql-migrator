@@ -30,7 +30,7 @@ public class MetadataGetter {
     try {
       statementSource = connectionSource.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
-      /* WARNING !! TO GET TABLES FROM METADATA IN DEPENDS ON THE DATABASE VENDOR */
+      /* WARNING !! TO GET TABLES FROM METADATA IT DEPENDS ON THE DATABASE VENDOR */
       DatabaseMetaData metaData = connectionSource.getMetaData();
       SchemaRelatedToVendor schemaRelatedToVendor = new SchemaRelatedToVendor();
       String schema = schemaRelatedToVendor.getSchema(metaData.getURL().substring(0, 7));
@@ -58,7 +58,7 @@ public class MetadataGetter {
 
   private void addTables(ResultSet resultSetTables) throws SQLException {
     if (!resultSetTables.isBeforeFirst()) {
-      throw new DbException("*** ERROR : NO DATA FOUND IN DATABASE SOURCE ***", new Exception("resultset is empty"));
+      throw new DbException("*** ERROR : CAN'T FIND ANY TABLE IN DATABASE SOURCE ***", new Exception("resultset is empty"));
     } else {
       while (resultSetTables.next()) {
         String tableName = resultSetTables.getString("TABLE_NAME");
@@ -70,8 +70,9 @@ public class MetadataGetter {
 
   private void addColumns(DatabaseMetaData metaData) {
     ResultSet resultSetCol = null;
+    int indexTable = 0;
     try {
-      for (int indexTable = 0; indexTable < database.getNbTables(); indexTable++) {
+      for (indexTable = 0; indexTable < database.getNbTables(); indexTable++) {
         resultSetCol = metaData.getColumns(null, null, database.getTableName(indexTable), "%");
         while (resultSetCol.next()) {
           database.getTable(indexTable).addColumn(resultSetCol.getString("COLUMN_NAME"));
@@ -79,7 +80,7 @@ public class MetadataGetter {
         closer.closeResultSet(resultSetCol);
       }
     } catch (SQLException e) {
-      throw new DbException("Problem to add columns in MetadataGetter.", e);
+      throw new DbException("Problem to add columns in TABLE : "+database.getTableName(indexTable)+".", e);
     } finally {
       closer.closeResultSet(resultSetCol);
     }
@@ -87,8 +88,9 @@ public class MetadataGetter {
 
   private void addNbRowInTables(Statement statementSource) {
     ResultSet resultSetRows = null;
+    int indexTable = 0;
     try {
-      for (int indexTable = 0; indexTable < database.getNbTables(); indexTable++) {
+      for (indexTable = 0; indexTable < database.getNbTables(); indexTable++) {
         resultSetRows = statementSource.executeQuery("SELECT COUNT(*) FROM " + database.getTableName(indexTable));
         while (resultSetRows.next()) {
           database.getTable(indexTable).setNbRows(resultSetRows.getInt(1));
@@ -96,7 +98,7 @@ public class MetadataGetter {
         closer.closeResultSet(resultSetRows);
       }
     } catch (SQLException e) {
-      throw new DbException("Problem to add number of rows in MetadataGetter.", e);
+      throw new DbException("Problem to add number of rows in TABLE : "+database.getTableName(indexTable)+".", e);
     } finally {
       closer.closeResultSet(resultSetRows);
     }

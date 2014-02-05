@@ -62,7 +62,7 @@ public class MetadataGetterTest {
       mdg.execute();
       fail();
     } catch (Exception e) {
-      assertThat(e).isInstanceOf(DbException.class).hasMessage("*** ERROR : NO DATA FOUND IN DATABASE SOURCE ***");
+      assertThat(e).isInstanceOf(DbException.class).hasMessage("*** ERROR : CAN'T FIND ANY TABLE IN DATABASE SOURCE ***");
     }
   }
 

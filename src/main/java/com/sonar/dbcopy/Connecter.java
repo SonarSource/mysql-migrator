@@ -12,14 +12,14 @@ import java.sql.SQLException;
 
 public class Connecter {
 
-  public Connection doConnection(ConnecterDatas dc) {
+  public Connection doConnection(ConnecterDatas cd) {
     try {
-      Class.forName(dc.getDriver());
-      return DriverManager.getConnection(dc.getUrl(), dc.getUser(), dc.getPwd());
+      Class.forName(cd.getDriver());
+      return DriverManager.getConnection(cd.getUrl(), cd.getUser(), cd.getPwd());
     } catch (SQLException e) {
-      throw new DbException("Open source connection failed.", e);
+      throw new DbException("Open connection failed with URL :"+cd.getUrl()+" .", e);
     } catch (ClassNotFoundException e) {
-      throw new DbException("Impossible to get the jdbc Driver Source.", e);
+      throw new DbException("Impossible to get the jdbc DRIVER "+cd.getDriver()+".", e);
     }
   }
 }

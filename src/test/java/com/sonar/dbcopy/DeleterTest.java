@@ -18,7 +18,7 @@ import java.sql.*;
 public class DeleterTest {
 
   private Deleter deleter;
-  private Database database;
+  private Database databaseSource;
   private Connection connection;
 
   @Before
@@ -27,11 +27,12 @@ public class DeleterTest {
 
     ConnecterDatas cdSource = new ConnecterDatas("org.h2.Driver", "jdbc:h2:mem:filledDatabase;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
 
-    database = utils.makeDatabase();  // build dabase with metadatas
+    databaseSource = utils.makeDatabase();  // build dabase with metadatas
+    Database databaseDest = utils.makeDatabase();
 
-    connection = utils.makeFilledH2("filledDatabase"); // build a filled  H2 database
+    connection = utils.makeFilledH2("filledDatabase"); // build a filled  H2 databaseSource
 
-    new Deleter(cdSource, database).execute();
+    new Deleter(cdSource, databaseSource).execute(databaseDest);
 
 
   }
@@ -45,9 +46,9 @@ public class DeleterTest {
       DatabaseMetaData metaData = connection.getMetaData();
       resultSetTables = metaData.getTables(connection.getCatalog(), null, "%", new String[]{"TABLE"});
       resultSetTables.next();
-      assertEquals(database.getTableName(1).toUpperCase(), resultSetTables.getString(3).toUpperCase());
+      assertEquals(databaseSource.getTableName(1).toUpperCase(), resultSetTables.getString(3).toUpperCase());
       resultSetTables.next();
-      assertEquals(database.getTableName(0).toUpperCase(), resultSetTables.getString(3).toUpperCase());
+      assertEquals(databaseSource.getTableName(0).toUpperCase(), resultSetTables.getString(3).toUpperCase());
       resultSetTables.close();
 
       /* SECONDLY VERIFYING THAT TABLE_FOR_TEST DOESN'T HAVE ANY ROW OF DATA */
