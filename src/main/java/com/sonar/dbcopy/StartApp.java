@@ -16,13 +16,14 @@ public class StartApp {
   }
 
   public static void main(String[] args) {
+    String starLine = "******************************************";
+    LOGGER.info(starLine);
 
     Database databaseSource = new Database();
     Database databaseDest = new Database();
-
-
     ConnecterDatas connecterDatasSource = new ConnecterDatas(args[0], args[1], args[2], args[3]);
     ConnecterDatas connecterDatasDest = new ConnecterDatas(args[4], args[5], args[6], args[7]);
+
 
     /* VERIFY CONNECTION */
     ConnectionVerifier connectionVerifier = new ConnectionVerifier();
@@ -30,6 +31,7 @@ public class StartApp {
     LOGGER.info("Database SOURCE  has been reached at :         " + connecterDatasSource.getUrl());
     connectionVerifier.databaseIsReached(connecterDatasDest);
     LOGGER.info("Database DESTINATION has been reached at :     " + connecterDatasDest.getUrl());
+
 
     /* VERIFY VERSIONS OF SONARQUBE */
     VersionVerifier vvSource = new VersionVerifier();
@@ -43,24 +45,41 @@ public class StartApp {
     } else {
       LOGGER.info("WELL DONE !! The versions of SonarQube schema migration are the same between source (" + maxVersionIdSource + ") and destination (" + maxVersionIdDestination + ").");
     }
-    LOGGER.info("**********************************************************************************************************************************************************");
+    LOGGER.info(starLine);
+
 
     /* GET METADATA FROM SOURCE AND FROM DESTINATION */
     MetadataGetter metadataGetterSource = new MetadataGetter(connecterDatasSource, databaseSource);
     metadataGetterSource.execute();
+    LOGGER.info(starLine);
     MetadataGetter metadataGetterDest = new MetadataGetter(connecterDatasDest, databaseDest);
     metadataGetterDest.execute();
 
+    LOGGER.info(starLine);
 
+    /* DELETE TABLE CONTENT OF DATABASE DESTINATION */
     Deleter deleter = new Deleter(connecterDatasDest, databaseSource);
     deleter.execute(databaseDest);
 
+    LOGGER.info(starLine);
+
+    /* COPY DATA FROM SOURCE TO DESTINATION */
     Reproducer reproducer = new Reproducer(connecterDatasSource, connecterDatasDest, databaseSource);
     reproducer.execute(databaseDest);
 
-    LOGGER.info("******************************************");
+    LOGGER.info(starLine);
+
+    /* FIND AND DISPLAY TABLES PRESENT IN DESTINATION BUT NOT IN SOURCE */
+    DatabaseComparer dbComparer = new DatabaseComparer(databaseSource);
+    for (int indexTable = 0; indexTable < databaseSource.getNbTables(); indexTable++) {
+      String tableNameDest = databaseDest.getTableName(indexTable);
+      if (!dbComparer.tableExistsInDestinationDatabase(tableNameDest)) {
+        LOGGER.warn("TABLE " + tableNameDest + " IN DESTINATION WAS NOT COPIED BECAUSE IT IS NOT PRESENT IN DATABASE SOURCE.");
+      }
+    }
+
     LOGGER.info("*** THE COPY HAS FINISHED SUCCESSFULLY ***");
-    LOGGER.info("******************************************");
+    LOGGER.info(starLine);
 
   }
 }

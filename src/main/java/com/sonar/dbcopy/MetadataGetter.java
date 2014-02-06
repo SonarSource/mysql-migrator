@@ -15,6 +15,8 @@ public class MetadataGetter {
   private Database database;
   private ConnecterDatas cd;
   private Closer closer;
+  private DatabaseMetaData metaData;
+  private  StringRelatedToVendor stringRelatedToVendor;
 
   public MetadataGetter(ConnecterDatas cd, Database db) {
     this.cd = cd;
@@ -31,9 +33,10 @@ public class MetadataGetter {
       statementSource = connectionSource.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
       /* WARNING !! TO GET TABLES FROM METADATA IT DEPENDS ON THE DATABASE VENDOR */
-      DatabaseMetaData metaData = connectionSource.getMetaData();
-      SchemaRelatedToVendor schemaRelatedToVendor = new SchemaRelatedToVendor();
-      String schema = schemaRelatedToVendor.getSchema(metaData.getURL().substring(0, 7));
+      metaData = connectionSource.getMetaData();
+
+      stringRelatedToVendor = new StringRelatedToVendor(metaData);
+      String schema = stringRelatedToVendor.getSchema();
 
       /* GET TABLES FROM SCHEMA AND ADD TO DATABASE */
       resultSetTables = metaData.getTables(connectionSource.getCatalog(), schema, "%", new String[]{"TABLE"});
@@ -61,9 +64,9 @@ public class MetadataGetter {
       throw new DbException("*** ERROR : CAN'T FIND ANY TABLE IN DATABASE SOURCE ***", new Exception("resultset is empty"));
     } else {
       while (resultSetTables.next()) {
-        String tableName = resultSetTables.getString("TABLE_NAME");
+        String tableName = resultSetTables.getString("TABLE_NAME").toLowerCase();
         database.addTable(tableName);
-        LOGGER.info("FOUND : " + tableName + ".");
+        LOGGER.info("FOUND : " + tableName);
       }
     }
   }
@@ -73,9 +76,13 @@ public class MetadataGetter {
     int indexTable = 0;
     try {
       for (indexTable = 0; indexTable < database.getNbTables(); indexTable++) {
-        resultSetCol = metaData.getColumns(null, null, database.getTableName(indexTable), "%");
+        String tableNameWithAdaptedCase =  stringRelatedToVendor.giveTableNameRelatedToVendor(database.getTableName(indexTable));
+        //ORACLE NEEDS UPERCASE TO EXECUTE getColumns()
+        resultSetCol = metaData.getColumns(null, null, tableNameWithAdaptedCase , "%");
         while (resultSetCol.next()) {
-          database.getTable(indexTable).addColumn(resultSetCol.getString("COLUMN_NAME"));
+          String columnNameToInsert = resultSetCol.getString("COLUMN_NAME").toLowerCase();
+
+          database.getTable(indexTable).addColumn(columnNameToInsert);
         }
         closer.closeResultSet(resultSetCol);
       }

@@ -29,9 +29,8 @@ public class LoopWriter {
     Statement sourceStatement = null;
     PreparedStatement destinationStatement = null;
     ResultSet resultSetSource = null;
-    int lineWritten = 0, nbCommit = 0, nbLog = 0;
+    int lineWritten = 0, nbCommit = 0, nbLog = 0, indexColumn = 0;
     Object objectGetted = null;
-    int indexColumn=0;
 
     try {
       sourceStatement = connectionSource.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
@@ -43,8 +42,12 @@ public class LoopWriter {
         lineWritten++;
         for (indexColumn = 0; indexColumn < nbColInTable; indexColumn++) {
           objectGetted = resultSetSource.getObject(indexColumn + 1);
+
           if (objectGetted == null) {
             destinationStatement.setObject(indexColumn + 1, null);
+          } else if (objectGetted.getClass().equals(oracle.sql.TIMESTAMP.class)) {
+            Timestamp objTimeStamp = resultSetSource.getTimestamp(indexColumn+1);
+            destinationStatement.setTimestamp(indexColumn + 1, objTimeStamp);
           } else {
             destinationStatement.setObject(indexColumn + 1, objectGetted);
           }
@@ -68,7 +71,7 @@ public class LoopWriter {
       closer.closeStatement(destinationStatement);
 
     } catch (SQLException e) {
-      throw new DbException("Problem in LoopWriter for TABLE : "+tableName+" in COLUMN ("+indexColumn+") at ROW ("+lineWritten+") for OBJECT ("+objectGetted+")", e);
+      throw new DbException("Problem in LoopWriter for the TABLE (" + tableName + ") in COLUMN (" + indexColumn + ") at ROW (" + lineWritten + ") for OBJECT (" + objectGetted + ")", e);
     } finally {
       closer.closeResultSet(resultSetSource);
       closer.closeStatement(sourceStatement);

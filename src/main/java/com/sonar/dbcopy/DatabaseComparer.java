@@ -7,16 +7,16 @@ package com.sonar.dbcopy;
 
 public class DatabaseComparer {
 
-  private Database dbDest;
+  private Database database;
 
-  public DatabaseComparer(Database dbD) {
-    this.dbDest = dbD;
+  public DatabaseComparer(Database db) {
+    this.database = db;
   }
 
-  public boolean tableExistsInDestinationDatabase(String tableNameSource) {
+  public boolean tableExistsInDestinationDatabase(String tableNameToFindInDb) {
     boolean tableExists = false;
-    for (int indexTable = 0; indexTable < dbDest.getNbTables(); indexTable++) {
-      if (tableNameSource.equals(dbDest.getTableName(indexTable))) {
+    for (int indexTable = 0; indexTable < database.getNbTables(); indexTable++) {
+      if (tableNameToFindInDb.equals(database.getTableName(indexTable))) {
         tableExists = true;
       }
     }

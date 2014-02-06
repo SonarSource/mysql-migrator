@@ -48,8 +48,8 @@ public class ReproducerAndLoopWriterTest {
       statementSource = connectionSource.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
       statementDest = connectionDest.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
 
-      resultSetSource = statementSource.executeQuery("SELECT * FROM TABLE_FOR_TEST ORDER BY 1");
-      resultSetDest = statementDest.executeQuery("SELECT * FROM TABLE_FOR_TEST ORDER BY 1");
+      resultSetSource = statementSource.executeQuery("SELECT * FROM table_for_test ORDER BY 1");
+      resultSetDest = statementDest.executeQuery("SELECT * FROM table_for_test ORDER BY 1");
 
       while (resultSetSource.next()) {
         resultSetDest.next();

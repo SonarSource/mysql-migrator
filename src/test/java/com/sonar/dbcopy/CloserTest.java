@@ -29,7 +29,7 @@ public class CloserTest {
     Utils utils = new Utils();
     connection = utils.makeFilledH2("sonar");
     statement = connection.createStatement();
-    resultSet = statement.executeQuery("SELECT * FROM TABLE_FOR_TEST");
+    resultSet = statement.executeQuery("SELECT * FROM table_for_test");
   }
 
   @Test

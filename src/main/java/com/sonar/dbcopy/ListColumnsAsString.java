@@ -23,6 +23,7 @@ public class ListColumnsAsString {
     }
     String columnsAsString = stringBuilder.toString();
     columnsAsString = columnsAsString.substring(1);
+
     return columnsAsString;
   }
 

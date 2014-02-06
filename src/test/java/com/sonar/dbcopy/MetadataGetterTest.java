@@ -41,17 +41,17 @@ public class MetadataGetterTest {
     assertNotNull(mdg);
     assertEquals(2, database.getNbTables());
 
-    assertEquals("EMPTY_TABLE_FOR_TEST", database.getTableName(0));
-    assertEquals("ID", database.getTable(0).getColumnName(0));
-    assertEquals("COLSTRING", database.getTable(0).getColumnName(1));
-    assertEquals("COLTIMESTAMP", database.getTable(0).getColumnName(2));
+    assertEquals("empty_table_for_test", database.getTableName(0));
+    assertEquals("id", database.getTable(0).getColumnName(0));
+    assertEquals("colstring", database.getTable(0).getColumnName(1));
+    assertEquals("coltimestamp", database.getTable(0).getColumnName(2));
 
-    assertEquals("TABLE_FOR_TEST", database.getTableName(1));
+    assertEquals("table_for_test", database.getTableName(1));
     assertEquals(2, database.getTable(1).getNbRows());
     assertEquals(3, database.getTable(1).getNbColumns());
-    assertEquals("COLUMNINTEGER", database.getTable(1).getColumnName(0));
-    assertEquals("COLUMNSTRING", database.getTable(1).getColumnName(1));
-    assertEquals("COLUMNTIMESTAMP", database.getTable(1).getColumnName(2));
+    assertEquals("columninteger", database.getTable(1).getColumnName(0));
+    assertEquals("columnstring", database.getTable(1).getColumnName(1));
+    assertEquals("columntimestamp", database.getTable(1).getColumnName(2));
   }
 
   @Test

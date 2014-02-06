@@ -37,9 +37,9 @@ public class Utils {
       preparedStatement.executeUpdate();
       preparedStatement = connection.prepareStatement("DROP TABLE IF EXISTS empty_table_for_test");
       preparedStatement.executeUpdate();
-      preparedStatement = connection.prepareStatement("CREATE TABLE table_for_test (COLUMNINTEGER integer NOT NULL PRIMARY KEY, COLUMNSTRING varchar(50), COLUMNTIMESTAMP timestamp)");
+      preparedStatement = connection.prepareStatement("CREATE TABLE table_for_test (columninteger integer NOT NULL PRIMARY KEY, columnstring varchar(50), columntimestamp timestamp)");
       preparedStatement.executeUpdate();
-      preparedStatement = connection.prepareStatement("CREATE TABLE empty_table_for_test (ID integer PRIMARY KEY, COLSTRING varchar(50), COLTIMESTAMP timestamp)");
+      preparedStatement = connection.prepareStatement("CREATE TABLE empty_table_for_test (id integer PRIMARY KEY, colstring varchar(50), coltimestamp timestamp)");
       preparedStatement.executeUpdate();
 
       return connection;
@@ -57,7 +57,7 @@ public class Utils {
       Connection connection = this.makeH2WithTables(databaseName);
 
       /* PREPARE STATEMENT TO INSERT DATAS */
-      String stringToInsert = "INSERT INTO table_for_test (COLUMNINTEGER , COLUMNSTRING , COLUMNTIMESTAMP ) VALUES (?,?,?)";
+      String stringToInsert = "INSERT INTO table_for_test (columninteger , columnstring , columntimestamp ) VALUES (?,?,?)";
       preparedStatement = connection.prepareStatement(stringToInsert);
 
       /* CREATE DATAS */
@@ -113,12 +113,12 @@ public class Utils {
     database.addTable("table_for_test");
     database.addTable("empty_table_for_test");
 
-    database.getTable(0).addColumn("COLUMNINTEGER");
-    database.getTable(0).addColumn("COLUMNSTRING");
-    database.getTable(0).addColumn("COLUMNTIMESTAMP");
-    database.getTable(1).addColumn("ID");
-    database.getTable(1).addColumn("COLSTRING");
-    database.getTable(1).addColumn("COLTIMESTAMP");
+    database.getTable(0).addColumn("columninteger");
+    database.getTable(0).addColumn("columnstring");
+    database.getTable(0).addColumn("columntimestamp");
+    database.getTable(1).addColumn("id");
+    database.getTable(1).addColumn("colstring");
+    database.getTable(1).addColumn("coltimestamp");
 
     database.getTable(0).setNbRows(2);
 

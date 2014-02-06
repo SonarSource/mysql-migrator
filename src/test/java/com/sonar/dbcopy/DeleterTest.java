@@ -53,7 +53,7 @@ public class DeleterTest {
 
       /* SECONDLY VERIFYING THAT TABLE_FOR_TEST DOESN'T HAVE ANY ROW OF DATA */
       statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
-      resultSet = statement.executeQuery("SELECT * FROM TABLE_FOR_TEST");
+      resultSet = statement.executeQuery("SELECT * FROM table_for_test");
       while (resultSet.next()){
         assertNull(resultSet.getObject(1));
       }
