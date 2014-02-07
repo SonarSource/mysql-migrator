@@ -35,4 +35,15 @@ public class ListColumnsAsString {
     }
     return stringBuilder.toString();
   }
+
+  public String makeStringOfTypes() {
+    StringBuilder stringBuilder = new StringBuilder();
+    for (int indexColumn = 0; indexColumn < nbColumns; indexColumn++) {
+      stringBuilder.append("," + table.getType(indexColumn));
+    }
+    String typesAsString = stringBuilder.toString();
+    typesAsString = typesAsString.substring(1);
+
+    return typesAsString;
+  }
 }

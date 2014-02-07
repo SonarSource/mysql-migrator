@@ -16,9 +16,7 @@ public class StartApp {
   }
 
   public static void main(String[] args) {
-    String starLine = "******************************************";
-    LOGGER.info(starLine);
-
+    String starLine = "****************";
     Database databaseSource = new Database();
     Database databaseDest = new Database();
     ConnecterDatas connecterDatasSource = new ConnecterDatas(args[0], args[1], args[2], args[3]);
@@ -26,6 +24,7 @@ public class StartApp {
 
 
     /* VERIFY CONNECTION */
+    LOGGER.info(starLine + " CONFIGURATION VERIFICATIONS " + starLine);
     ConnectionVerifier connectionVerifier = new ConnectionVerifier();
     connectionVerifier.databaseIsReached(connecterDatasSource);
     LOGGER.info("Database SOURCE  has been reached at :         " + connecterDatasSource.getUrl());
@@ -45,29 +44,31 @@ public class StartApp {
     } else {
       LOGGER.info("WELL DONE !! The versions of SonarQube schema migration are the same between source (" + maxVersionIdSource + ") and destination (" + maxVersionIdDestination + ").");
     }
-    LOGGER.info(starLine);
+    LOGGER.info(starLine + " SEARCH TABLES FROM SOURCE " + starLine);
 
 
     /* GET METADATA FROM SOURCE AND FROM DESTINATION */
     MetadataGetter metadataGetterSource = new MetadataGetter(connecterDatasSource, databaseSource);
     metadataGetterSource.execute();
-    LOGGER.info(starLine);
+
+    LOGGER.info(starLine + " SEARCH TABLES FROM DESTINATION " + starLine);
+
     MetadataGetter metadataGetterDest = new MetadataGetter(connecterDatasDest, databaseDest);
     metadataGetterDest.execute();
 
-    LOGGER.info(starLine);
+    LOGGER.info(starLine + " DELETE TABLES FROM DESTINATION " + starLine);
 
     /* DELETE TABLE CONTENT OF DATABASE DESTINATION */
     Deleter deleter = new Deleter(connecterDatasDest, databaseSource);
     deleter.execute(databaseDest);
 
-    LOGGER.info(starLine);
+    LOGGER.info(starLine + " COPY DATA " + starLine);
 
     /* COPY DATA FROM SOURCE TO DESTINATION */
-    Reproducer reproducer = new Reproducer(connecterDatasSource, connecterDatasDest, databaseSource);
+    Reproducer reproducer = new Reproducer(connecterDatasSource, connecterDatasDest, databaseSource, databaseDest);
     reproducer.execute(databaseDest);
 
-    LOGGER.info(starLine);
+    LOGGER.info(starLine + " SEARCH FOR MISTAKES " + starLine);
 
     /* FIND AND DISPLAY TABLES PRESENT IN DESTINATION BUT NOT IN SOURCE */
     DatabaseComparer dbComparer = new DatabaseComparer(databaseSource);
@@ -78,8 +79,8 @@ public class StartApp {
       }
     }
 
-    LOGGER.info("*** THE COPY HAS FINISHED SUCCESSFULLY ***");
-    LOGGER.info(starLine);
+    LOGGER.info("** THE COPY HAS FINISHED SUCCESSFULLY **");
+    LOGGER.info(starLine + starLine + starLine);
 
   }
 }

@@ -8,6 +8,9 @@ package com.sonar.dbcopy;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import java.sql.Types;
+
 import static org.junit.Assert.assertEquals;
 
 
@@ -18,9 +21,9 @@ public class ListColumnsAsStringTest {
   @Before
   public void setUp(){
     Table table = new Table("tableName");
-    table.addColumn("col0");
-    table.addColumn("col1");
-    table.addColumn("col2");
+    table.addColumn(0,"col0", Types.VARCHAR);
+    table.addColumn(1,"col1",Types.VARCHAR);
+    table.addColumn(2,"col2",Types.VARCHAR);
     lcas = new ListColumnsAsString(table);
 
   }

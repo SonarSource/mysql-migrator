@@ -34,6 +34,7 @@ public class Deleter {
       connectionDest = new Connecter().doConnection(cdDest);
       statementToDelete = connectionDest.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
 
+      // DELETE IS DONE ONLY ON THE SAME TABLES THAN SOURCE TO AVOID REPEATING UNIQUE ID
       for (int indexTable = 0; indexTable < this.databaseSource.getNbTables(); indexTable++) {
         tableName = this.databaseSource.getTableName(indexTable);
         if (dbComparer.tableExistsInDestinationDatabase(tableName)) {
@@ -43,6 +44,7 @@ public class Deleter {
           LOGGER.error("WARNING !! Can't DELETE  TABLE :" + tableName + " because it doesn't exist in destination database. ");
         }
       }
+
       closer.closeStatement(statementToDelete);
 
     } catch (SQLException e) {

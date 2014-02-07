@@ -16,7 +16,7 @@ public class MetadataGetter {
   private ConnecterDatas cd;
   private Closer closer;
   private DatabaseMetaData metaData;
-  private  StringRelatedToVendor stringRelatedToVendor;
+  private CharacteristicsRelatedToEditor chRelToEd;
 
   public MetadataGetter(ConnecterDatas cd, Database db) {
     this.cd = cd;
@@ -35,8 +35,8 @@ public class MetadataGetter {
       /* WARNING !! TO GET TABLES FROM METADATA IT DEPENDS ON THE DATABASE VENDOR */
       metaData = connectionSource.getMetaData();
 
-      stringRelatedToVendor = new StringRelatedToVendor(metaData);
-      String schema = stringRelatedToVendor.getSchema();
+      chRelToEd = new CharacteristicsRelatedToEditor();
+      String schema = chRelToEd.getSchema(metaData);
 
       /* GET TABLES FROM SCHEMA AND ADD TO DATABASE */
       resultSetTables = metaData.getTables(connectionSource.getCatalog(), schema, "%", new String[]{"TABLE"});
@@ -44,10 +44,14 @@ public class MetadataGetter {
       closer.closeResultSet(resultSetTables);
 
       /* GET COLUMNS FROM TABLES */
+
       this.addColumns(metaData);
 
       /* GET NB ROWS BY TABLE */
       this.addNbRowInTables(statementSource);
+
+      /* LOG RESULTS */
+      this.displayFoundTables();
 
     } catch (SQLException e) {
       throw new DbException("Problem to get schema from database source.", e);
@@ -66,7 +70,6 @@ public class MetadataGetter {
       while (resultSetTables.next()) {
         String tableName = resultSetTables.getString("TABLE_NAME").toLowerCase();
         database.addTable(tableName);
-        LOGGER.info("FOUND : " + tableName);
       }
     }
   }
@@ -74,20 +77,24 @@ public class MetadataGetter {
   private void addColumns(DatabaseMetaData metaData) {
     ResultSet resultSetCol = null;
     int indexTable = 0;
+    int indexColumn;
     try {
       for (indexTable = 0; indexTable < database.getNbTables(); indexTable++) {
-        String tableNameWithAdaptedCase =  stringRelatedToVendor.giveTableNameRelatedToVendor(database.getTableName(indexTable));
+        indexColumn = 0;
+        String tableNameWithAdaptedCase = chRelToEd.transfromCaseOfTableNameRelatedToEditor(metaData, database.getTableName(indexTable));
+
         //ORACLE NEEDS UPERCASE TO EXECUTE getColumns()
-        resultSetCol = metaData.getColumns(null, null, tableNameWithAdaptedCase , "%");
+        resultSetCol = metaData.getColumns(null, null, tableNameWithAdaptedCase, "%");
         while (resultSetCol.next()) {
           String columnNameToInsert = resultSetCol.getString("COLUMN_NAME").toLowerCase();
-
-          database.getTable(indexTable).addColumn(columnNameToInsert);
+          int columnType = resultSetCol.getInt("DATA_TYPE");
+          database.getTable(indexTable).addColumn(indexColumn, columnNameToInsert, columnType);
+          indexColumn++;
         }
         closer.closeResultSet(resultSetCol);
       }
     } catch (SQLException e) {
-      throw new DbException("Problem to add columns in TABLE : "+database.getTableName(indexTable)+".", e);
+      throw new DbException("Problem to add columns in TABLE : " + database.getTableName(indexTable) + ".", e);
     } finally {
       closer.closeResultSet(resultSetCol);
     }
@@ -105,9 +112,18 @@ public class MetadataGetter {
         closer.closeResultSet(resultSetRows);
       }
     } catch (SQLException e) {
-      throw new DbException("Problem to add number of rows in TABLE : "+database.getTableName(indexTable)+".", e);
+      throw new DbException("Problem to add number of rows in TABLE : " + database.getTableName(indexTable) + ".", e);
     } finally {
       closer.closeResultSet(resultSetRows);
+    }
+  }
+
+  private void displayFoundTables() {
+    for (int indexTable = 0; indexTable < database.getNbTables(); indexTable++) {
+      ListColumnsAsString lcas = new ListColumnsAsString(database.getTable(indexTable));
+      LOGGER.info("FOUND TABLE : " + database.getTableName(indexTable));
+      LOGGER.info("                COLUMNS : (" + lcas.makeColumnString() + ")");
+      LOGGER.info("                TYPES : (" + lcas.makeStringOfTypes() + ")");
     }
   }
 }

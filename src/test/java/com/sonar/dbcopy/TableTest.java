@@ -9,6 +9,8 @@ package com.sonar.dbcopy;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.sql.Types;
+
 import static org.junit.Assert.assertEquals;
 
 public class TableTest {
@@ -19,8 +21,8 @@ public class TableTest {
   public void setUp() throws Exception {
     table = new Table("table1");
     table.setNbRows(5);
-    table.addColumn("col0");
-    table.addColumn("col1");
+    table.addColumn(0,"col0", Types.VARCHAR);
+    table.addColumn(1,"col1", Types.VARCHAR);
   }
 
   @Test

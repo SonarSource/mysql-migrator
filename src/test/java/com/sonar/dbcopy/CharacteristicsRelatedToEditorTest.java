@@ -15,9 +15,9 @@ import java.sql.SQLException;
 
 import static org.junit.Assert.assertEquals;
 
-public class StringRelatedToVendorTest {
+public class CharacteristicsRelatedToEditorTest {
 
-  private StringRelatedToVendor stringRelatedToVendor;
+  private CharacteristicsRelatedToEditor chRelToEd;
   private DatabaseMetaData metaData;
 
   @Before
@@ -25,21 +25,21 @@ public class StringRelatedToVendorTest {
     Utils utils = new Utils();
     Connection connection = utils.makeFilledH2("sonar");
     metaData = connection.getMetaData();
-    stringRelatedToVendor = new StringRelatedToVendor(metaData);
+    chRelToEd = new CharacteristicsRelatedToEditor();
 
   }
 
   @Test
   public void testGetSchema() throws SQLException {
-    //assertEquals("public", stringRelatedToVendor.getSchema("jdbc:po"));
-    assertEquals(null, stringRelatedToVendor.getSchema());
-    //assertEquals(null, stringRelatedToVendor.getSchema("jdbc:my"));
-    //assertEquals(null, stringRelatedToVendor.getSchema("jdbc:or"));
-    //assertEquals(null, stringRelatedToVendor.getSchema("jdbc:sq"));
+    //assertEquals("public", chRelToEd.getSchema("jdbc:po"));
+    assertEquals(null, chRelToEd.getSchema(metaData));
+    //assertEquals(null, chRelToEd.getSchema("jdbc:my"));
+    //assertEquals(null, chRelToEd.getSchema("jdbc:or"));
+    //assertEquals(null, chRelToEd.getSchema("jdbc:sq"));
   }
 
   @Test
   public void testGiveTableNameRelatedToVendor () throws SQLException{
-    assertEquals("TABLE", stringRelatedToVendor.giveTableNameRelatedToVendor("table"));
+    assertEquals("TABLE", chRelToEd.transfromCaseOfTableNameRelatedToEditor(metaData, "table"));
   }
 }

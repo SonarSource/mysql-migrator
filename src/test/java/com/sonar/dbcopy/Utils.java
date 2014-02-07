@@ -7,10 +7,7 @@ package com.sonar.dbcopy;
 
 import org.h2.jdbcx.JdbcConnectionPool;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 
 public class Utils {
 
@@ -113,12 +110,12 @@ public class Utils {
     database.addTable("table_for_test");
     database.addTable("empty_table_for_test");
 
-    database.getTable(0).addColumn("columninteger");
-    database.getTable(0).addColumn("columnstring");
-    database.getTable(0).addColumn("columntimestamp");
-    database.getTable(1).addColumn("id");
-    database.getTable(1).addColumn("colstring");
-    database.getTable(1).addColumn("coltimestamp");
+    database.getTable(0).addColumn(0,"columninteger", Types.INTEGER);
+    database.getTable(0).addColumn(1,"columnstring",Types.VARCHAR);
+    database.getTable(0).addColumn(2,"columntimestamp",Types.TIMESTAMP);
+    database.getTable(1).addColumn(0,"id",Types.SMALLINT);
+    database.getTable(1).addColumn(1,"colstring",Types.VARCHAR);
+    database.getTable(1).addColumn(2,"coltimestamp", Types.TIMESTAMP);
 
     database.getTable(0).setNbRows(2);
 

@@ -29,7 +29,7 @@ public class SequenceReseterTest {
 
   @Test
   public void testExecute() throws Exception {
-    SequenceReseter sequenceReseter = new SequenceReseter("jdbc:h2", "table_for_test", connection);
+    SequenceReseter sequenceReseter = new SequenceReseter("table_for_test", connection);
     try {
     } catch (Exception e) {
       assertThat(e).isInstanceOf(DbException.class).hasMessage("Problem to reset autoincrement with last id in SequenceReseter.");

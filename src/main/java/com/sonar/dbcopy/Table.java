@@ -14,20 +14,30 @@ public class Table {
   private String tableName;
   private int nbRows;
   private List<String> columns;
+  private List<Integer> types;
 
   public Table(String tableName) {
     this.tableName = tableName;
     this.nbRows = 0;
     columns = new ArrayList<String>();
+    types = new ArrayList<Integer>();
   }
 
   public int getNbColumns() {
     return columns.size();
   }
 
-  public void addColumn(String columnName) {
-    columns.add(columnName);
+  public void addColumn(int index, String columnName, Integer type) {
+    if (columnName == null) {
+      columnName = "null";
+    }
+    if (type == null) {
+      type = 0;
+    }
+    columns.add(index, columnName);
+    types.add(index, type);
   }
+
 
   public String getName() {
     return this.tableName;
@@ -43,5 +53,9 @@ public class Table {
 
   public String getColumnName(int indexColumn) {
     return columns.get(indexColumn);
+  }
+
+  public Integer getType(int indexColumn) {
+    return types.get(indexColumn);
   }
 }

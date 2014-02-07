@@ -12,7 +12,7 @@ import java.sql.SQLException;
 
 public class ConnectionVerifier {
 
-    public void databaseIsReached(ConnecterDatas cd) {
+  public void databaseIsReached(ConnecterDatas cd) {
     Connection connection = null;
     Closer closer = new Closer("ConnectionVerifier");
     try {
@@ -23,7 +23,6 @@ public class ConnectionVerifier {
       if (metaData == null) {
         throw new SQLException();
       }
-
     } catch (SQLException e) {
       throw new DbException("*** DATABASE CAN'T BE REACHED AT ADDRESS " + cd.getUrl() + " ***", e);
     } catch (ClassNotFoundException e) {
