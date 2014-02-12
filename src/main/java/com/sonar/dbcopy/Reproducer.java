@@ -38,6 +38,7 @@ public class Reproducer {
     try {
       DatabaseMetaData metaDest = connectionDestination.getMetaData();
       destinationIsSqlServer = chRelToEditor.isSqlServer(metaDest);
+//      boolean destinationIsOracle = chRelToEditor.isOracle(metaDest);
 
       connectionDestination.setAutoCommit(false);
 
@@ -64,6 +65,9 @@ public class Reproducer {
             modifySqlServerOption.modifyIdentityInsert(connectionDestination, tableSourceName, "ON");
           }
 
+          if(tableSourceName.equals("measure_data")){
+            System.out.println("coucou");
+          }
           // READ AND WRITE
           LOGGER.info("START COPY IN : " + indexTable + "   " + tableSourceName + ".");
           LoopWriter loopWriter = new LoopWriter(tableSource, databaseDest.getTableByName(tableSourceName), indexTable, sqlRequest);
@@ -71,8 +75,8 @@ public class Reproducer {
           LOGGER.info("DATA COPIED IN : " + indexTable + "   " + tableSourceName + ".");
 
           // RESET SEQUENCE
-          SequenceReseter sequenceReseter = new SequenceReseter(tableSourceName, connectionDestination);
-          sequenceReseter.execute();
+            SequenceReseter sequenceReseter = new SequenceReseter(tableSourceName, connectionDestination);
+            sequenceReseter.execute();
 
           //SQL SERVER DESTINATION OPTION :  PUT IDENTITY_INSERT AT off FOR THE CURRENT TABLE
           if (destinationIsSqlServer) {

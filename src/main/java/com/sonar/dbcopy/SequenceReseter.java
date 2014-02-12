@@ -25,29 +25,32 @@ public class SequenceReseter {
     Closer closer = new Closer("SequenceReseter");
     Statement statement = null;
     ResultSet resultSet = null;
-    CharacteristicsRelatedToEditor chRelToEd = new CharacteristicsRelatedToEditor();
+    CharacteristicsRelatedToEditor relToEditor = new CharacteristicsRelatedToEditor();
+
     try {
       DatabaseMetaData metadata = connectionDest.getMetaData();
 
-      String tableNameWithGoodCase = chRelToEd.transfromCaseOfTableNameRelatedToEditor(metadata,tableName);
+      String tableNameWithGoodCase = relToEditor.transfromCaseOfTableNameRelatedToEditor(metadata,tableName);
+      boolean destIsOracle =  relToEditor.isOracle(metadata);
 
-      resultSet = metadata.getPrimaryKeys(null, null, tableNameWithGoodCase);
+        resultSet = metadata.getPrimaryKeys(null, null, tableNameWithGoodCase);
 
-      // if resultset is not null that means there is a primary key
-      //System.err.println("soso ----$$$ "+resultSet.getString("PK_NAME"));
-
+      // if resultset is not "beforeFirst" that means there is a primary key
       if (resultSet.isBeforeFirst()) {
         closer.closeResultSet(resultSet);
-        long idMax = chRelToEd.getIdMaxPlusOne(connectionDest, tableName);
-        sqlRequest = chRelToEd.makeRequestRelatedToEditor(metadata, tableName, idMax);
+        long idMaxPlusOne = relToEditor.getIdMaxPlusOne(connectionDest, tableName);
+        sqlRequest = relToEditor.makeRequestRelatedToEditor(metadata, tableName, idMaxPlusOne);
 
         statement = connectionDest.createStatement();
+        if(destIsOracle){
+         statement.execute(relToEditor.makeDropSequenceRequest(tableName));
+        }
         statement.execute(sqlRequest);
 
-        LOGGER.info("SEQUENCE RESETED IN : " + tableName);
+        LOGGER.info("SEQUENCE ADJUSTED IN : " + tableName + " at "+ idMaxPlusOne);
       }
     } catch (SQLException e) {
-      throw new DbException("Problem to execute the reset autoincrement request with last id :" + sqlRequest + " at TABLE : " + tableName + ".", e);
+      throw new DbException("Problem to execute the adjustment of autoincrement  with last id + 1 :" + sqlRequest + " at TABLE : " + tableName + ".", e);
     } finally {
       closer.closeResultSet(resultSet);
       closer.closeStatement(statement);

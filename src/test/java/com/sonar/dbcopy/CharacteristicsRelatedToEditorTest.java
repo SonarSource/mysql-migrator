@@ -26,20 +26,15 @@ public class CharacteristicsRelatedToEditorTest {
     Connection connection = utils.makeFilledH2("sonar");
     metaData = connection.getMetaData();
     chRelToEd = new CharacteristicsRelatedToEditor();
-
   }
 
   @Test
   public void testGetSchema() throws SQLException {
-    //assertEquals("public", chRelToEd.getSchema("jdbc:po"));
     assertEquals(null, chRelToEd.getSchema(metaData));
-    //assertEquals(null, chRelToEd.getSchema("jdbc:my"));
-    //assertEquals(null, chRelToEd.getSchema("jdbc:or"));
-    //assertEquals(null, chRelToEd.getSchema("jdbc:sq"));
   }
 
   @Test
-  public void testGiveTableNameRelatedToVendor () throws SQLException{
+  public void testGiveTableNameRelatedToVendor() throws SQLException {
     assertEquals("TABLE", chRelToEd.transfromCaseOfTableNameRelatedToEditor(metaData, "table"));
   }
 }

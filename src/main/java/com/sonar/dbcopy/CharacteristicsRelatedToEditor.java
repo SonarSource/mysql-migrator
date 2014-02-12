@@ -12,11 +12,11 @@ public class CharacteristicsRelatedToEditor {
 
   public String getSchema(DatabaseMetaData metaData) throws SQLException {
     // USED FOR metadata.getTables WHICH NEED "public" WITH POSTGRESQL AND UPPERCASE  USER NAME WITH ORACLE
-    String vendorUrl = metaData.getURL().substring(0, 7);
+//    String vendorUrl = metaData.getURL().substring(0, 7);
     String schema;
-    if ("jdbc:po".equals(vendorUrl)) {
+    if (isPostgresql(metaData)) {
       schema = "public";
-    } else if ("jdbc:or".equals(vendorUrl)) {
+    } else if (isOracle(metaData)) {
       schema = metaData.getUserName().toUpperCase();
     } else {
       schema = null;
@@ -28,12 +28,54 @@ public class CharacteristicsRelatedToEditor {
     // USED FOR metadata.getColumns WHICH NEED UPPERCASE WITH ORACLE
     String vendorUrl = metaData.getURL().substring(0, 7);
     String tableNameToReturn;
-    if ("jdbc:or".equals(vendorUrl) || "jdbc:h2".equals(vendorUrl)) {
+    if (isOracle(metaData) || isH2(metaData)) {
       tableNameToReturn = tableNameToChangeCase.toUpperCase();
     } else {
       tableNameToReturn = tableNameToChangeCase.toLowerCase();
     }
     return tableNameToReturn;
+  }
+
+  public String makeDropSequenceRequest(String tableName) {
+    return "DROP SEQUENCE " + tableName.toUpperCase() + "_SEQ";
+  }
+
+  public String makeRequestRelatedToEditor(DatabaseMetaData metadata, String tableName, long idMaxPlusOne) throws SQLException {
+
+    String sqlRequest = "";
+
+    if (isSqlServer(metadata)) {
+      sqlRequest = "dbcc checkident(" + tableName + ",reseed," + idMaxPlusOne + ");";
+    } else if (isOracle(metadata)) {
+      sqlRequest = "CREATE SEQUENCE " + tableName.toUpperCase() + "_SEQ START WITH " + idMaxPlusOne + " MAXVALUE 999999999999999999999999999 MINVALUE 1 NOCYCLE CACHE 20 NOORDER";
+    } else if (isPostgresql(metadata)) {
+      sqlRequest = "ALTER SEQUENCE " + tableName + "_id_seq RESTART WITH " + idMaxPlusOne + ";";
+    } else if (isMySql(metadata)) {
+      sqlRequest = "ALTER TABLE " + tableName + " AUTO_INCREMENT = " + idMaxPlusOne + ";";
+    } else {
+      throw new DbException("Url does not correspond to a correct format to reset auto increment idMaxPlusOne.", new Exception());
+    }
+    return sqlRequest;
+  }
+
+  public long getIdMaxPlusOne(Connection connectionDest, String tableName) {
+    Closer closer = new Closer("getIdMax");
+    Statement statement = null;
+    ResultSet resultSet = null;
+    long idMaxToReturn = 1;
+    try {
+      statement = connectionDest.createStatement();
+      resultSet = statement.executeQuery("SELECT max(id) FROM " + tableName);
+      while (resultSet.next()) {
+        idMaxToReturn = resultSet.getLong(1);
+      }
+      return idMaxToReturn + 1;
+    } catch (SQLException e) {
+      throw new DbException("Problem with sql request to select id max in Sequence Reseter at TABLE : " + tableName + ".", new Exception());
+    } finally {
+      closer.closeResultSet(resultSet);
+      closer.closeStatement(statement);
+    }
   }
 
   public boolean isSqlServer(DatabaseMetaData metaData) throws SQLException {
@@ -54,42 +96,31 @@ public class CharacteristicsRelatedToEditor {
     return isOracle;
   }
 
-  public String makeRequestRelatedToEditor(DatabaseMetaData metadata, String tableName, long idMax) throws SQLException {
-
-    String urlbeginning = metadata.getURL().substring(0, 7);
-    String sqlRequest="";
-
-    if ("jdbc:jt".equals(urlbeginning)) {
-      sqlRequest = "dbcc checkident(" + tableName + ",reseed," + idMax + ");";
-    } else if ("jdbc:or".equals(urlbeginning)) {
-      sqlRequest = "ALTER SEQUENCE " + tableName + "_id_seq  MINVALUE " + idMax;
-    } else if ("jdbc:po".equals(urlbeginning)) {
-      sqlRequest = "ALTER SEQUENCE " + tableName + "_id_seq RESTART WITH " + idMax + ";";
-    } else if ("jdbc:my".equals(urlbeginning)) {
-      sqlRequest = "ALTER TABLE " + tableName + " AUTO_INCREMENT = " + idMax + ";";
-    } else {
-      throw new DbException("URL : "+urlbeginning+" does not correspond to a correct format to reset auto increment idMax.", new Exception());
+  public boolean isPostgresql(DatabaseMetaData metaData) throws SQLException {
+    boolean isPostgresql = false;
+    String vendorUrl = metaData.getURL().substring(0, 7);
+    if ("jdbc:po".equals(vendorUrl)) {
+      isPostgresql = true;
     }
-    return sqlRequest;
+    return isPostgresql;
   }
 
-  public long getIdMaxPlusOne(Connection connectionDest, String tableName) {
-    Closer closer = new Closer("getIdMax");
-    Statement statement = null;
-    ResultSet resultSet = null;
-    long idMaxToReturn = 1;
-    try {
-      statement = connectionDest.createStatement();
-      resultSet = statement.executeQuery("SELECT max(id) FROM " + tableName);
-      while (resultSet.next()) {
-        idMaxToReturn = resultSet.getLong(1);
-      }
-      return idMaxToReturn + 1;
-    } catch (SQLException e) {
-      throw new DbException("Problem with sql request to select id max in Sequence Reseter at TABLE : "+tableName+".", new Exception());
-    } finally {
-      closer.closeResultSet(resultSet);
-      closer.closeStatement(statement);
+  public boolean isMySql(DatabaseMetaData metaData) throws SQLException {
+    boolean isMySql = false;
+    String vendorUrl = metaData.getURL().substring(0, 7);
+    if ("jdbc:my".equals(vendorUrl)) {
+      isMySql = true;
     }
+    return isMySql;
   }
+
+  public boolean isH2(DatabaseMetaData metaData) throws SQLException {
+    boolean isH2 = false;
+    String vendorUrl = metaData.getURL().substring(0, 7);
+    if ("jdbc:h2".equals(vendorUrl)) {
+      isH2 = true;
+    }
+    return isH2;
+  }
+
 }
