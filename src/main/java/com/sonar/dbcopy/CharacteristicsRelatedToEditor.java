@@ -67,7 +67,7 @@ public class CharacteristicsRelatedToEditor {
       }
       return idMaxToReturn + 1;
     } catch (SQLException e) {
-      throw new DbException("Problem with sql request to select id max in Sequence Reseter at TABLE : " + tableName + ".", new Exception());
+      throw new DbException("Problem with sql request to select id max in Sequence Reseter at TABLE : " + tableName + ".", e);
     } finally {
       closer.closeResultSet(resultSet);
       closer.closeStatement(statement);

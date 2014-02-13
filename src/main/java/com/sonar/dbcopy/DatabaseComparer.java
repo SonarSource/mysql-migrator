@@ -10,10 +10,9 @@ import org.slf4j.LoggerFactory;
 public class DatabaseComparer {
 
   private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-  private int nbMissingTableInDest;
 
   public void displayAllTablesFoundIfExists(Database dbSource, Database dbDestination) {
-    nbMissingTableInDest = 0;
+    int nbMissingTableInDest = 0;
 
     // DISPLAY SOURCE TABLES
     for (int indexTable = 0; indexTable < dbSource.getNbTables(); indexTable++) {
@@ -51,13 +50,13 @@ public class DatabaseComparer {
     }
   }
 
-  public void displayMissingTableInDb(Database fullDb, Database missDb,String missDbStatus) {
-    Table realTable = null, missTableToFind = null;
+  public void displayMissingTableInDb(Database fullDb, Database missDb, String missDbStatus) {
+    Table realTable, missTableToFind;
     for (int indexTable = 0; indexTable < fullDb.getNbTables(); indexTable++) {
       realTable = fullDb.getTable(indexTable);
       missTableToFind = findTableByNameInDb(missDb, realTable.getName());
       if (missTableToFind == null) {
-        LOGGER.warn("TABLE " + fullDb.getTableName(indexTable) + " is not present in the "+missDbStatus+" database. Have a look to the logs \"FOUND TABLES\".");
+        LOGGER.warn("TABLE " + fullDb.getTableName(indexTable) + " is not present in the " + missDbStatus + " database. Have a look to the logs \"FOUND TABLES\".");
       }
     }
   }

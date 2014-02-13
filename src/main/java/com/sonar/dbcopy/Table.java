@@ -28,14 +28,23 @@ public class Table {
   }
 
   public void addColumn(int index, String columnName, Integer type) {
+    String columnNameToInsert = null;
+    Integer typeToInsert = null;
+
     if (columnName == null) {
-      columnName = "null";
+      columnNameToInsert = "null";
+    } else {
+      columnNameToInsert = columnName;
     }
+
     if (type == null) {
-      type = 0;
+      typeToInsert = 0;
+    } else {
+      typeToInsert = type;
     }
-    columns.add(index, columnName);
-    types.add(index, type);
+
+    columns.add(index, columnNameToInsert);
+    types.add(index, typeToInsert);
   }
 
 

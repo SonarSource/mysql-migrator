@@ -42,12 +42,12 @@ public class SequenceReseter {
         sqlRequest = relToEditor.makeAlterSequencesRequest(metaDest, tableName, idMaxPlusOne);
 
         statement = connectionDest.createStatement();
-        if(destinationIsOracle){
-         statement.execute(relToEditor.makeDropSequenceRequest(tableName));
+        if (destinationIsOracle) {
+          statement.execute(relToEditor.makeDropSequenceRequest(tableName));
         }
         statement.execute(sqlRequest);
 
-        LOGGER.info("SEQUENCE ADJUSTED IN : " + tableName + " at "+ idMaxPlusOne);
+        LOGGER.info("SEQUENCE ADJUSTED IN : " + tableName + " at " + idMaxPlusOne);
       }
     } catch (SQLException e) {
       throw new DbException("Problem to execute the adjustment of autoincrement  with last id + 1 :" + sqlRequest + " at TABLE : " + tableName + ".", e);

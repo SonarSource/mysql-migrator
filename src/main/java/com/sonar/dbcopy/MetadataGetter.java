@@ -44,7 +44,7 @@ public class MetadataGetter {
       closer.closeResultSet(resultSetTables);
 
       /* GET COLUMNS FROM TABLES */
-      this.addColumns(metaData);
+      this.addColumns();
 
       /* GET NB ROWS BY TABLE */
       this.addNbRowInTables(statementSource);
@@ -70,7 +70,7 @@ public class MetadataGetter {
     }
   }
 
-  private void addColumns(DatabaseMetaData metaData) {
+  private void addColumns() {
     ResultSet resultSetCol = null;
     int indexTable = 0;
     int indexColumn;

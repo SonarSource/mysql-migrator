@@ -22,7 +22,7 @@ public class VersionVerifier {
       statement = connection.createStatement();
       resultSet = statement.executeQuery("SELECT version FROM schema_migrations");
 
-      while ((resultSet.next())) {
+      while (resultSet.next()) {
         String versionString = resultSet.getString(1);
         int versionInteger = Integer.parseInt(versionString);
         if (versionInteger > maxVersionId) {

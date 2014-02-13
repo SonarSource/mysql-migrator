@@ -9,6 +9,7 @@ package com.sonar.dbcopy;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.sql.*;
@@ -21,6 +22,7 @@ public class LoopWriter {
   private Table sourceTable, destTable;
   private Connection connectionSource, connectionDestination;
   private boolean sourceIsOracle, sourceIsSqlServer, destinationIsPostgresql, destinationIsOracle, destinationIsSqlServer;
+  private String logExceptionContext;
 
   public LoopWriter(Table sourceTable, Table destTable, int indexTable, String sqlInsertRequest) {
     this.sourceTable = sourceTable;
@@ -54,6 +56,11 @@ public class LoopWriter {
       while (resultSetSource.next()) {
         lineWritten++;
         for (indexColumn = 0; indexColumn < nbColInTable; indexColumn++) {
+          logExceptionContext = "Problem when converting data in LoopWriter for the TABLE (" + tableName + ") " +
+            "in COLUMN SOURCE (name:" + sourceTable.getColumnName(indexColumn) + ",type:" + sourceTable.getType(indexColumn) + ")" +
+            " and COLUMN DEST(name:" + destTable.getColumnName(indexColumn) + ",type:" + destTable.getType(indexColumn) + ") " +
+            "at ROW (" + lineWritten + ") for OBJECT SOURCE(" + objectGetted + ") ";
+
           objectGetted = resultSetSource.getObject(indexColumn + 1);
 
 /* COPY : HERE IS TREATED CASES WITH PROBLEM */
@@ -140,11 +147,10 @@ public class LoopWriter {
       connectionDestination.commit();
       closer.closeStatement(destinationStatement);
 
-    } catch (Exception e) {
-      throw new DbException("Problem when converting data in LoopWriter for the TABLE (" + tableName + ") " +
-        "in COLUMN SOURCE (name:" + sourceTable.getColumnName(indexColumn) + ",type:" + sourceTable.getType(indexColumn) + ")" +
-        " and COLUMN DEST(name:" + destTable.getColumnName(indexColumn) + ",type:" + destTable.getType(indexColumn) + ") " +
-        "at ROW (" + lineWritten + ") for OBJECT SOURCE(" + objectGetted + ") ", e);
+    } catch (IOException e) {
+      throw new DbException(logExceptionContext, e);
+    } catch (SQLException e) {
+      throw new DbException(logExceptionContext, e);
     } finally {
       closer.closeResultSet(resultSetSource);
       closer.closeStatement(sourceStatement);
