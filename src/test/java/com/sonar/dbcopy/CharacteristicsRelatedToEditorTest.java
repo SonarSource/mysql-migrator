@@ -35,6 +35,6 @@ public class CharacteristicsRelatedToEditorTest {
 
   @Test
   public void testGiveTableNameRelatedToVendor() throws SQLException {
-    assertEquals("TABLE", chRelToEd.transfromCaseOfTableNameRelatedToEditor(metaData, "table"));
+    assertEquals("TABLE", chRelToEd.transfromCaseOfTableName(metaData, "table"));
   }
 }
