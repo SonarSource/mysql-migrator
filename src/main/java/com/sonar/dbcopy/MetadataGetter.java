@@ -32,7 +32,7 @@ public class MetadataGetter {
     try {
       statementSource = connectionSource.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
-      /* WARNING !! TO GET TABLES FROM METADATA IT DEPENDS ON THE DATABASE VENDOR */
+      /* WARNING !! TO GET TABLES FROM METADATA IT DEPENDS ON THE VALUE OF SCHEMA EDITOR */
       metaData = connectionSource.getMetaData();
 
       chRelToEd = new CharacteristicsRelatedToEditor();
@@ -44,14 +44,10 @@ public class MetadataGetter {
       closer.closeResultSet(resultSetTables);
 
       /* GET COLUMNS FROM TABLES */
-
       this.addColumns(metaData);
 
       /* GET NB ROWS BY TABLE */
       this.addNbRowInTables(statementSource);
-
-      /* LOG RESULTS */
-      this.displayFoundTables();
 
     } catch (SQLException e) {
       throw new DbException("Problem to get schema from database source.", e);
@@ -81,7 +77,7 @@ public class MetadataGetter {
     try {
       for (indexTable = 0; indexTable < database.getNbTables(); indexTable++) {
         indexColumn = 0;
-        String tableNameWithAdaptedCase = chRelToEd.transfromCaseOfTableNameRelatedToEditor(metaData, database.getTableName(indexTable));
+        String tableNameWithAdaptedCase = chRelToEd.transfromCaseOfTableName(metaData, database.getTableName(indexTable));
 
         //ORACLE NEEDS UPERCASE TO EXECUTE getColumns()
         resultSetCol = metaData.getColumns(null, null, tableNameWithAdaptedCase, "%");
@@ -115,15 +111,6 @@ public class MetadataGetter {
       throw new DbException("Problem to add number of rows in TABLE : " + database.getTableName(indexTable) + ".", e);
     } finally {
       closer.closeResultSet(resultSetRows);
-    }
-  }
-
-  private void displayFoundTables() {
-    for (int indexTable = 0; indexTable < database.getNbTables(); indexTable++) {
-      ListColumnsAsString lcas = new ListColumnsAsString(database.getTable(indexTable));
-      LOGGER.info("FOUND TABLE : " + database.getTableName(indexTable));
-      LOGGER.info("                COLUMNS : (" + lcas.makeColumnString() + ")");
-      LOGGER.info("                TYPES : (" + lcas.makeStringOfTypes() + ")");
     }
   }
 }

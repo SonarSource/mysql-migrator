@@ -11,8 +11,7 @@ import java.sql.*;
 public class CharacteristicsRelatedToEditor {
 
   public String getSchema(DatabaseMetaData metaData) throws SQLException {
-    // USED FOR metadata.getTables WHICH NEED "public" WITH POSTGRESQL AND UPPERCASE  USER NAME WITH ORACLE
-//    String vendorUrl = metaData.getURL().substring(0, 7);
+    // USED FOR metadata.getTables WHICH NEED "public" WITH POSTGRESQL AND UPPERCASE USER NAME WITH ORACLE
     String schema;
     if (isPostgresql(metaData)) {
       schema = "public";
@@ -24,9 +23,8 @@ public class CharacteristicsRelatedToEditor {
     return schema;
   }
 
-  public String transfromCaseOfTableNameRelatedToEditor(DatabaseMetaData metaData, String tableNameToChangeCase) throws SQLException {
+  public String transfromCaseOfTableName(DatabaseMetaData metaData, String tableNameToChangeCase) throws SQLException {
     // USED FOR metadata.getColumns WHICH NEED UPPERCASE WITH ORACLE
-    String vendorUrl = metaData.getURL().substring(0, 7);
     String tableNameToReturn;
     if (isOracle(metaData) || isH2(metaData)) {
       tableNameToReturn = tableNameToChangeCase.toUpperCase();
@@ -40,14 +38,12 @@ public class CharacteristicsRelatedToEditor {
     return "DROP SEQUENCE " + tableName.toUpperCase() + "_SEQ";
   }
 
-  public String makeRequestRelatedToEditor(DatabaseMetaData metadata, String tableName, long idMaxPlusOne) throws SQLException {
-
-    String sqlRequest = "";
-
+  public String makeAlterSequencesRequest(DatabaseMetaData metadata, String tableName, long idMaxPlusOne) throws SQLException {
+    String sqlRequest;
     if (isSqlServer(metadata)) {
       sqlRequest = "dbcc checkident(" + tableName + ",reseed," + idMaxPlusOne + ");";
     } else if (isOracle(metadata)) {
-      sqlRequest = "CREATE SEQUENCE " + tableName.toUpperCase() + "_SEQ START WITH " + idMaxPlusOne + " MAXVALUE 999999999999999999999999999 MINVALUE 1 NOCYCLE CACHE 20 NOORDER";
+      sqlRequest = "CREATE SEQUENCE " + tableName.toUpperCase() + "_SEQ INCREMENT BY 1 MINVALUE 1 START WITH " + idMaxPlusOne;
     } else if (isPostgresql(metadata)) {
       sqlRequest = "ALTER SEQUENCE " + tableName + "_id_seq RESTART WITH " + idMaxPlusOne + ";";
     } else if (isMySql(metadata)) {

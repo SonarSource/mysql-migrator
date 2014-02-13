@@ -44,40 +44,37 @@ public class StartApp {
     } else {
       LOGGER.info("WELL DONE !! The versions of SonarQube schema migration are the same between source (" + maxVersionIdSource + ") and destination (" + maxVersionIdDestination + ").");
     }
-    LOGGER.info(starLine + " SEARCH TABLES FROM SOURCE " + starLine);
 
 
     /* GET METADATA FROM SOURCE AND FROM DESTINATION */
+    LOGGER.info(starLine + " SEARCH TABLES " + starLine);
     MetadataGetter metadataGetterSource = new MetadataGetter(connecterDatasSource, databaseSource);
     metadataGetterSource.execute();
-
-    LOGGER.info(starLine + " SEARCH TABLES FROM DESTINATION " + starLine);
-
     MetadataGetter metadataGetterDest = new MetadataGetter(connecterDatasDest, databaseDest);
     metadataGetterDest.execute();
 
-    LOGGER.info(starLine + " DELETE TABLES FROM DESTINATION " + starLine);
+    /* DISPLAY TABLES FOUND */
+    LOGGER.info(starLine + " FOUND TABLES " + starLine);
+    DatabaseComparer dbComparer = new DatabaseComparer();
+    dbComparer.displayAllTablesFoundIfExists(databaseSource, databaseDest);
+
 
     /* DELETE TABLE CONTENT OF DATABASE DESTINATION */
+    LOGGER.info(starLine + " DELETE TABLES FROM DESTINATION " + starLine);
     Deleter deleter = new Deleter(connecterDatasDest, databaseSource);
     deleter.execute(databaseDest);
 
-    LOGGER.info(starLine + " COPY DATA " + starLine);
 
     /* COPY DATA FROM SOURCE TO DESTINATION */
+    LOGGER.info(starLine + " COPY DATA " + starLine);
     Reproducer reproducer = new Reproducer(connecterDatasSource, connecterDatasDest, databaseSource, databaseDest);
-    reproducer.execute(databaseDest);
+    reproducer.execute();
 
-    LOGGER.info(starLine + " SEARCH FOR MISTAKES " + starLine);
 
     /* FIND AND DISPLAY TABLES PRESENT IN DESTINATION BUT NOT IN SOURCE */
-    DatabaseComparer dbComparer = new DatabaseComparer(databaseSource);
-    for (int indexTable = 0; indexTable < databaseSource.getNbTables(); indexTable++) {
-      String tableNameDest = databaseDest.getTableName(indexTable);
-      if (!dbComparer.tableExistsInDestinationDatabase(tableNameDest)) {
-        LOGGER.warn("TABLE " + tableNameDest + " IN DESTINATION WAS NOT COPIED BECAUSE IT IS NOT PRESENT IN DATABASE SOURCE.");
-      }
-    }
+    LOGGER.info(starLine + " SEARCH FOR MISTAKES " + starLine);
+    dbComparer.displayMissingTableInDb(databaseSource, databaseDest, "DESTINATION");
+    dbComparer.displayMissingTableInDb(databaseDest, databaseSource, "SOURCE");
 
     LOGGER.info("** THE COPY HAS FINISHED SUCCESSFULLY **");
     LOGGER.info(starLine + starLine + starLine);

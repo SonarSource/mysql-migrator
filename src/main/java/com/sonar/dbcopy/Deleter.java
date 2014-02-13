@@ -19,36 +19,35 @@ public class Deleter {
   private ConnecterDatas cdDest;
   private Database databaseSource;
 
-  public Deleter(ConnecterDatas cdDest, Database dbS) {
+  public Deleter(ConnecterDatas cdDest, Database databaseSource) {
     this.cdDest = cdDest;
-    this.databaseSource = dbS;
+    this.databaseSource = databaseSource;
   }
 
   public void execute(Database databaseDest) {
     Closer closer = new Closer("Deleter");
-    DatabaseComparer dbComparer = new DatabaseComparer(databaseDest);
-    String tableName = null;
+    DatabaseComparer dbComparer = new DatabaseComparer();
+    String tableNameSource = null;
     Statement statementToDelete = null;
     Connection connectionDest = null;
     try {
       connectionDest = new Connecter().doConnection(cdDest);
       statementToDelete = connectionDest.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
 
-      // DELETE IS DONE ONLY ON THE SAME TABLES THAN SOURCE TO AVOID REPEATING UNIQUE ID
+      // DELETING DESTINATION TABLE FROM SOURCE DATABASE TABLE LIST ONLY WHEN IT IS PRESENT IN DESTINATION
       for (int indexTable = 0; indexTable < this.databaseSource.getNbTables(); indexTable++) {
-        tableName = this.databaseSource.getTableName(indexTable);
-        if (dbComparer.tableExistsInDestinationDatabase(tableName)) {
-          statementToDelete.execute("DELETE FROM " + tableName);
-          LOGGER.info("DELETE: " + indexTable + "   " + tableName);
+        tableNameSource = this.databaseSource.getTableName(indexTable);
+        if (dbComparer.findTableByNameInDb(databaseDest, tableNameSource) != null) {
+          statementToDelete.execute("DELETE FROM " + tableNameSource);
+          LOGGER.info("DELETE: " + indexTable + "   " + tableNameSource);
         } else {
-          LOGGER.error("WARNING !! Can't DELETE  TABLE :" + tableName + " because it doesn't exist in destination database. ");
+          LOGGER.error("WARNING !! Can't DELETE  TABLE :" + tableNameSource + " because it doesn't exist in destination database. ");
         }
       }
-
       closer.closeStatement(statementToDelete);
 
     } catch (SQLException e) {
-      throw new DbException("Deleting datas from destination failed for TABLE : " + tableName + " .", e);
+      throw new DbException("Deleting datas from destination failed for TABLE : " + tableNameSource + " .", e);
     } finally {
       closer.closeStatement(statementToDelete);
       closer.closeConnection(connectionDest);

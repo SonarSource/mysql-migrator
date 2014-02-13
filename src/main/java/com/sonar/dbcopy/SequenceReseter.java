@@ -28,21 +28,21 @@ public class SequenceReseter {
     CharacteristicsRelatedToEditor relToEditor = new CharacteristicsRelatedToEditor();
 
     try {
-      DatabaseMetaData metadata = connectionDest.getMetaData();
+      DatabaseMetaData metaDest = connectionDest.getMetaData();
 
-      String tableNameWithGoodCase = relToEditor.transfromCaseOfTableNameRelatedToEditor(metadata,tableName);
-      boolean destIsOracle =  relToEditor.isOracle(metadata);
+      String tableNameWithGoodCase = relToEditor.transfromCaseOfTableName(metaDest, tableName);
+      boolean destinationIsOracle =  relToEditor.isOracle(metaDest);
 
-        resultSet = metadata.getPrimaryKeys(null, null, tableNameWithGoodCase);
+        resultSet = metaDest.getPrimaryKeys(null, null, tableNameWithGoodCase);
 
       // if resultset is not "beforeFirst" that means there is a primary key
       if (resultSet.isBeforeFirst()) {
         closer.closeResultSet(resultSet);
         long idMaxPlusOne = relToEditor.getIdMaxPlusOne(connectionDest, tableName);
-        sqlRequest = relToEditor.makeRequestRelatedToEditor(metadata, tableName, idMaxPlusOne);
+        sqlRequest = relToEditor.makeAlterSequencesRequest(metaDest, tableName, idMaxPlusOne);
 
         statement = connectionDest.createStatement();
-        if(destIsOracle){
+        if(destinationIsOracle){
          statement.execute(relToEditor.makeDropSequenceRequest(tableName));
         }
         statement.execute(sqlRequest);

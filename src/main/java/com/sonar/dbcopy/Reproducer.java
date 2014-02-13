@@ -19,26 +19,24 @@ public class Reproducer {
   private Database databaseSource, databaseDest;
   private CharacteristicsRelatedToEditor chRelToEditor;
 
-  public Reproducer(ConnecterDatas cdSource, ConnecterDatas cdDest, Database dbS, Database dbD) {
+  public Reproducer(ConnecterDatas cdSource, ConnecterDatas cdDest, Database databaseSource, Database databaseDest) {
     this.cdSource = cdSource;
     this.cdDest = cdDest;
-    this.databaseSource = dbS;
-    this.databaseDest = dbD;
+    this.databaseSource = databaseSource;
+    this.databaseDest = databaseDest;
     this.chRelToEditor = new CharacteristicsRelatedToEditor();
   }
 
-  public void execute(Database databaseDest) {
+  public void execute() {
     Closer closer = new Closer("Reproducer");
-    DatabaseComparer dbComparer = new DatabaseComparer(databaseDest);
+    DatabaseComparer dbComparer = new DatabaseComparer();
     ModifySqlServerOption modifySqlServerOption = null;
-    boolean destinationIsSqlServer = false, sourceIsOracle = false;
     int indexTable = 0;
     Connection connectionSource = new Connecter().doConnection(cdSource);
     Connection connectionDestination = new Connecter().doConnection(cdDest);
     try {
       DatabaseMetaData metaDest = connectionDestination.getMetaData();
-      destinationIsSqlServer = chRelToEditor.isSqlServer(metaDest);
-//      boolean destinationIsOracle = chRelToEditor.isOracle(metaDest);
+      boolean destinationIsSqlServer = chRelToEditor.isSqlServer(metaDest);
 
       connectionDestination.setAutoCommit(false);
 
@@ -53,9 +51,10 @@ public class Reproducer {
         Table tableSource = databaseSource.getTable(indexTable);
         String tableSourceName = tableSource.getName();
 
-
         // VERIFY IF TABLE EXISTS IN DESTINATION
-        if (dbComparer.tableExistsInDestinationDatabase(tableSourceName)) {
+        if (dbComparer.findTableByNameInDb(databaseDest, tableSourceName) == null) {
+          LOGGER.error("WARNING !! Can't WRITE in TABLE :" + tableSourceName + " because it doesn't exist in destination database. ");
+        } else {
 
           ListColumnsAsString lcas = new ListColumnsAsString(tableSource);
           String sqlRequest = "INSERT INTO " + tableSourceName + " (" + lcas.makeColumnString() + ") VALUES(" + lcas.makeQuestionMarkString() + ")";
@@ -65,9 +64,6 @@ public class Reproducer {
             modifySqlServerOption.modifyIdentityInsert(connectionDestination, tableSourceName, "ON");
           }
 
-          if(tableSourceName.equals("measure_data")){
-            System.out.println("coucou");
-          }
           // READ AND WRITE
           LOGGER.info("START COPY IN : " + indexTable + "   " + tableSourceName + ".");
           LoopWriter loopWriter = new LoopWriter(tableSource, databaseDest.getTableByName(tableSourceName), indexTable, sqlRequest);
@@ -75,16 +71,13 @@ public class Reproducer {
           LOGGER.info("DATA COPIED IN : " + indexTable + "   " + tableSourceName + ".");
 
           // RESET SEQUENCE
-            SequenceReseter sequenceReseter = new SequenceReseter(tableSourceName, connectionDestination);
-            sequenceReseter.execute();
+          SequenceReseter sequenceReseter = new SequenceReseter(tableSourceName, connectionDestination);
+          sequenceReseter.execute();
 
           //SQL SERVER DESTINATION OPTION :  PUT IDENTITY_INSERT AT off FOR THE CURRENT TABLE
           if (destinationIsSqlServer) {
             modifySqlServerOption.modifyIdentityInsert(connectionDestination, tableSourceName, "OFF");
           }
-
-        } else {
-          LOGGER.error("WARNING !! Can't WRITE in TABLE :" + tableSourceName + " because it doesn't exist in destination database. ");
         }
       }
 
