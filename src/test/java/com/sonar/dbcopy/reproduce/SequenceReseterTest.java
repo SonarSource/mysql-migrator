@@ -4,8 +4,9 @@
  * mailto:contact AT sonarsource DOT com
  */
 
-package com.sonar.dbcopy;
+package com.sonar.dbcopy.reproduce;
 
+import com.sonar.dbcopy.Utils;
 import com.sonar.dbcopy.reproduce.SequenceReseter;
 import com.sonar.dbcopy.utils.DbException;
 import org.junit.After;

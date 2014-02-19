@@ -33,10 +33,6 @@ public class Database {
     return tablesList.get(indexTable);
   }
 
-  public int getNbColumnInTable(int indexTable) {
-    return tablesList.get(indexTable).getNbColumns();
-  }
-
   public Table getTableByName(String tableNameToReturn) {
     Table tableToReturn = null;
     for (int indexTable = 0; indexTable < tablesList.size(); indexTable++) {

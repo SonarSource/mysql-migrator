@@ -4,7 +4,7 @@
  * mailto:contact AT sonarsource DOT com
  */
 
-package com.sonar.dbcopy;
+package com.sonar.dbcopy.utils.objects;
 
 import com.sonar.dbcopy.utils.objects.Database;
 import org.junit.Before;
@@ -41,5 +41,4 @@ public class DatabaseTest {
     assertEquals("table1", database.getTableName(0));
     assertEquals("table2", database.getTableName(1));
   }
-
 }

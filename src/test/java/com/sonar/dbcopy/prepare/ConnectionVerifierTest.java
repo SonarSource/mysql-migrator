@@ -4,8 +4,9 @@
  * mailto:contact AT sonarsource DOT com
  */
 
-package com.sonar.dbcopy;
+package com.sonar.dbcopy.prepare;
 
+import com.sonar.dbcopy.Utils;
 import com.sonar.dbcopy.utils.objects.ConnecterDatas;
 import com.sonar.dbcopy.prepare.ConnectionVerifier;
 import com.sonar.dbcopy.utils.DbException;

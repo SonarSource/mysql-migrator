@@ -4,7 +4,7 @@
  * mailto:contact AT sonarsource DOT com
  */
 
-package com.sonar.dbcopy;
+package com.sonar.dbcopy.utils.objects;
 
 import com.sonar.dbcopy.utils.objects.Table;
 import org.junit.Before;
