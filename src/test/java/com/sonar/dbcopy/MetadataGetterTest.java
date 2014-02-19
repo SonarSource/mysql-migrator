@@ -6,6 +6,11 @@
 
 package com.sonar.dbcopy;
 
+import com.sonar.dbcopy.prepare.MetadataGetter;
+import com.sonar.dbcopy.utils.Closer;
+import com.sonar.dbcopy.utils.DbException;
+import com.sonar.dbcopy.utils.objects.ConnecterDatas;
+import com.sonar.dbcopy.utils.objects.Database;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,15 +19,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import static org.fest.assertions.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class MetadataGetterTest {
 
   private MetadataGetter mdg;
   private Database database;
   private Connection connectionForFilled, connectionWithoutTable;
+  private Closer closer;
 
   @Before
   public void setUp() throws SQLException, ClassNotFoundException {
@@ -30,6 +34,7 @@ public class MetadataGetterTest {
     database = new Database();
     connectionForFilled = utils.makeFilledH2("filledDatabase");
     connectionWithoutTable = utils.makeH2("withoutTables");
+    closer = new Closer("MetadataGetterTest");
   }
 
   @Test
@@ -42,16 +47,23 @@ public class MetadataGetterTest {
     assertEquals(2, database.getNbTables());
 
     assertEquals("empty_table_for_test", database.getTableName(0));
+    assertEquals(0, database.getTable(0).getNbRows());
+    assertEquals(3, database.getTable(0).getNbColumns());
     assertEquals("id", database.getTable(0).getColumnName(0));
     assertEquals("colstring", database.getTable(0).getColumnName(1));
     assertEquals("coltimestamp", database.getTable(0).getColumnName(2));
 
     assertEquals("table_for_test", database.getTableName(1));
     assertEquals(2, database.getTable(1).getNbRows());
-    assertEquals(3, database.getTable(1).getNbColumns());
-    assertEquals("columninteger", database.getTable(1).getColumnName(0));
+    assertEquals(7, database.getTable(1).getNbColumns());
+    assertEquals("id", database.getTable(1).getColumnName(0));
     assertEquals("columnstring", database.getTable(1).getColumnName(1));
     assertEquals("columntimestamp", database.getTable(1).getColumnName(2));
+    assertEquals("columnblob", database.getTable(1).getColumnName(3));
+    assertEquals("columnclob", database.getTable(1).getColumnName(4));
+    assertEquals("columnboolean", database.getTable(1).getColumnName(5));
+    assertEquals("columntobenull", database.getTable(1).getColumnName(6));
+
   }
 
   @Test
@@ -68,10 +80,6 @@ public class MetadataGetterTest {
 
   @After
   public void tearDown() {
-    try {
-      connectionForFilled.close();
-    } catch (SQLException e) {
-      throw new DbException("Impossible to close H2 connection.", e);
-    }
+    closer.closeConnection(connectionForFilled);
   }
 }

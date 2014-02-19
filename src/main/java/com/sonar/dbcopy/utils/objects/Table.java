@@ -4,7 +4,7 @@
  * mailto:contact AT sonarsource DOT com
  */
 
-package com.sonar.dbcopy;
+package com.sonar.dbcopy.utils.objects;
 
 import java.util.ArrayList;
 import java.util.List;

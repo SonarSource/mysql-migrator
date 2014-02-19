@@ -4,8 +4,14 @@
  * mailto:contact AT sonarsource DOT com
  */
 
-package com.sonar.dbcopy;
+package com.sonar.dbcopy.prepare;
 
+import com.sonar.dbcopy.utils.Closer;
+import com.sonar.dbcopy.utils.Connecter;
+import com.sonar.dbcopy.utils.DatabaseComparer;
+import com.sonar.dbcopy.utils.DbException;
+import com.sonar.dbcopy.utils.objects.ConnecterDatas;
+import com.sonar.dbcopy.utils.objects.Database;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;

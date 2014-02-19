@@ -5,6 +5,15 @@
  */
 package com.sonar.dbcopy;
 
+import com.sonar.dbcopy.prepare.ConnectionVerifier;
+import com.sonar.dbcopy.prepare.Deleter;
+import com.sonar.dbcopy.prepare.MetadataGetter;
+import com.sonar.dbcopy.prepare.VersionVerifier;
+import com.sonar.dbcopy.reproduce.Reproducer;
+import com.sonar.dbcopy.utils.DatabaseComparer;
+import com.sonar.dbcopy.utils.DbException;
+import com.sonar.dbcopy.utils.objects.ConnecterDatas;
+import com.sonar.dbcopy.utils.objects.Database;
 import org.slf4j.LoggerFactory;
 
 public class StartApp {

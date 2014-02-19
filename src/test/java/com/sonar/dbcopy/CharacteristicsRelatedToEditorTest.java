@@ -6,6 +6,7 @@
 
 package com.sonar.dbcopy;
 
+import com.sonar.dbcopy.utils.CharacteristicsRelatedToEditor;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -6,6 +6,7 @@
 
 package com.sonar.dbcopy;
 
+import com.sonar.dbcopy.utils.objects.ConnecterDatas;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;

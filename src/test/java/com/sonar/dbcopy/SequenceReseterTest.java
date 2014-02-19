@@ -6,6 +6,8 @@
 
 package com.sonar.dbcopy;
 
+import com.sonar.dbcopy.reproduce.SequenceReseter;
+import com.sonar.dbcopy.utils.DbException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +16,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import static org.fest.assertions.Assertions.assertThat;
-import static org.junit.Assert.fail;
 
 
 public class SequenceReseterTest {
@@ -38,6 +39,6 @@ public class SequenceReseterTest {
 
   @After
   public void tearDown() throws SQLException {
-     connection.close();
+    connection.close();
   }
 }

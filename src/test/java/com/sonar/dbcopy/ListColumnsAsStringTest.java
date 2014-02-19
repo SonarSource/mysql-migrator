@@ -6,6 +6,8 @@
 
 package com.sonar.dbcopy;
 
+import com.sonar.dbcopy.utils.objects.Table;
+import com.sonar.dbcopy.utils.ListColumnsAsString;
 import org.junit.Before;
 import org.junit.Test;
 

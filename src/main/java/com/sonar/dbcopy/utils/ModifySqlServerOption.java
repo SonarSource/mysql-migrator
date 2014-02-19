@@ -3,7 +3,7 @@
  * All rights reserved
  * mailto:contact AT sonarsource DOT com
  */
-package com.sonar.dbcopy;
+package com.sonar.dbcopy.utils;
 
 import java.sql.*;
 
@@ -26,7 +26,7 @@ public class ModifySqlServerOption {
         closer.closeStatement(statement);
       }
     } catch (SQLException e) {
-      throw new DbException("Problem to SET IDENTITY_INSERT at "+onOroff+" in database Sqlserver for TABLE : "+tableName, e);
+      throw new DbException("Problem to SET IDENTITY_INSERT at " + onOroff + " in database Sqlserver for TABLE : " + tableName, e);
     } finally {
       closer.closeResultSet(rs);
       closer.closeStatement(statement);

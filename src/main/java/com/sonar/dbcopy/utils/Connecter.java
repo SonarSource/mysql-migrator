@@ -4,7 +4,9 @@
  * mailto:contact AT sonarsource DOT com
  */
 
-package com.sonar.dbcopy;
+package com.sonar.dbcopy.utils;
+
+import com.sonar.dbcopy.utils.objects.ConnecterDatas;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

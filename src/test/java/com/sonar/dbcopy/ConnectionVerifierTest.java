@@ -6,6 +6,9 @@
 
 package com.sonar.dbcopy;
 
+import com.sonar.dbcopy.utils.objects.ConnecterDatas;
+import com.sonar.dbcopy.prepare.ConnectionVerifier;
+import com.sonar.dbcopy.utils.DbException;
 import org.junit.Before;
 import org.junit.Test;
 

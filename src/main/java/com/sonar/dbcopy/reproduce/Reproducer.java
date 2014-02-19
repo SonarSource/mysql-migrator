@@ -4,8 +4,12 @@
  * mailto:contact AT sonarsource DOT com
  */
 
-package com.sonar.dbcopy;
+package com.sonar.dbcopy.reproduce;
 
+import com.sonar.dbcopy.utils.*;
+import com.sonar.dbcopy.utils.objects.ConnecterDatas;
+import com.sonar.dbcopy.utils.objects.Database;
+import com.sonar.dbcopy.utils.objects.Table;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
@@ -66,8 +70,8 @@ public class Reproducer {
 
           // READ AND WRITE
           LOGGER.info("START COPY IN : " + indexTable + "   " + tableSourceName + ".");
-          LoopWriter loopWriter = new LoopWriter(tableSource, databaseDest.getTableByName(tableSourceName), indexTable, sqlRequest);
-          loopWriter.readAndWrite(connectionSource, connectionDestination);
+          LoopToReadAndWrite loopToReadAndWrite = new LoopToReadAndWrite(tableSource, databaseDest.getTableByName(tableSourceName), indexTable, sqlRequest);
+          loopToReadAndWrite.prepareStatementAndStartCopy(connectionSource,connectionDestination);
           LOGGER.info("DATA COPIED IN : " + indexTable + "   " + tableSourceName + ".");
 
           // RESET SEQUENCE

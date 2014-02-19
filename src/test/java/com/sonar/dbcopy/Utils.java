@@ -5,13 +5,20 @@
  */
 package com.sonar.dbcopy;
 
+import com.sonar.dbcopy.utils.Closer;
+import com.sonar.dbcopy.utils.DbException;
+import com.sonar.dbcopy.utils.objects.Database;
 import org.h2.jdbcx.JdbcConnectionPool;
 
+import javax.sql.rowset.serial.SerialBlob;
 import java.sql.*;
 
 public class Utils {
 
+  private Closer closer;
+
   public Utils() {
+    closer = new Closer("Utils");
   }
 
   /* H2 */
@@ -34,16 +41,16 @@ public class Utils {
       preparedStatement.executeUpdate();
       preparedStatement = connection.prepareStatement("DROP TABLE IF EXISTS empty_table_for_test");
       preparedStatement.executeUpdate();
-      preparedStatement = connection.prepareStatement("CREATE TABLE table_for_test (columninteger integer NOT NULL PRIMARY KEY, columnstring varchar(50), columntimestamp timestamp)");
+      preparedStatement = connection.prepareStatement("CREATE TABLE table_for_test (id integer NOT NULL PRIMARY KEY AUTO_INCREMENT, columnstring varchar(50), columntimestamp timestamp, columnblob blob, columnclob clob, columnboolean boolean , columntobenull varchar(5))");
       preparedStatement.executeUpdate();
-      preparedStatement = connection.prepareStatement("CREATE TABLE empty_table_for_test (id integer PRIMARY KEY, colstring varchar(50), coltimestamp timestamp)");
+      preparedStatement = connection.prepareStatement("CREATE TABLE empty_table_for_test (id integer PRIMARY KEY AUTO_INCREMENT, colstring varchar(50), coltimestamp timestamp)");
       preparedStatement.executeUpdate();
 
       return connection;
     } catch (SQLException e) {
       throw new DbException("Problem to make H2 for tests", e);
     } finally {
-      preparedStatement.close();
+      closer.closeStatement(preparedStatement);
     }
   }
 
@@ -54,29 +61,51 @@ public class Utils {
       Connection connection = this.makeH2WithTables(databaseName);
 
       /* PREPARE STATEMENT TO INSERT DATAS */
-      String stringToInsert = "INSERT INTO table_for_test (columninteger , columnstring , columntimestamp ) VALUES (?,?,?)";
+      String stringToInsert = "INSERT INTO table_for_test (id , columnstring , columntimestamp, columnBlob , columnClob , columnBoolean  , columnTobeNull ) VALUES (?,?,?,?,?,?,?)";
       preparedStatement = connection.prepareStatement(stringToInsert);
 
       /* CREATE DATAS */
-      Object idForColumnInteger = 8;
-      Object stringForColumnString = "This is a first string for test";
-      Object timestampForColumnTimestamp = new Timestamp(123456);
+      Integer idForColumnId = 1;
+      String stringObj = "This is a first string for test";
+      Timestamp timestampObj = new Timestamp(123456);
+      byte[] bytes = "first string to be convert in byte".getBytes();
+      Blob blobObj = new SerialBlob(bytes);
+
+      //char[] charObj = "first string to be convert in clob".toCharArray();
+      //Clob clobObj = new SerialClob(charObj);
+
+      boolean booleanObj = true;
+
+
 
       /* INSERT A FIRST ROW OF DATAS IN DATABASE */
-      preparedStatement.setObject(1, idForColumnInteger);
-      preparedStatement.setObject(2, stringForColumnString);
-      preparedStatement.setObject(3, timestampForColumnTimestamp);
+      preparedStatement.setObject(1, idForColumnId);
+      preparedStatement.setObject(2, stringObj);
+      preparedStatement.setObject(3, timestampObj);
+      preparedStatement.setObject(4, blobObj);
+      preparedStatement.setBytes(5, bytes);
+      preparedStatement.setObject(6, booleanObj);
+      preparedStatement.setObject(7, null);
       preparedStatement.executeUpdate();
 
       /* MODIFY DATAS FOR SECOND ROW */
-      idForColumnInteger = 5;
-      stringForColumnString = "This is a second string for test";
-      Object timestampForColumnTimestamp2 = new Timestamp(456789);
+      idForColumnId = 2;
+      stringObj = "This is a second string for test";
+      timestampObj = new Timestamp(456789);
+      bytes = "second string to be convert in byte".getBytes();
+      blobObj = new SerialBlob(bytes);
+      //charObj = "second string to be convert in clob".toCharArray();
+      //clobObj = new SerialClob(charObj);
+      booleanObj = false;
 
       /* INSERT A SECOND ROW OF DATAS IN DATABASE */
-      preparedStatement.setObject(1, idForColumnInteger);
-      preparedStatement.setObject(2, stringForColumnString);
-      preparedStatement.setObject(3, timestampForColumnTimestamp2);
+      preparedStatement.setObject(1, idForColumnId);
+      preparedStatement.setObject(2, stringObj);
+      preparedStatement.setObject(3, timestampObj);
+      preparedStatement.setObject(4, blobObj);
+      preparedStatement.setBytes(5, bytes);
+      preparedStatement.setObject(6, booleanObj);
+      preparedStatement.setObject(7, null);
       preparedStatement.executeUpdate();
 
       return connection;
@@ -86,11 +115,7 @@ public class Utils {
     } catch (ClassNotFoundException e) {
       throw new DbException("Problem to insert data in H2 for test", e);
     } finally {
-      try {
-        preparedStatement.close();
-      } catch (SQLException e) {
-        throw new DbException("Problem to iclose h2 connection", e);
-      }
+      closer.closeStatement(preparedStatement);
     }
   }
 
@@ -110,12 +135,12 @@ public class Utils {
     database.addTable("table_for_test");
     database.addTable("empty_table_for_test");
 
-    database.getTable(0).addColumn(0,"columninteger", Types.INTEGER);
-    database.getTable(0).addColumn(1,"columnstring",Types.VARCHAR);
-    database.getTable(0).addColumn(2,"columntimestamp",Types.TIMESTAMP);
-    database.getTable(1).addColumn(0,"id",Types.SMALLINT);
-    database.getTable(1).addColumn(1,"colstring",Types.VARCHAR);
-    database.getTable(1).addColumn(2,"coltimestamp", Types.TIMESTAMP);
+    database.getTable(0).addColumn(0, "id", Types.INTEGER);
+    database.getTable(0).addColumn(1, "columnstring", Types.VARCHAR);
+    database.getTable(0).addColumn(2, "columntimestamp", Types.TIMESTAMP);
+    database.getTable(1).addColumn(0, "id", Types.SMALLINT);
+    database.getTable(1).addColumn(1, "colstring", Types.VARCHAR);
+    database.getTable(1).addColumn(2, "coltimestamp", Types.TIMESTAMP);
 
     database.getTable(0).setNbRows(2);
 

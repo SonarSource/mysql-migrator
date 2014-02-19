@@ -4,7 +4,7 @@
  * mailto:contact AT sonarsource DOT com
  */
 
-package com.sonar.dbcopy;
+package com.sonar.dbcopy.utils;
 
 import java.sql.*;
 
@@ -48,6 +48,8 @@ public class CharacteristicsRelatedToEditor {
       sqlRequest = "ALTER SEQUENCE " + tableName + "_id_seq RESTART WITH " + idMaxPlusOne + ";";
     } else if (isMySql(metadata)) {
       sqlRequest = "ALTER TABLE " + tableName + " AUTO_INCREMENT = " + idMaxPlusOne + ";";
+    } else if (isH2(metadata)) {
+      sqlRequest = "ALTER TABLE "+tableName+" ALTER COLUMN id RESTART WITH "+ idMaxPlusOne + ";";
     } else {
       throw new DbException("Url does not correspond to a correct format to reset auto increment idMaxPlusOne.", new Exception());
     }
@@ -118,5 +120,4 @@ public class CharacteristicsRelatedToEditor {
     }
     return isH2;
   }
-
 }
