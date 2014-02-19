@@ -12,15 +12,6 @@ import java.sql.SQLException;
 
 public interface CopierTool {
 
-  /* Dont forget to build object with a PreparedStatement from destination
-  *
-  * private PreparedStatement destStatement;
-  * public CopierTool(PreparedStatement destStatement){
-  *   this.destStatement = destStatement;
-  * }
-   *
-  * */
-
   public void copyTimestamp(ResultSet resultSetSource, int indexColumn) throws SQLException;
 
   public void copyBlob(ResultSet resultSetSource, int indexColumn) throws SQLException, IOException;
