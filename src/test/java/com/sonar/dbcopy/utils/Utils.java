@@ -3,7 +3,7 @@
  * All rights reserved
  * mailto:contact AT sonarsource DOT com
  */
-package com.sonar.dbcopy;
+package com.sonar.dbcopy.utils;
 
 import com.sonar.dbcopy.utils.Closer;
 import com.sonar.dbcopy.utils.DbException;

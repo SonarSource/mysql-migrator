@@ -9,6 +9,7 @@ package com.sonar.dbcopy.reproduce.tools;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 public class DefaultCopierTool implements CopierTool {
 
@@ -20,7 +21,8 @@ public class DefaultCopierTool implements CopierTool {
 
   @Override
   public void copyTimestamp(ResultSet resultSetSource, int indexColumn) throws SQLException {
-    copy(resultSetSource, indexColumn);
+    Timestamp objTimestamp = resultSetSource.getTimestamp(indexColumn + 1);
+    destinationStatement.setTimestamp(indexColumn + 1, objTimestamp);
   }
 
   @Override
@@ -35,7 +37,8 @@ public class DefaultCopierTool implements CopierTool {
 
   @Override
   public void copyBoolean(ResultSet resultSetSource, int indexColumn) throws SQLException {
-    copy(resultSetSource, indexColumn);
+    boolean object = resultSetSource.getBoolean(indexColumn + 1);
+    destinationStatement.setBoolean(indexColumn + 1, object);
   }
 
   @Override
@@ -48,4 +51,12 @@ public class DefaultCopierTool implements CopierTool {
   public void copyWhenNull(int indexColumn) throws SQLException {
     destinationStatement.setObject(indexColumn + 1, null);
   }
+
+  @Override
+  public void copyVarchar(ResultSet resultSetSource, int indexColumn) throws SQLException {
+    String stringToinsert = resultSetSource.getString(indexColumn+1);
+    stringToinsert = stringToinsert.replace("\u0000","");
+    destinationStatement.setString(indexColumn + 1, stringToinsert);
+  }
+
 }

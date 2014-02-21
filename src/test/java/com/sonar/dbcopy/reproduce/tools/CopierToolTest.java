@@ -6,7 +6,7 @@
 
 package com.sonar.dbcopy.reproduce.tools;
 
-import com.sonar.dbcopy.Utils;
+import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.Closer;
 import org.junit.After;
 import org.junit.Assert;

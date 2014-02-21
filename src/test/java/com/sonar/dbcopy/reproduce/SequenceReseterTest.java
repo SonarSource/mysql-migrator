@@ -6,9 +6,8 @@
 
 package com.sonar.dbcopy.reproduce;
 
-import com.sonar.dbcopy.Utils;
-import com.sonar.dbcopy.reproduce.SequenceReseter;
 import com.sonar.dbcopy.utils.DbException;
+import com.sonar.dbcopy.utils.Utils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

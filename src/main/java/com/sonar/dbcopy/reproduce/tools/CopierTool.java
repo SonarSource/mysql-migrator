@@ -24,4 +24,6 @@ public interface CopierTool {
 
   public void copyWhenNull(int indexColumn) throws SQLException;
 
-}
+  public void copyVarchar(ResultSet resultSetSource , int indexColumn) throws SQLException ;
+
+  }

@@ -51,7 +51,7 @@ public class Reproducer {
       /* ****** FOR EACH TABLE: ****** */
       for (indexTable = 0; indexTable < databaseSource.getNbTables(); indexTable++) {
 
-        // PREPARE REQUEST
+          // PREPARE REQUEST
         Table tableSource = databaseSource.getTable(indexTable);
         String tableSourceName = tableSource.getName();
 
@@ -69,10 +69,10 @@ public class Reproducer {
           }
 
           // READ AND WRITE
-          LOGGER.info("START COPY IN : " + indexTable + "   " + tableSourceName + ".");
+          LOGGER.info("START COPY IN TABLE " + indexTable + " : " + tableSourceName + ".");
           LoopToReadAndWrite loopToReadAndWrite = new LoopToReadAndWrite(tableSource, databaseDest.getTableByName(tableSourceName), indexTable, sqlRequest);
           loopToReadAndWrite.prepareStatementAndStartCopy(connectionSource,connectionDestination);
-          LOGGER.info("DATA COPIED IN : " + indexTable + "   " + tableSourceName + ".");
+          LOGGER.info("DATA COPIED IN TABLE " + indexTable + " :  " + tableSourceName + ".");
 
           // RESET SEQUENCE
           SequenceReseter sequenceReseter = new SequenceReseter(tableSourceName, connectionDestination);

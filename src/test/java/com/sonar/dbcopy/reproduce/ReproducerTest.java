@@ -6,9 +6,8 @@
 
 package com.sonar.dbcopy.reproduce;
 
-import com.sonar.dbcopy.Utils;
-import com.sonar.dbcopy.reproduce.Reproducer;
 import com.sonar.dbcopy.utils.DbException;
+import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.objects.ConnecterDatas;
 import com.sonar.dbcopy.utils.objects.Database;
 import org.junit.After;
@@ -59,7 +58,6 @@ public class ReproducerTest {
         resultSetDest.next();
         // ONLY TEST IF EACH TABLE HAS BEEN COPIED ( TESTS FOR ALL COLUMNS ARE DONE IN CopierToolTest)
         Assert.assertEquals(resultSetSource.getObject(1), resultSetDest.getObject(1));
-
       }
 
       resultSetSource = statementSource.executeQuery("SELECT * FROM empty_table_for_test ORDER BY 1");

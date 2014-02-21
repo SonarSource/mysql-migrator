@@ -67,4 +67,11 @@ public class OracleToPostgresql implements CopierTool {
   public void copyWhenNull(int indexColumn) throws SQLException {
     destinationStatement.setObject(indexColumn + 1, null);
   }
+
+  @Override
+  public void copyVarchar(ResultSet resultSetSource, int indexColumn) throws SQLException {
+    String stringToinsert = resultSetSource.getString(indexColumn + 1);
+    stringToinsert = stringToinsert.replace("\u0000", "");
+    destinationStatement.setString(indexColumn + 1, stringToinsert);
+  }
 }

@@ -6,19 +6,18 @@
 
 package com.sonar.dbcopy.prepare;
 
-import com.sonar.dbcopy.Utils;
-import com.sonar.dbcopy.utils.objects.Database;
-import com.sonar.dbcopy.utils.objects.ConnecterDatas;
-import com.sonar.dbcopy.prepare.Deleter;
 import com.sonar.dbcopy.utils.DbException;
+import com.sonar.dbcopy.utils.Utils;
+import com.sonar.dbcopy.utils.objects.ConnecterDatas;
+import com.sonar.dbcopy.utils.objects.Database;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertEquals;
-
 import java.sql.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class DeleterTest {
 
@@ -44,8 +43,8 @@ public class DeleterTest {
 
   @Test
   public void testExecute() {
-    Statement statement=null;
-    ResultSet resultSet=null, resultSetTables=null;
+    Statement statement = null;
+    ResultSet resultSet = null, resultSetTables = null;
     try {
       /* FIRST VERIFYING THE METADATAS OF TABLES DELETED (2 TABLES) ARE STILL PRESENT */
       DatabaseMetaData metaData = connection.getMetaData();
@@ -59,15 +58,15 @@ public class DeleterTest {
       /* SECONDLY VERIFYING THAT TABLE_FOR_TEST DOESN'T HAVE ANY ROW OF DATA */
       statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
       resultSet = statement.executeQuery("SELECT * FROM table_for_test");
-      while (resultSet.next()){
+      while (resultSet.next()) {
         assertNull(resultSet.getObject(1));
       }
 
     } catch (SQLException e) {
       throw new DbException("Problem when testing deleter.", e);
-    }finally {
+    } finally {
       try {
-        if(resultSetTables!=null){
+        if (resultSetTables != null) {
           resultSetTables.close();
         }
         resultSet.close();
@@ -83,7 +82,7 @@ public class DeleterTest {
   }
 
   @After
-  public void tearDown(){
+  public void tearDown() {
     try {
       connection.close();
     } catch (SQLException e) {

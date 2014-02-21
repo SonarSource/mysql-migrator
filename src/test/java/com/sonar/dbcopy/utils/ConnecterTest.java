@@ -6,7 +6,6 @@
 
 package com.sonar.dbcopy.utils;
 
-import com.sonar.dbcopy.Utils;
 import com.sonar.dbcopy.utils.objects.ConnecterDatas;
 import org.junit.Before;
 import org.junit.Test;

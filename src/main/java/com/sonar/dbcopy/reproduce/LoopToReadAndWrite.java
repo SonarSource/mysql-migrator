@@ -14,6 +14,7 @@ import com.sonar.dbcopy.utils.objects.Table;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.sql.*;
 
 public class LoopToReadAndWrite {
@@ -82,29 +83,37 @@ public class LoopToReadAndWrite {
   private void readAndWrite(ResultSet resultSetSource, PreparedStatement destinationStatement) {
     int lineWritten = 0, nbCommit = 0, nbLog = 0, indexColumn;
     Object objectGetted;
+    String logsAppended = "";
 
     try {
       while (resultSetSource.next()) {
         lineWritten++;
+        int id = resultSetSource.getInt(1);
+
         for (indexColumn = 0; indexColumn < nbColInTable; indexColumn++) {
           objectGetted = resultSetSource.getObject(indexColumn + 1);
 
           logExceptionContext = "Problem when reading and writing data in LoopToReadAndWrite for the TABLE (" + tableName + ") " +
             "in COLUMN SOURCE (name:" + sourceTable.getColumnName(indexColumn) + ",type:" + sourceTable.getType(indexColumn) + ")" +
             " and COLUMN DEST(name:" + destTable.getColumnName(indexColumn) + ",type:" + destTable.getType(indexColumn) + ") " +
-            "at ROW (" + lineWritten + ") for OBJECT SOURCE(" + objectGetted + ") ";
+            "at id (" + id + ") for OBJECT SOURCE(" + objectGetted + ") ";
+
 
           /* ******* COPY : CASES WITH PROBLEM ARE TREATED WITH COPIERTOOL ******* */
-          if (objectGetted == null) {
+          if (resultSetSource.wasNull()) {    //TODO  objectGetted==null
             copierTool.copyWhenNull(indexColumn);
           } else if (sourceTable.getType(indexColumn) == Types.TIMESTAMP) {
             copierTool.copyTimestamp(resultSetSource, indexColumn);
           } else if (sourceTable.getType(indexColumn) == Types.DECIMAL && destTable.getType(indexColumn) == Types.BIT) {
             copierTool.copyBoolean(resultSetSource, indexColumn);
+          } else if (sourceTable.getType(indexColumn) == Types.BIT && destTable.getType(indexColumn) == Types.BIT) {
+            copierTool.copyBoolean(resultSetSource, indexColumn);
           } else if (sourceTable.getType(indexColumn) == Types.BLOB) {
             copierTool.copyBlob(resultSetSource, indexColumn);
           } else if (sourceTable.getType(indexColumn) == Types.CLOB) {
             copierTool.copyClob(resultSetSource, indexColumn);
+          } else if (sourceTable.getType(indexColumn) == Types.VARCHAR) {
+            copierTool.copyVarchar(resultSetSource, indexColumn);
           } else {
             copierTool.copy(resultSetSource, indexColumn);
           }
@@ -112,7 +121,7 @@ public class LoopToReadAndWrite {
         destinationStatement.addBatch();
 
         if (lineWritten > 1000 * nbLog) {
-          LOGGER.info("COPYING... : " + indexTable + "   " + tableName + " LINES " + lineWritten + " / " + nbRowsInTable);
+          LOGGER.info("COPYING... : " + tableName + " LINES " + lineWritten + " / " + nbRowsInTable);
           nbLog++;
         }
         // COMMIT EACH 10 ROWS
@@ -121,9 +130,10 @@ public class LoopToReadAndWrite {
           connectionDestination.commit();
           nbCommit++;
         }
+
       }
     } catch (SQLException e) {
-      throw new DbException(logExceptionContext, e);
+      throw new DbException(logExceptionContext, e.getNextException());
     } catch (IOException e) {
       throw new DbException(logExceptionContext, e);
     }
