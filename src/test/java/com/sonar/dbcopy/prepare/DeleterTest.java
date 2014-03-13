@@ -6,10 +6,10 @@
 
 package com.sonar.dbcopy.prepare;
 
-import com.sonar.dbcopy.utils.DbException;
+import com.sonar.dbcopy.utils.toolconfig.DbException;
 import com.sonar.dbcopy.utils.Utils;
-import com.sonar.dbcopy.utils.objects.ConnecterDatas;
-import com.sonar.dbcopy.utils.objects.Database;
+import com.sonar.dbcopy.utils.data.ConnecterDatas;
+import com.sonar.dbcopy.utils.data.Database;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

@@ -9,11 +9,11 @@ import com.sonar.dbcopy.prepare.ConnectionVerifier;
 import com.sonar.dbcopy.prepare.Deleter;
 import com.sonar.dbcopy.prepare.MetadataGetter;
 import com.sonar.dbcopy.prepare.VersionVerifier;
-import com.sonar.dbcopy.reproduce.Reproducer;
-import com.sonar.dbcopy.utils.DatabaseComparer;
-import com.sonar.dbcopy.utils.DbException;
-import com.sonar.dbcopy.utils.objects.ConnecterDatas;
-import com.sonar.dbcopy.utils.objects.Database;
+import com.sonar.dbcopy.reproduce.process.LoopByTable;
+import com.sonar.dbcopy.utils.data.ConnecterDatas;
+import com.sonar.dbcopy.utils.data.Database;
+import com.sonar.dbcopy.utils.toolconfig.DatabaseComparer;
+import com.sonar.dbcopy.utils.toolconfig.DbException;
 import org.slf4j.LoggerFactory;
 
 public class StartApp {
@@ -31,7 +31,6 @@ public class StartApp {
     ConnecterDatas connecterDatasSource = new ConnecterDatas(args[0], args[1], args[2], args[3]);
     ConnecterDatas connecterDatasDest = new ConnecterDatas(args[4], args[5], args[6], args[7]);
 
-
     /* VERIFY CONNECTION */
     LOGGER.info(starLine + " CONFIGURATION VERIFICATIONS " + starLine);
     ConnectionVerifier connectionVerifier = new ConnectionVerifier();
@@ -39,7 +38,6 @@ public class StartApp {
     LOGGER.info("Database SOURCE  has been reached at :         " + connecterDatasSource.getUrl());
     connectionVerifier.databaseIsReached(connecterDatasDest);
     LOGGER.info("Database DESTINATION has been reached at :     " + connecterDatasDest.getUrl());
-
 
     /* VERIFY VERSIONS OF SONARQUBE */
     VersionVerifier vvSource = new VersionVerifier();
@@ -53,7 +51,6 @@ public class StartApp {
     } else {
       LOGGER.info("WELL DONE !! The versions of SonarQube schema migration are the same between source (" + maxVersionIdSource + ") and destination (" + maxVersionIdDestination + ").");
     }
-
 
     /* GET METADATA FROM SOURCE AND FROM DESTINATION */
     LOGGER.info(starLine + " SEARCH TABLES " + starLine);
@@ -76,15 +73,14 @@ public class StartApp {
 
     /* COPY DATA FROM SOURCE TO DESTINATION */
     LOGGER.info(starLine + " COPY DATA " + starLine);
-    Reproducer reproducer = new Reproducer(connecterDatasSource, connecterDatasDest, databaseSource, databaseDest);
-    reproducer.execute();
-
+    LoopByTable loopByTable = new LoopByTable(connecterDatasSource, connecterDatasDest, databaseSource, databaseDest);
+    loopByTable.execute();
 
     /* FIND AND DISPLAY TABLES PRESENT IN DESTINATION BUT NOT IN SOURCE */
     LOGGER.info(starLine + " SEARCH FOR MISTAKES " + starLine);
     dbComparer.displayMissingTableInDb(databaseSource, databaseDest, "DESTINATION");
     dbComparer.displayMissingTableInDb(databaseDest, databaseSource, "SOURCE");
-
+    dbComparer.displayDiffNumberRows(databaseSource, databaseDest);
     LOGGER.info("** THE COPY HAS FINISHED SUCCESSFULLY **");
     LOGGER.info(starLine + starLine + starLine);
 

@@ -5,12 +5,12 @@
  */
 package com.sonar.dbcopy.prepare;
 
-import com.sonar.dbcopy.utils.CharacteristicsRelatedToEditor;
-import com.sonar.dbcopy.utils.Closer;
-import com.sonar.dbcopy.utils.Connecter;
-import com.sonar.dbcopy.utils.DbException;
-import com.sonar.dbcopy.utils.objects.ConnecterDatas;
-import com.sonar.dbcopy.utils.objects.Database;
+import com.sonar.dbcopy.utils.data.ConnecterDatas;
+import com.sonar.dbcopy.utils.data.Database;
+import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
+import com.sonar.dbcopy.utils.toolconfig.Closer;
+import com.sonar.dbcopy.utils.toolconfig.Connecter;
+import com.sonar.dbcopy.utils.toolconfig.DbException;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;

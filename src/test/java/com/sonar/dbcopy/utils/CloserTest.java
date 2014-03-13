@@ -5,6 +5,8 @@
  */
 package com.sonar.dbcopy.utils;
 
+import com.sonar.dbcopy.utils.toolconfig.Closer;
+import com.sonar.dbcopy.utils.toolconfig.DbException;
 import org.junit.Before;
 import org.junit.Test;
 

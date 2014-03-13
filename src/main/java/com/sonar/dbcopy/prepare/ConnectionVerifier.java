@@ -5,9 +5,9 @@
  */
 package com.sonar.dbcopy.prepare;
 
-import com.sonar.dbcopy.utils.Closer;
-import com.sonar.dbcopy.utils.DbException;
-import com.sonar.dbcopy.utils.objects.ConnecterDatas;
+import com.sonar.dbcopy.utils.data.ConnecterDatas;
+import com.sonar.dbcopy.utils.toolconfig.Closer;
+import com.sonar.dbcopy.utils.toolconfig.DbException;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;

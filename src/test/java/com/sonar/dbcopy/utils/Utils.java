@@ -5,9 +5,9 @@
  */
 package com.sonar.dbcopy.utils;
 
-import com.sonar.dbcopy.utils.Closer;
-import com.sonar.dbcopy.utils.DbException;
-import com.sonar.dbcopy.utils.objects.Database;
+import com.sonar.dbcopy.utils.data.Database;
+import com.sonar.dbcopy.utils.toolconfig.Closer;
+import com.sonar.dbcopy.utils.toolconfig.DbException;
 import org.h2.jdbcx.JdbcConnectionPool;
 
 import javax.sql.rowset.serial.SerialBlob;
