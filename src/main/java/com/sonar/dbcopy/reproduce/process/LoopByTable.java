@@ -12,10 +12,7 @@ import com.sonar.dbcopy.utils.data.Table;
 import com.sonar.dbcopy.utils.toolconfig.*;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class LoopByTable {
 
@@ -39,6 +36,8 @@ public class LoopByTable {
     int indexTable = 0;
     Connection connectionSource = null;
     Connection connectionDestination = null;
+    Statement statementCountDest = null;
+    ResultSet resultSetCountDest = null;
     try {
       /* ****** FOR EACH TABLE: ****** */
       for (indexTable = 0; indexTable < databaseSource.getNbTables(); indexTable++) {
@@ -86,19 +85,24 @@ public class LoopByTable {
           }
         }
         // COUNT COLUMNS IN TABLE DESTINATION TO COMPARE IT TO SOURCE
-        ResultSet resultSetCountDest = connectionDestination.createStatement().executeQuery("SELECT count(*) FROM " + tableDest.getName());
+        statementCountDest = connectionDestination.createStatement();
+        resultSetCountDest = statementCountDest.executeQuery("SELECT count(*) FROM " + tableDest.getName());
         while (resultSetCountDest.next()) {
           int rowsInTableDest = resultSetCountDest.getInt(1);
           tableDest.setNbRows(rowsInTableDest);
         }
 
-        // CLOSE CONNECTION SOURCE AFTER EACH TABLE COPY
+        // CLOSE CONNECTION AND OBJECT AFTER EACH TABLE COPY
+        closer.closeResultSet(resultSetCountDest);
+        closer.closeStatement(statementCountDest);
         closer.closeConnection(connectionSource);
         closer.closeConnection(connectionDestination);
       }
     } catch (SQLException e) {
       throw new DbException("Problem when do loop for tables in LoopByTable at TABLE : " + databaseSource.getTableName(indexTable), e);
     } finally {
+      closer.closeResultSet(resultSetCountDest);
+      closer.closeStatement(statementCountDest);
       closer.closeConnection(connectionSource);
       closer.closeConnection(connectionDestination);
       LOGGER.info("EveryThing is finally closed in LoopByTable.");

@@ -42,11 +42,8 @@ public class LoopByRow {
     ListColumnsAsString lcasDest = new ListColumnsAsString(destTable);
     try {
       while (resultSetSource.next()) {
-        try {
-          lastID = resultSetSource.getInt(1);
-        } catch (SQLException e) {
-          LOGGER.info("First column is not and id.", e);
-        }
+        lastID = getIfRowHasIntegerIdAndPreserveCopyFromException(resultSetSource);
+
         logExceptionContext = "TABLE (" + tableName + ") " +
           " which had COLUMNS: " + lcasSource.makeColumnString() + " with TYPES: " + lcasSource.makeStringOfTypes() + " IN SOURCE " +
           " and COLUMNS: " + lcasDest.makeColumnString() + " with TYPES: " + lcasDest.makeStringOfTypes() + " IN DESTINATION " +
@@ -80,30 +77,38 @@ public class LoopByRow {
 
         // COMMIT EACH 10 ROWS
         if (lineWritten % 10 == 0) {
-          try {
-            preparedStatementDest.executeBatch();
-            preparedStatementDest.getConnection().commit();
-            lastIDOfPreviousBlock = lastID;
-          } catch (SQLException e) {
-            LOGGER.error("ERROR: LINES NOT COPIED !! IN " + logExceptionContext, e);
-          }
+          executeBatchAndPreserveCopyFromException(preparedStatementDest);
+          lastIDOfPreviousBlock = lastID;
         }
         lineWritten++;
       }
-      try {
-        preparedStatementDest.executeBatch();
-        preparedStatementDest.getConnection().commit();
-      } catch (SQLException e) {
-        LOGGER.error("ERROR: LINES NOT COPIED !! IN " + logExceptionContext, e);
-      }
+      executeBatchAndPreserveCopyFromException(preparedStatementDest);
+
     } catch (SQLException e) {
-      throw new DbException("Problem when reading and writing data in LoopByRow for the " + logExceptionContext, e);
-    } catch (IOException e) {
       throw new DbException("Problem when reading and writing data in LoopByRow for the " + logExceptionContext, e);
     } finally {
       closer.closeResultSet(resultSetSource);
       closer.closeStatement(preparedStatementDest);
     }
+  }
+
+  private void executeBatchAndPreserveCopyFromException(PreparedStatement preparedStatementDest) {
+    try {
+      preparedStatementDest.executeBatch();
+      preparedStatementDest.getConnection().commit();
+    } catch (SQLException e) {
+      LOGGER.error("ERROR: LINES NOT COPIED !! IN " + logExceptionContext, e);
+    }
+  }
+
+  private int getIfRowHasIntegerIdAndPreserveCopyFromException(ResultSet resultSetSource){
+    int idToReturn = 0;
+    try {
+      idToReturn = resultSetSource.getInt(1);
+    } catch (SQLException e) {
+      LOGGER.info("First column is not and Integer.", e);
+    }
+    return idToReturn;
   }
 }
 

@@ -15,9 +15,9 @@ public interface ReaderTool {
 
   public Timestamp readTimestamp(ResultSet resultSetSource, int indexColumn) throws SQLException;
 
-  public byte[] readBlob(ResultSet resultSetSource, int indexColumn) throws SQLException, IOException;
+  public byte[] readBlob(ResultSet resultSetSource, int indexColumn) throws SQLException;
 
-  public byte[] readClob(ResultSet resultSetSource, int indexColumn) throws SQLException, IOException;
+  public byte[] readClob(ResultSet resultSetSource, int indexColumn) throws SQLException;
 
   public boolean readBoolean(ResultSet resultSetSource, int indexColumn) throws SQLException;
 

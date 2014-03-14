@@ -6,6 +6,8 @@
 
 package com.sonar.dbcopy.reproduce.reader;
 
+import com.sonar.dbcopy.utils.toolconfig.DbException;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,26 +22,34 @@ public class H2Reader implements ReaderTool {
   }
 
   @Override
-  public byte[] readBlob(ResultSet resultSetSource, int indexColumn) throws SQLException, IOException {
+  public byte[] readBlob(ResultSet resultSetSource, int indexColumn) throws SQLException {
     InputStream inputStreamObj = resultSetSource.getBinaryStream(indexColumn + 1);
     byte[] buffer = new byte[8192];
     int bytesRead;
     ByteArrayOutputStream output = new ByteArrayOutputStream();
-    while ((bytesRead = inputStreamObj.read(buffer)) != -1) {
-      output.write(buffer, 0, bytesRead);
+    try {
+      while ((bytesRead = inputStreamObj.read(buffer)) != -1) {
+        output.write(buffer, 0, bytesRead);
+      }
+    } catch (IOException e) {
+      throw new DbException("Problem to get bytes when reading Blob", e);
     }
     byte[] bytesToInsert = output.toByteArray();
     return bytesToInsert;
   }
 
   @Override
-  public byte[] readClob(ResultSet resultSetSource, int indexColumn) throws SQLException, IOException {
+  public byte[] readClob(ResultSet resultSetSource, int indexColumn) throws SQLException {
     InputStream inputStreamObj = resultSetSource.getBinaryStream(indexColumn + 1);
     byte[] buffer = new byte[8192];
     int bytesRead;
     ByteArrayOutputStream output = new ByteArrayOutputStream();
-    while ((bytesRead = inputStreamObj.read(buffer)) != -1) {
-      output.write(buffer, 0, bytesRead);
+    try {
+      while ((bytesRead = inputStreamObj.read(buffer)) != -1) {
+        output.write(buffer, 0, bytesRead);
+      }
+    } catch (IOException e) {
+      throw new DbException("Problem to get bytes when reading Clob", e);
     }
     byte[] bytesToInsert = output.toByteArray();
     return bytesToInsert;
