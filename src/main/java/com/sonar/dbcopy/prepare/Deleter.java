@@ -10,7 +10,6 @@ import com.sonar.dbcopy.utils.data.ConnecterDatas;
 import com.sonar.dbcopy.utils.data.Database;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
 import com.sonar.dbcopy.utils.toolconfig.Connecter;
-import com.sonar.dbcopy.utils.toolconfig.DatabaseComparer;
 import com.sonar.dbcopy.utils.toolconfig.DbException;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +31,6 @@ public class Deleter {
 
   public void execute(Database databaseDest) {
     Closer closer = new Closer("Deleter");
-    DatabaseComparer dbComparer = new DatabaseComparer();
     String tableNameSource = null;
     Statement statementToDelete = null;
     Connection connectionDest = null;
@@ -43,7 +41,7 @@ public class Deleter {
       // DELETING DESTINATION TABLE FROM SOURCE DATABASE TABLE LIST ONLY WHEN IT IS PRESENT IN DESTINATION
       for (int indexTable = 0; indexTable < this.databaseSource.getNbTables(); indexTable++) {
         tableNameSource = this.databaseSource.getTableName(indexTable);
-        if (dbComparer.findTableByNameInDb(databaseDest, tableNameSource) != null) {
+        if (databaseDest.getTableByName(tableNameSource) != null) {
           statementToDelete.execute("TRUNCATE TABLE " + tableNameSource);
           LOGGER.info("DELETE: " + indexTable + "   " + tableNameSource);
         } else {

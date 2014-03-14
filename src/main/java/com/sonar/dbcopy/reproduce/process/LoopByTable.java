@@ -31,7 +31,6 @@ public class LoopByTable {
 
   public void execute() {
     Closer closer = new Closer("LoopByTable");
-    DatabaseComparer dbComparer = new DatabaseComparer();
     ModifySqlServerOption modifySqlServerOption = null;
     int indexTable = 0;
     Connection connectionSource = null;
@@ -60,7 +59,7 @@ public class LoopByTable {
         Table tableDest = databaseDest.getTableByName(tableSourceName);
 
         // VERIFY IF TABLE EXISTS IN DESTINATION
-        if (dbComparer.findTableByNameInDb(databaseDest, tableSourceName) == null) {
+        if (tableDest == null) {
           LOGGER.error("WARNING !! Can't WRITE in TABLE :" + tableSourceName + " because it doesn't exist in destination database. ");
         } else {
 
@@ -70,13 +69,11 @@ public class LoopByTable {
           }
 
           // READ AND WRITE
-          LOGGER.info("START COPY IN TABLE " + indexTable + " : " + tableSourceName + ".");
           PrepareCopyTable prepareCopyTable = new PrepareCopyTable(tableSource, tableDest);
           prepareCopyTable.makeToolsAndStartCopy(connectionSource, connectionDestination);
-          LOGGER.info("DATA COPIED IN TABLE " + indexTable + " :  " + tableSourceName + ".");
 
           // RESET SEQUENCE
-          SequenceReseter sequenceReseter = new SequenceReseter(tableSourceName, connectionDestination);
+          SequenceReseter sequenceReseter = new SequenceReseter(tableSourceName, cdDest);
           sequenceReseter.execute();
 
           //SQL SERVER DESTINATION OPTION : PUT IDENTITY_INSERT AT off FOR THE CURRENT TABLE
@@ -84,14 +81,16 @@ public class LoopByTable {
             modifySqlServerOption.modifyIdentityInsert(connectionDestination, tableSourceName, "OFF");
           }
         }
-        // COUNT COLUMNS IN TABLE DESTINATION TO COMPARE IT TO SOURCE
-        statementCountDest = connectionDestination.createStatement();
-        resultSetCountDest = statementCountDest.executeQuery("SELECT count(*) FROM " + tableDest.getName());
-        while (resultSetCountDest.next()) {
-          int rowsInTableDest = resultSetCountDest.getInt(1);
-          tableDest.setNbRows(rowsInTableDest);
+        // COUNT COLUMNS IN TABLE DESTINATION TO COMPARE IT TO
+        if (tableDest != null) {
+          tableDest.setNbRows(0);
+          statementCountDest = connectionDestination.createStatement();
+          resultSetCountDest = statementCountDest.executeQuery("SELECT count(*) FROM " + tableDest.getName());
+          while (resultSetCountDest.next()) {
+            int rowsInTableDest = resultSetCountDest.getInt(1);
+            tableDest.setNbRows(rowsInTableDest);
+          }
         }
-
         // CLOSE CONNECTION AND OBJECT AFTER EACH TABLE COPY
         closer.closeResultSet(resultSetCountDest);
         closer.closeStatement(statementCountDest);

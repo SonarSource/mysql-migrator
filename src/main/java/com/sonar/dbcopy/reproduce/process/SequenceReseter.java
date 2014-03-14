@@ -5,8 +5,10 @@
  */
 package com.sonar.dbcopy.reproduce.process;
 
+import com.sonar.dbcopy.utils.data.ConnecterDatas;
 import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
+import com.sonar.dbcopy.utils.toolconfig.Connecter;
 import com.sonar.dbcopy.utils.toolconfig.DbException;
 import org.slf4j.LoggerFactory;
 
@@ -16,48 +18,50 @@ public class SequenceReseter {
 
   private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
   private String sqlRequestToReset, tableName;
-  private Connection connectionDest;
+  private ConnecterDatas cdDest;
 
-  public SequenceReseter(String tableName, Connection connectiondest) {
+  public SequenceReseter(String tableName, ConnecterDatas cdDest) {
     this.tableName = tableName;
-    this.connectionDest = connectiondest;
+    this.cdDest = cdDest;
   }
 
   public void execute() {
 
     Closer closer = new Closer("SequenceReseter");
-    Statement statement = null;
-    ResultSet resultSet = null;
+    Connection connectionDest = null;
+    Statement statementDest = null;
+    ResultSet resultSetDest = null;
     CharacteristicsRelatedToEditor relToEditor = new CharacteristicsRelatedToEditor();
+    Connecter connecter = new Connecter();
 
     try {
+      connectionDest = connecter.doConnection(cdDest);
       DatabaseMetaData metaDest = connectionDest.getMetaData();
 
       String tableNameWithGoodCase = relToEditor.transfromCaseOfTableName(metaDest, tableName);
       boolean destinationIsOracle = relToEditor.isOracle(metaDest);
 
-      resultSet = metaDest.getPrimaryKeys(null, null, tableNameWithGoodCase);
+      resultSetDest = metaDest.getPrimaryKeys(null, null, tableNameWithGoodCase);
 
       // IF REULTSET IS NOT "beforeFirst" THAT MEANS THERE IS A PRIMARY KEY
-      if (resultSet.isBeforeFirst()) {
-        closer.closeResultSet(resultSet);
+      if (resultSetDest.isBeforeFirst()) {
+        closer.closeResultSet(resultSetDest);
         long idMaxPlusOne = relToEditor.getIdMaxPlusOne(connectionDest, tableName);
         sqlRequestToReset = relToEditor.makeAlterSequencesRequest(metaDest, tableName, idMaxPlusOne);
 
         // THEN RESET SEQUENCE REQUEST IS EXECUTED
-        statement = connectionDest.createStatement();
+        statementDest = connectionDest.createStatement();
         if (destinationIsOracle) {
-          statement.execute(relToEditor.makeDropSequenceRequest(tableName));
+          statementDest.execute(relToEditor.makeDropSequenceRequest(tableName));
         }
-        statement.execute(sqlRequestToReset);
-
-        LOGGER.info("SEQUENCE ADJUSTED IN : " + tableName + " at " + idMaxPlusOne);
+        statementDest.execute(sqlRequestToReset);
       }
     } catch (SQLException e) {
       throw new DbException("Problem to execute the adjustment of autoincrement  with last id +1 :" + sqlRequestToReset + " at TABLE : " + tableName + ".", e);
     } finally {
-      closer.closeResultSet(resultSet);
-      closer.closeStatement(statement);
+      closer.closeResultSet(resultSetDest);
+      closer.closeStatement(statementDest);
+      closer.closeConnection(connectionDest);
     }
   }
 }

@@ -7,6 +7,7 @@
 package com.sonar.dbcopy.reproduce;
 
 import com.sonar.dbcopy.reproduce.process.SequenceReseter;
+import com.sonar.dbcopy.utils.data.ConnecterDatas;
 import com.sonar.dbcopy.utils.toolconfig.DbException;
 import com.sonar.dbcopy.utils.Utils;
 import org.junit.After;
@@ -31,8 +32,11 @@ public class SequenceReseterTest {
 
   @Test
   public void testExecute() throws Exception {
-    SequenceReseter sequenceReseter = new SequenceReseter("table_for_test", connection);
+    // NON COMPLIANT
+    ConnecterDatas connecterDatas = new ConnecterDatas("","jdbc:h2:mem:sonar;DB_CLOSE_ON_EXIT=-1;","sonar","sonar");
+//    SequenceReseter sequenceReseter = new SequenceReseter("table_for_test", connecterDatas);
     try {
+//      sequenceReseter.execute();
     } catch (Exception e) {
       assertThat(e).isInstanceOf(DbException.class).hasMessage("Problem to reset autoincrement with last id in SequenceReseter.");
     }

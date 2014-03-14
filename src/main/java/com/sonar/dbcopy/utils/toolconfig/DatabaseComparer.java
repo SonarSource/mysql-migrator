@@ -19,12 +19,13 @@ public class DatabaseComparer {
     // DISPLAY SOURCE TABLES
     for (int indexTable = 0; indexTable < dbSource.getNbTables(); indexTable++) {
       Table tableSource = dbSource.getTable(indexTable);
+      String tableSourceName = tableSource.getName();
       LOGGER.info("");
-      LOGGER.info("FOUND TABLE : " + tableSource.getName());
+      LOGGER.info("FOUND TABLE : " + tableSourceName);
       LOGGER.info("   SOURCE:");
       displayTableContent(tableSource);
       // DISPLAY DESTINATION TABLE IF EXISTS
-      Table tableDestToFind = findTableByNameInDb(dbDestination, dbSource.getTableName(indexTable));
+      Table tableDestToFind = dbDestination.getTableByName(tableSourceName);
       if (tableDestToFind == null) {
         LOGGER.warn("   DESTINATION:  WARNING !! TABLE " + dbSource.getTableName(indexTable) + " is not present in the DESTINATION database.");
         nbMissingTableInDest++;
@@ -40,7 +41,7 @@ public class DatabaseComparer {
     } else {
       // DISPLAY TABLE THAT EXISTS IN DESTINATION BUT NOT IN SOURCE
       for (int indexTable = 0; indexTable < dbDestination.getNbTables(); indexTable++) {
-        Table tableSourceToFind = findTableByNameInDb(dbSource, dbDestination.getTableName(indexTable));
+        Table tableSourceToFind = dbSource.getTableByName(dbDestination.getTableName(indexTable));
         if (tableSourceToFind == null) {
           LOGGER.info("");
           LOGGER.info("FOUND TABLE : " + dbDestination.getTableName(indexTable));
@@ -50,16 +51,6 @@ public class DatabaseComparer {
         }
       }
     }
-  }
-
-  public Table findTableByNameInDb(Database dbToExplore, String tableNameToFind) {
-    Table tableToFindIfExists = null;
-    for (int indexTable = 0; indexTable < dbToExplore.getNbTables(); indexTable++) {
-      if (tableNameToFind.equals(dbToExplore.getTableName(indexTable))) {
-        tableToFindIfExists = dbToExplore.getTable(indexTable);
-      }
-    }
-    return tableToFindIfExists;
   }
 
   private void displayTableContent(Table tableToDisplay) {
@@ -72,7 +63,7 @@ public class DatabaseComparer {
     Table realTable, missTableToFind;
     for (int indexTable = 0; indexTable < fullDb.getNbTables(); indexTable++) {
       realTable = fullDb.getTable(indexTable);
-      missTableToFind = findTableByNameInDb(missDb, realTable.getName());
+      missTableToFind = missDb.getTableByName(realTable.getName());
       if (missTableToFind == null) {
         LOGGER.warn("TABLE " + fullDb.getTableName(indexTable) + " is not present in the " + missDbStatus + " database. Have a look to the logs \"FOUND TABLES\" upper.");
       }
@@ -83,8 +74,9 @@ public class DatabaseComparer {
     for (int indexTable = 0; indexTable < dbSource.getNbTables(); indexTable++) {
       Table tableSource = dbSource.getTable(indexTable);
       Table tableDest = dbDest.getTableByName(tableSource.getName());
-      if (tableDest.getNbRows() != tableSource.getNbRows()) {
+      if (tableDest != null && tableDest.getNbRows() != tableSource.getNbRows()) {
         LOGGER.warn("TABLE " + tableSource.getName() + " add " + tableSource.getNbRows() + " ROWS in SOURCE while " + tableDest.getNbRows() + " in DESTINATION");
+        LOGGER.info("*");
       }
     }
   }
