@@ -23,8 +23,7 @@ public class ResulsetSourceGetter {
 
   public Statement createAndReturnStatementSource(Connection connectionSource) {
     try {
-      Statement statementSource = connectionSource.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-      return statementSource;
+      return connectionSource.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
     } catch (SQLException e) {
       throw new DbException("Problem when creating statement on TABLE source: " + tableName, e);
     }
@@ -32,8 +31,7 @@ public class ResulsetSourceGetter {
 
   public ResultSet createAndReturnResultSetSource(Statement statementSource) {
     try {
-      ResultSet resultSetSource = statementSource.executeQuery("SELECT * FROM " + tableName);
-      return resultSetSource;
+      return statementSource.executeQuery("SELECT * FROM " + tableName);
     } catch (SQLException e) {
       throw new DbException("Problem when executing the sql select request on TABLE source: " + tableName, e);
     }

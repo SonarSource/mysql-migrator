@@ -34,8 +34,7 @@ public class H2Reader implements ReaderTool {
     } catch (IOException e) {
       throw new DbException("Problem to get bytes when reading Blob", e);
     }
-    byte[] bytesToInsert = output.toByteArray();
-    return bytesToInsert;
+    return output.toByteArray();
   }
 
   @Override
@@ -51,8 +50,7 @@ public class H2Reader implements ReaderTool {
     } catch (IOException e) {
       throw new DbException("Problem to get bytes when reading Clob", e);
     }
-    byte[] bytesToInsert = output.toByteArray();
-    return bytesToInsert;
+    return output.toByteArray();
   }
 
   @Override
@@ -68,8 +66,7 @@ public class H2Reader implements ReaderTool {
   @Override
   public String readVarchar(ResultSet resultSetSource, int indexColumn) throws SQLException {
     String stringToinsert = resultSetSource.getString(indexColumn + 1);
-    stringToinsert = stringToinsert.replace("\u0000", "");
-    return stringToinsert;
+    return stringToinsert.replace("\u0000", "");
   }
 }
 

@@ -14,7 +14,6 @@ import com.sonar.dbcopy.utils.toolconfig.DbException;
 import com.sonar.dbcopy.utils.toolconfig.ListColumnsAsString;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -45,8 +44,6 @@ public class LoopByRow {
         lastID = getIfRowHasIntegerIdAndPreserveCopyFromException(resultSetSource);
 
         logExceptionContext = "TABLE (" + tableName + ") " +
-          " which had COLUMNS: " + lcasSource.makeColumnString() + " with TYPES: " + lcasSource.makeStringOfTypes() + " IN SOURCE " +
-          " and COLUMNS: " + lcasDest.makeColumnString() + " with TYPES: " + lcasDest.makeStringOfTypes() + " IN DESTINATION " +
           " at ROW (" + lineWritten + ") for - id - between (" + lastIDOfPreviousBlock + ") and (" + lastID + ").";
 
         for (indexColumn = 0; indexColumn < nbColInTable; indexColumn++) {
@@ -97,11 +94,13 @@ public class LoopByRow {
       preparedStatementDest.executeBatch();
       preparedStatementDest.getConnection().commit();
     } catch (SQLException e) {
-      LOGGER.error("ERROR: LINES NOT COPIED !! IN " + logExceptionContext, e);
+      LOGGER.error("ERROR: LINES NOT COPIED !! IN " + logExceptionContext, e.getMessage());
+      LOGGER.error("CAUSED BY: "+e.getNextException());
+
     }
   }
 
-  private int getIfRowHasIntegerIdAndPreserveCopyFromException(ResultSet resultSetSource){
+  private int getIfRowHasIntegerIdAndPreserveCopyFromException(ResultSet resultSetSource) {
     int idToReturn = 0;
     try {
       idToReturn = resultSetSource.getInt(1);
