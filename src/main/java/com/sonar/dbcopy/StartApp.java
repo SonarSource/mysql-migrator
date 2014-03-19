@@ -20,7 +20,7 @@ public class StartApp {
 
   private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
 
-  private StartApp() {
+  protected StartApp() {
     // empty because only use the static method main
   }
 

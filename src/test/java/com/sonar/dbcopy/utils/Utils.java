@@ -49,7 +49,7 @@ public class Utils {
       preparedStatement.executeUpdate();
 
       if (trueToInsertThirdTable) {
-        preparedStatement = connection.prepareStatement("CREATE TABLE schema_migrations (version integer PRIMARY KEY)");
+        preparedStatement = connection.prepareStatement("CREATE TABLE schema_migrations (version integer)");
         preparedStatement.executeUpdate();
       }
 
