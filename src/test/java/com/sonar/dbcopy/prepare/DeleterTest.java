@@ -23,18 +23,20 @@ public class DeleterTest {
 
   private Deleter deleter;
   private Database databaseSource;
-  private Connection connection;
+  private Connection connectionSource;
 
   @Before
   public void setUp() {
+    boolean threeTablesInJavaDb= false;
+
     Utils utils = new Utils();
 
     ConnecterDatas cdSource = new ConnecterDatas("org.h2.Driver", "jdbc:h2:mem:filledDatabase;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
 
-    databaseSource = utils.makeDatabase();  // build dabase with metadatas
-    Database databaseDest = utils.makeDatabase();
+    databaseSource = utils.makeDatabase(threeTablesInJavaDb);  // build dabase with metadatas
+    Database databaseDest = utils.makeDatabase(threeTablesInJavaDb);
 
-    connection = utils.makeFilledH2("filledDatabase"); // build a filled  H2 databaseSource
+    connectionSource = utils.makeFilledH2("filledDatabase",threeTablesInJavaDb); // build a filled  H2 databaseSource
 
     new Deleter(cdSource, databaseSource).execute(databaseDest);
 
@@ -47,8 +49,8 @@ public class DeleterTest {
     ResultSet resultSet = null, resultSetTables = null;
     try {
       /* FIRST VERIFYING THE METADATAS OF TABLES DELETED (2 TABLES) ARE STILL PRESENT */
-      DatabaseMetaData metaData = connection.getMetaData();
-      resultSetTables = metaData.getTables(connection.getCatalog(), null, "%", new String[]{"TABLE"});
+      DatabaseMetaData metaData = connectionSource.getMetaData();
+      resultSetTables = metaData.getTables(connectionSource.getCatalog(), null, "%", new String[]{"TABLE"});
       resultSetTables.next();
       assertEquals(databaseSource.getTableName(1).toUpperCase(), resultSetTables.getString(3).toUpperCase());
       resultSetTables.next();
@@ -56,7 +58,7 @@ public class DeleterTest {
       resultSetTables.close();
 
       /* SECONDLY VERIFYING THAT TABLE_FOR_TEST DOESN'T HAVE ANY ROW OF DATA */
-      statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
+      statement = connectionSource.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
       resultSet = statement.executeQuery("SELECT * FROM table_for_test");
       while (resultSet.next()) {
         assertNull(resultSet.getObject(1));
@@ -84,9 +86,9 @@ public class DeleterTest {
   @After
   public void tearDown() {
     try {
-      connection.close();
+      connectionSource.close();
     } catch (SQLException e) {
-      throw new DbException("Problem To close connection when testing deleter.", e);
+      throw new DbException("Problem To close connection source when testing deleter.", e);
     }
   }
 }

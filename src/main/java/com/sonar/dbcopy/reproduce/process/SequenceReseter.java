@@ -10,13 +10,11 @@ import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
 import com.sonar.dbcopy.utils.toolconfig.Connecter;
 import com.sonar.dbcopy.utils.toolconfig.DbException;
-import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 
 public class SequenceReseter {
 
-  private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
   private String sqlRequestToReset, tableName;
   private ConnecterDatas cdDest;
 

@@ -104,7 +104,6 @@ public class LoopByTable {
       closer.closeStatement(statementCountDest);
       closer.closeConnection(connectionSource);
       closer.closeConnection(connectionDestination);
-      LOGGER.info("EveryThing is finally closed in LoopByTable.");
     }
   }
 }

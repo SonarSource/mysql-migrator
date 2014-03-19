@@ -54,10 +54,15 @@ public class StartApp {
 
     /* GET METADATA FROM SOURCE AND FROM DESTINATION */
     LOGGER.info(starLine + " SEARCH TABLES " + starLine);
+    LOGGER.info("START GETTING METADATA IN SOURCE...");
     MetadataGetter metadataGetterSource = new MetadataGetter(connecterDatasSource, databaseSource);
     metadataGetterSource.execute();
+    LOGGER.info("DONE !");
+    LOGGER.info("START GETTING METADATA IN DESTINATION...");
     MetadataGetter metadataGetterDest = new MetadataGetter(connecterDatasDest, databaseDest);
     metadataGetterDest.execute();
+    LOGGER.info("DONE !");
+
 
     /* DISPLAY TABLES FOUND */
     LOGGER.info(starLine + " FOUND TABLES " + starLine);

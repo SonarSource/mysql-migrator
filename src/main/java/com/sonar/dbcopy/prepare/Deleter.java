@@ -30,6 +30,7 @@ public class Deleter {
   }
 
   public void execute(Database databaseDest) {
+    LOGGER.info("START DELETING...");
     Closer closer = new Closer("Deleter");
     String tableNameSource = null;
     Statement statementToDelete = null;
@@ -43,7 +44,6 @@ public class Deleter {
         tableNameSource = this.databaseSource.getTableName(indexTable);
         if (databaseDest.getTableByName(tableNameSource) != null) {
           statementToDelete.execute("TRUNCATE TABLE " + tableNameSource);
-          LOGGER.info("DELETE: " + indexTable + "   " + tableNameSource);
         } else {
           LOGGER.error("WARNING !! Can't DELETE  TABLE :" + tableNameSource + " because it doesn't exist in destination database. ");
         }
@@ -55,7 +55,6 @@ public class Deleter {
     } finally {
       closer.closeStatement(statementToDelete);
       closer.closeConnection(connectionDest);
-      LOGGER.info("Everything is closed in Deleter.");
     }
   }
 }

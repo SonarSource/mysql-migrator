@@ -28,8 +28,8 @@ public class Table {
   }
 
   public void addColumn(int index, String columnName, Integer type) {
-    String columnNameToInsert = null;
-    Integer typeToInsert = null;
+    String columnNameToInsert;
+    Integer typeToInsert;
 
     if (columnName == null) {
       columnNameToInsert = "null";

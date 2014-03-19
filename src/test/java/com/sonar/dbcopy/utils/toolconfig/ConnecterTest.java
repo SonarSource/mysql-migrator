@@ -4,8 +4,9 @@
  * mailto:contact AT sonarsource DOT com
  */
 
-package com.sonar.dbcopy.utils;
+package com.sonar.dbcopy.utils.toolconfig;
 
+import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.data.ConnecterDatas;
 import com.sonar.dbcopy.utils.toolconfig.Connecter;
 import com.sonar.dbcopy.utils.toolconfig.DbException;
@@ -23,7 +24,7 @@ public class ConnecterTest {
   @Before
   public void setUp() {
     Utils utils = new Utils();
-    utils.makeEmptyH2("databaseToConnect");
+    utils.makeEmptyH2("databaseToConnect",false);
   }
 
   @Test

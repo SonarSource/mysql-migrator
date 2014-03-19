@@ -32,7 +32,7 @@ public class MetadataGetterTest {
   public void setUp() throws SQLException, ClassNotFoundException {
     Utils utils = new Utils();
     database = new Database();
-    connectionForFilled = utils.makeFilledH2("filledDatabase");
+    connectionForFilled = utils.makeFilledH2("filledDatabase",false);
     connectionWithoutTable = utils.makeH2("withoutTables");
     closer = new Closer("MetadataGetterTest");
   }

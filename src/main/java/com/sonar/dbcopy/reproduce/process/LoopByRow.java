@@ -22,7 +22,7 @@ import java.sql.Types;
 public class LoopByRow {
 
   private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-  private String logExceptionContext, tableContentSource, tableContentDest;
+  private String logCurrentRowAndPK, tableContentSource, tableContentDest;
   private Table sourceTable, destTable;
 
   public LoopByRow(Table sourceTable, Table destTable) {
@@ -43,22 +43,21 @@ public class LoopByRow {
     try {
       LOGGER.info(tableName);
       while (resultSetSource.next()) {
-        // PREPARE LOG AND DISPLAY INFO EACH 50000 ROWS
+        // PREPARE LOGS AND DISPLAY INFO EACH 50 000 ROWS
         lastID = getIfRowHasIntegerIdAndPreserveCopyFromException(resultSetSource);
-        logExceptionContext = " at ROW (" + lineWritten + ") WITH - id - BETWEEN (" + lastIDOfPreviousBlock + ") AND (" + lastID + ").";
         tableContentSource = "SOURCE COLUMNS      ( " + lcasSource.makeColumnString() + " ) with TYPES (" + lcasSource.makeStringOfTypes() + " ).";
         tableContentDest = "DESTINATION COLUMNS ( " + lcasDest.makeColumnString() + " ) with TYPES (" + lcasDest.makeStringOfTypes() + " ).";
+        logCurrentRowAndPK = " at ROW (" + lineWritten + ") WITH - id - BETWEEN (" + lastIDOfPreviousBlock + ") AND (" + lastID + ").";
 
         lineWritten++;
         if (lineWritten % 50000 == 0) {
-          //TABLE NAME IS DISPLAYED ONLY AT THE LINE 0 JUST BEFORE THE START OF while
           logLinesCopied(lineWritten, nbRowsInTable);
         }
 
-
+        // START COPY BY COLUMN
         for (indexColumn = 0; indexColumn < nbColInTable; indexColumn++) {
           Object objectGetted = resultSetSource.getObject(indexColumn + 1);
-        /* ******* COPY : CASES WITH PROBLEM ARE TREATED WITH READER AND WRITER TOOLS ******* */
+          // MANAGING DIFFERENT TYPE CASES
           if (objectGetted == null) {
             writerTool.writeWhenNull(indexColumn);
           } else if (sourceTable.getType(indexColumn) == Types.TIMESTAMP) {
@@ -87,12 +86,11 @@ public class LoopByRow {
       logLinesCopied(lineWritten, nbRowsInTable);
 
     } catch (SQLException e) {
-      LOGGER.error(" * * * * * * * * * * * * * * * * * * * * * * ");
+      LOGGER.error("************** SQLEXCEPTION **************");
       LOGGER.error("ERROR IN TABLE: " + tableName);
       LOGGER.error(tableContentSource);
       LOGGER.error(tableContentDest);
-      LOGGER.error("LINES NOT COPIED " + logExceptionContext);
-      LOGGER.error(e.getMessage());
+      LOGGER.error("LINES NOT COPIED " + logCurrentRowAndPK);
       LOGGER.error("NEXT EXCEPTION: " + e.getNextException());
       throw new DbException("Problem in LoopByRow when reading data.", e);
 
@@ -107,13 +105,15 @@ public class LoopByRow {
       preparedStatementDest.executeBatch();
       preparedStatementDest.getConnection().commit();
     } catch (SQLException e) {
-      LOGGER.error("****************************************************");
+      LOGGER.error("************** EXECUTE BATCH SQLEXCEPTION **************");
       LOGGER.error("ERROR IN TABLE: " + sourceTable.getName());
       LOGGER.error(tableContentSource);
       LOGGER.error(tableContentDest);
-      LOGGER.error("LINES NOT COPIED " + logExceptionContext);
-      LOGGER.error(e.getMessage());
+      LOGGER.error("LINES NOT COPIED " + logCurrentRowAndPK);
+//      LOGGER.error(e.getMessage()); // GIVE WHICH ROW WITH EXACT SQL REQUEST? BUT TOO LONG FOR DATA FILES
       LOGGER.error("NEXT EXCEPTION: " + e.getNextException());
+
+      // MUST ROLLBACK CONNECTION TO CONTINUE COPY AFTER A SQLEXCEPTION
       rollBackConnection(preparedStatementDest);
     }
   }

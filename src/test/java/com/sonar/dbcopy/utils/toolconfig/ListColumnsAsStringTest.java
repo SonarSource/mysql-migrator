@@ -4,7 +4,7 @@
  * mailto:contact AT sonarsource DOT com
  */
 
-package com.sonar.dbcopy.utils;
+package com.sonar.dbcopy.utils.toolconfig;
 
 import com.sonar.dbcopy.utils.data.Table;
 import com.sonar.dbcopy.utils.toolconfig.ListColumnsAsString;

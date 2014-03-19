@@ -4,8 +4,9 @@
  * mailto:contact AT sonarsource DOT com
  */
 
-package com.sonar.dbcopy.utils;
+package com.sonar.dbcopy.utils.toolconfig;
 
+import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +25,7 @@ public class CharacteristicsRelatedToEditorTest {
   @Before
   public void setUp() throws Exception {
     Utils utils = new Utils();
-    Connection connection = utils.makeFilledH2("sonar");
+    Connection connection = utils.makeFilledH2("sonar",false);
     metaData = connection.getMetaData();
     chRelToEd = new CharacteristicsRelatedToEditor();
   }

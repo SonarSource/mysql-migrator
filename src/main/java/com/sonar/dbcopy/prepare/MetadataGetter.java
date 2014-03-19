@@ -61,7 +61,6 @@ public class MetadataGetter {
       closer.closeResultSet(resultSetTables);
       closer.closeStatement(statementSource);
       closer.closeConnection(connectionSource);
-      LOGGER.info("Everything is closed in MetadataGetter.");
     }
   }
 

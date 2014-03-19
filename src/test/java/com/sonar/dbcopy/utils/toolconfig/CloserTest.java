@@ -3,8 +3,9 @@
  * All rights reserved
  * mailto:contact AT sonarsource DOT com
  */
-package com.sonar.dbcopy.utils;
+package com.sonar.dbcopy.utils.toolconfig;
 
+import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
 import com.sonar.dbcopy.utils.toolconfig.DbException;
 import org.junit.Before;
@@ -29,7 +30,7 @@ public class CloserTest {
   public void setUp() throws SQLException {
     closer = new Closer("CloserTest");
     Utils utils = new Utils();
-    connection = utils.makeFilledH2("sonar");
+    connection = utils.makeFilledH2("sonar",false);
     statement = connection.createStatement();
     resultSet = statement.executeQuery("SELECT * FROM table_for_test");
   }

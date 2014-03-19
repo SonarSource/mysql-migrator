@@ -4,14 +4,12 @@
  * mailto:contact AT sonarsource DOT com
  */
 
-package com.sonar.dbcopy.reproduce;
+package com.sonar.dbcopy.reproduce.process;
 
-import com.sonar.dbcopy.reproduce.process.LoopByTable;
-import com.sonar.dbcopy.utils.toolconfig.DatabaseComparer;
-import com.sonar.dbcopy.utils.toolconfig.DbException;
 import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.data.ConnecterDatas;
 import com.sonar.dbcopy.utils.data.Database;
+import com.sonar.dbcopy.utils.toolconfig.DbException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -26,16 +24,19 @@ public class WholeCopyTest {
 
   private Connection connectionSource, connectionDest;
   private ConnecterDatas cdSource, cdDest;
-  private Database databaseSource,databaseDest;
+  private Database databaseSource, databaseDest;
 
   @Before
   public void setUp() throws Exception {
-    Utils utils = new Utils();
-    connectionSource = utils.makeFilledH2("source");
-    connectionDest = utils.makeEmptyH2("destination");
+    boolean threeTablesInSource=true;
+    boolean threeTablesInDestination=false;
 
-    databaseSource = utils.makeDatabase();
-    databaseDest = utils.makeDatabase();
+    Utils utils = new Utils();
+    connectionSource = utils.makeFilledH2("source",threeTablesInSource);
+    connectionDest = utils.makeEmptyH2("destination",threeTablesInDestination);
+
+    databaseSource = utils.makeDatabase(threeTablesInSource);
+    databaseDest = utils.makeDatabase(threeTablesInDestination);
 
     /* BE CAREFUL AT THE H2 DATABASE NAME: "source" AND "destination" */
 

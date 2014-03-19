@@ -59,13 +59,13 @@ public class DatabaseComparer {
     LOGGER.info("           TYPES : (" + lcas.makeStringOfTypes() + ")");
   }
 
-  public void displayMissingTableInDb(Database fullDb, Database missDb, String missDbStatus) {
-    Table realTable, missTableToFind;
-    for (int indexTable = 0; indexTable < fullDb.getNbTables(); indexTable++) {
-      realTable = fullDb.getTable(indexTable);
-      missTableToFind = missDb.getTableByName(realTable.getName());
-      if (missTableToFind == null) {
-        LOGGER.warn("TABLE " + fullDb.getTableName(indexTable) + " is not present in the " + missDbStatus + " database. Have a look to the logs \"FOUND TABLES\" upper.");
+  public void displayMissingTableInDb(Database completeDb, Database dbToEvaluate, String sourceOrDestination) {
+    Table realTable, missingTableToFind;
+    for (int indexTable = 0; indexTable < completeDb.getNbTables(); indexTable++) {
+      realTable = completeDb.getTable(indexTable);
+      missingTableToFind = dbToEvaluate.getTableByName(realTable.getName());
+      if (missingTableToFind == null) {
+        LOGGER.warn("TABLE " + completeDb.getTableName(indexTable) + " is not present in the " + sourceOrDestination + " database. Have a look to the logs \"FOUND TABLES\" upper.");
       }
     }
   }

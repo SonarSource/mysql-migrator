@@ -17,7 +17,7 @@ import java.sql.SQLException;
 public class DestinationStatementBuilder {
 
   public PreparedStatement getDestinationStatement(Connection connectionDestination, Table tableSource) {
-    PreparedStatement preparedStatementDest = null;
+    PreparedStatement preparedStatementDest;
     String tableSourceName = tableSource.getName();
 
     ListColumnsAsString lcas = new ListColumnsAsString(tableSource);
