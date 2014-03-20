@@ -70,7 +70,8 @@ public class MySqlReader implements ReaderTool {
 
   @Override
   public String readVarchar(ResultSet resultSetSource, int indexColumn) throws SQLException {
-    String stringToinsert = resultSetSource.getString(indexColumn + 1);
+    String stringToinsert = null;
+    stringToinsert = resultSetSource.getString(indexColumn + 1);
     return stringToinsert.replace("\u0000", "");
   }
 }

@@ -9,8 +9,6 @@ package com.sonar.dbcopy.reproduce.process;
 import com.sonar.dbcopy.reproduce.reader.ReaderTool;
 import com.sonar.dbcopy.reproduce.writer.WriterTool;
 import com.sonar.dbcopy.utils.data.Table;
-import com.sonar.dbcopy.utils.toolconfig.Closer;
-import com.sonar.dbcopy.utils.toolconfig.DbException;
 import com.sonar.dbcopy.utils.toolconfig.ListColumnsAsString;
 import org.slf4j.LoggerFactory;
 
@@ -22,103 +20,115 @@ import java.sql.Types;
 public class LoopByRow {
 
   private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-  private String logCurrentRowAndPK, tableContentSource, tableContentDest;
+  private String logRowsForExecuteBatch, logCurrentRowForAddBatch, tableContentSource, tableContentDest;
   private Table sourceTable, destTable;
+  private ReaderTool readerTool;
+  private WriterTool writerTool;
+  private PreparedStatement preparedStatementDest;
 
   public LoopByRow(Table sourceTable, Table destTable) {
     this.sourceTable = sourceTable;
     this.destTable = destTable;
+    ListColumnsAsString lcasSource = new ListColumnsAsString(sourceTable);
+    ListColumnsAsString lcasDest = new ListColumnsAsString(destTable);
+    tableContentSource = "SOURCE COLUMNS      ( " + lcasSource.makeColumnString() + " ) with TYPES (" + lcasSource.makeStringOfTypes() + " ).";
+    tableContentDest = "DESTINATION COLUMNS ( " + lcasDest.makeColumnString() + " ) with TYPES (" + lcasDest.makeStringOfTypes() + " ).";
   }
 
-  public void executeCopy(ResultSet resultSetSource, PreparedStatement preparedStatementDest, ReaderTool readerTool, WriterTool writerTool) {
-    Closer closer = new Closer("LoopByRow");
-    int indexColumn;
+  public void executeCopy(ResultSet resultSetSource, PreparedStatement preparedStatementDest, ReaderTool readerTool, WriterTool writerTool) throws SQLException {
+    this.readerTool = readerTool;
+    this.writerTool = writerTool;
+    this.preparedStatementDest = preparedStatementDest;
     long lineWritten = 0, lastID = 0, lastIDOfPreviousBlock = 0;
-    int nbColInTable = sourceTable.getNbColumns();
     String tableName = sourceTable.getName();
     int nbRowsInTable = sourceTable.getNbRows();
 
-    ListColumnsAsString lcasSource = new ListColumnsAsString(sourceTable);
-    ListColumnsAsString lcasDest = new ListColumnsAsString(destTable);
+
+    logLinesCopied(tableName, lineWritten, nbRowsInTable);
+    while (resultSetSource.next()) {
+
+      // RECORD CONTEXT
+      lastID = getIdIfPKAndPreserveCopyFromException(resultSetSource);
+      logRowsForExecuteBatch = " at ROW (" + lineWritten + ") WITH - id - BETWEEN (" + lastIDOfPreviousBlock + ") AND (" + lastID + ").";
+      logCurrentRowForAddBatch = " at ROW (" + lineWritten + ") WITH  id = (" + lastID + ").";
+
+      // LOG EACH 50 000 LINES WRITTEN
+      lineWritten++;
+      if (lineWritten % 50000 == 0) {
+        logLinesCopied("", lineWritten, nbRowsInTable);
+      }
+
+      // COPY
+      getAndSetEachRowDependingOnType(resultSetSource);
+      // ADD BATCH
+      addBatchAndPreserveCopyFromException();
+
+      // COMMIT EACH 10 ROWS
+      if (lineWritten % 10 == 0) {
+        executeBatchAndPreserveCopyFromException();
+        commitAndPreserveCopyFromException();
+        lastIDOfPreviousBlock = lastID;
+      }
+    }
+    // COMMIT LAST ROWS
+    executeBatchAndPreserveCopyFromException();
+    commitAndPreserveCopyFromException();
+
+    //LOG LAST COPIED LINE
+    logLinesCopied(tableName, lineWritten, nbRowsInTable);
+  }
+
+  private void getAndSetEachRowDependingOnType(ResultSet resultSetSource) {
     try {
-      LOGGER.info(tableName);
-      while (resultSetSource.next()) {
-        // PREPARE LOGS AND DISPLAY INFO EACH 50 000 ROWS
-        lastID = getIfRowHasIntegerIdAndPreserveCopyFromException(resultSetSource);
-        tableContentSource = "SOURCE COLUMNS      ( " + lcasSource.makeColumnString() + " ) with TYPES (" + lcasSource.makeStringOfTypes() + " ).";
-        tableContentDest = "DESTINATION COLUMNS ( " + lcasDest.makeColumnString() + " ) with TYPES (" + lcasDest.makeStringOfTypes() + " ).";
-        logCurrentRowAndPK = " at ROW (" + lineWritten + ") WITH - id - BETWEEN (" + lastIDOfPreviousBlock + ") AND (" + lastID + ").";
+      for (int indexColumn = 0; indexColumn < sourceTable.getNbColumns(); indexColumn++) {
+        Object objectGetted = resultSetSource.getObject(indexColumn + 1);
 
-        lineWritten++;
-        if (lineWritten % 50000 == 0) {
-          logLinesCopied(lineWritten, nbRowsInTable);
-        }
-
-        // START COPY BY COLUMN
-        for (indexColumn = 0; indexColumn < nbColInTable; indexColumn++) {
-          Object objectGetted = resultSetSource.getObject(indexColumn + 1);
-          // MANAGING DIFFERENT TYPE CASES
-          if (objectGetted == null) {
-            writerTool.writeWhenNull(indexColumn);
-          } else if (sourceTable.getType(indexColumn) == Types.TIMESTAMP) {
-            writerTool.writeTimestamp(readerTool.readTimestamp(resultSetSource, indexColumn), indexColumn);
-          } else if (sourceTable.getType(indexColumn) == Types.DECIMAL && destTable.getType(indexColumn) == Types.BIT) {
-            writerTool.writeBoolean(readerTool.readBoolean(resultSetSource, indexColumn), indexColumn);
-          } else if (sourceTable.getType(indexColumn) == Types.BLOB) {
-            writerTool.writeBlob(readerTool.readBlob(resultSetSource, indexColumn), indexColumn);
-          } else if (sourceTable.getType(indexColumn) == Types.CLOB) {
-            writerTool.writeClob(readerTool.readClob(resultSetSource, indexColumn), indexColumn);
-          } else if (sourceTable.getType(indexColumn) == Types.VARCHAR) {
-            writerTool.writeVarchar(readerTool.readVarchar(resultSetSource, indexColumn), indexColumn);
-          } else {
-            writerTool.writeObject(readerTool.readObject(resultSetSource, indexColumn), indexColumn);
-          }
-        }
-        preparedStatementDest.addBatch();
-
-        // COMMIT EACH 10 ROWS
-        if (lineWritten % 10 == 0) {
-          executeBatchAndPreserveCopyFromException(preparedStatementDest);
-          lastIDOfPreviousBlock = lastID;
+        if (objectGetted == null) {
+          writerTool.writeWhenNull(indexColumn);
+        } else if (sourceTable.getType(indexColumn) == Types.TIMESTAMP) {
+          writerTool.writeTimestamp(readerTool.readTimestamp(resultSetSource, indexColumn), indexColumn);
+        } else if (sourceTable.getType(indexColumn) == Types.DECIMAL && destTable.getType(indexColumn) == Types.BIT) {
+          writerTool.writeBoolean(readerTool.readBoolean(resultSetSource, indexColumn), indexColumn);
+        } else if (sourceTable.getType(indexColumn) == Types.BLOB) {
+          writerTool.writeBlob(readerTool.readBlob(resultSetSource, indexColumn), indexColumn);
+        } else if (sourceTable.getType(indexColumn) == Types.CLOB) {
+          writerTool.writeClob(readerTool.readClob(resultSetSource, indexColumn), indexColumn);
+        } else if (sourceTable.getType(indexColumn) == Types.VARCHAR) {
+          writerTool.writeVarchar(readerTool.readVarchar(resultSetSource, indexColumn), indexColumn);
+        } else {
+          writerTool.writeObject(readerTool.readObject(resultSetSource, indexColumn), indexColumn);
         }
       }
-      executeBatchAndPreserveCopyFromException(preparedStatementDest);
-      logLinesCopied(lineWritten, nbRowsInTable);
-
     } catch (SQLException e) {
-      LOGGER.error("************** SQLEXCEPTION **************");
-      LOGGER.error("ERROR IN TABLE: " + tableName);
-      LOGGER.error(tableContentSource);
-      LOGGER.error(tableContentDest);
-      LOGGER.error("LINES NOT COPIED " + logCurrentRowAndPK);
-      LOGGER.error("NEXT EXCEPTION: " + e.getNextException());
-      throw new DbException("Problem in LoopByRow when reading data.", e);
-
-    } finally {
-      closer.closeResultSet(resultSetSource);
-      closer.closeStatement(preparedStatementDest);
+      this.displayContextLog(e, logCurrentRowForAddBatch);
     }
   }
 
-  private void executeBatchAndPreserveCopyFromException(PreparedStatement preparedStatementDest) {
+  private void addBatchAndPreserveCopyFromException() {
+    try {
+      preparedStatementDest.addBatch();
+    } catch (SQLException e) {
+      this.displayContextLog(e, logCurrentRowForAddBatch);
+    }
+  }
+
+  private void executeBatchAndPreserveCopyFromException() {
     try {
       preparedStatementDest.executeBatch();
-      preparedStatementDest.getConnection().commit();
     } catch (SQLException e) {
-      LOGGER.error("************** EXECUTE BATCH SQLEXCEPTION **************");
-      LOGGER.error("ERROR IN TABLE: " + sourceTable.getName());
-      LOGGER.error(tableContentSource);
-      LOGGER.error(tableContentDest);
-      LOGGER.error("LINES NOT COPIED " + logCurrentRowAndPK);
-//      LOGGER.error(e.getMessage()); // GIVE WHICH ROW WITH EXACT SQL REQUEST? BUT TOO LONG FOR DATA FILES
-      LOGGER.error("NEXT EXCEPTION: " + e.getNextException());
-
-      // MUST ROLLBACK CONNECTION TO CONTINUE COPY AFTER A SQLEXCEPTION
-      rollBackConnection(preparedStatementDest);
+      this.displayContextLog(e, logRowsForExecuteBatch);
     }
   }
 
-  private long getIfRowHasIntegerIdAndPreserveCopyFromException(ResultSet resultSetSource) {
+  private void commitAndPreserveCopyFromException() {
+    try {
+      preparedStatementDest.getConnection().commit();
+    } catch (SQLException e) {
+      this.displayContextLog(e, logRowsForExecuteBatch);
+    }
+  }
+
+  private long getIdIfPKAndPreserveCopyFromException(ResultSet resultSetSource) {
     long idToReturn = 0;
     try {
       idToReturn = resultSetSource.getLong(1);
@@ -128,17 +138,24 @@ public class LoopByRow {
     return idToReturn;
   }
 
-  private void logLinesCopied(long lineWritten, int nbRowsInTable) {
-    LOGGER.info("   " + lineWritten + " / " + nbRowsInTable);
-
-  }
-
-  private void rollBackConnection(PreparedStatement preparedStatementDest) {
-    try {
-      preparedStatementDest.getConnection().rollback();
-    } catch (SQLException e) {
-      throw new DbException("Unable to rollback the connection", e);
+  private void logLinesCopied(String tableName, long lineWritten, int nbRowsInTable) {
+    String space = "                                      ";
+    if(tableName.length()<30){
+      space = space.substring(0, 30 - tableName.length());
     }
+    LOGGER.info(tableName + space + lineWritten + " / " + nbRowsInTable);
   }
+
+  private void displayContextLog(SQLException e, String logRow) {
+    LOGGER.error("ERROR IN TABLE: " + sourceTable.getName());
+    LOGGER.error(tableContentSource);
+    LOGGER.error(tableContentDest);
+    LOGGER.error("LINES NOT COPIED " + logRow);
+//      LOGGER.error(e.getMessage()); // GIVE THE EXACT ROW WITH WHERE SQL REQUEST FAILED, BUT SOMETIMES IT'S TOO LONG WHEN IT DISPLAYS ENTIRE FILES
+    LOGGER.error("NEXT EXCEPTION: " + e.getNextException());
+
+  }
+
+
 }
 
