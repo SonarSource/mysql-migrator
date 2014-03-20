@@ -140,7 +140,7 @@ public class LoopByRow {
 
   private void logLinesCopied(String tableName, long lineWritten, int nbRowsInTable) {
     String space = "                                      ";
-    if(tableName.length()<30){
+    if (tableName.length() < 30) {
       space = space.substring(0, 30 - tableName.length());
     }
     LOGGER.info(tableName + space + lineWritten + " / " + nbRowsInTable);
@@ -151,7 +151,7 @@ public class LoopByRow {
     LOGGER.error(tableContentSource);
     LOGGER.error(tableContentDest);
     LOGGER.error("LINES NOT COPIED " + logRow);
-//      LOGGER.error(e.getMessage()); // GIVE THE EXACT ROW WITH WHERE SQL REQUEST FAILED, BUT SOMETIMES IT'S TOO LONG WHEN IT DISPLAYS ENTIRE FILES
+    LOGGER.error(e.getMessage()); // GIVE THE EXACT ROW WITH WHERE SQL REQUEST FAILED, BUT SOMETIMES IT'S TOO LONG WHEN IT DISPLAYS ENTIRE FILES
     LOGGER.error("NEXT EXCEPTION: " + e.getNextException());
 
   }
