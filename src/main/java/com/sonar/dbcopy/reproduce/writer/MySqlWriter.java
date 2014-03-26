@@ -29,8 +29,8 @@ public class MySqlWriter implements WriterTool {
   }
 
   @Override
-  public void writeClob(byte[] byteArray, int indexColumn) throws SQLException {
-    destinationStatement.setBytes(indexColumn + 1, byteArray);
+  public void writeClob(String stringAsclob, int indexColumn) throws SQLException {
+    destinationStatement.setString(indexColumn + 1, stringAsclob);
   }
 
   @Override

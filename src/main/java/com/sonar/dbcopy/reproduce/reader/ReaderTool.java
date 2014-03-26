@@ -6,7 +6,6 @@
 
 package com.sonar.dbcopy.reproduce.reader;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -17,7 +16,7 @@ public interface ReaderTool {
 
   public byte[] readBlob(ResultSet resultSetSource, int indexColumn) throws SQLException;
 
-  public byte[] readClob(ResultSet resultSetSource, int indexColumn) throws SQLException;
+  public String readClob(ResultSet resultSetSource, int indexColumn) throws SQLException;
 
   public boolean readBoolean(ResultSet resultSetSource, int indexColumn) throws SQLException;
 

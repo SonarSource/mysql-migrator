@@ -25,6 +25,7 @@ public class LoopByRow {
   private ReaderTool readerTool;
   private WriterTool writerTool;
   private PreparedStatement preparedStatementDest;
+  private long lastID;
 
   public LoopByRow(Table sourceTable, Table destTable) {
     this.sourceTable = sourceTable;
@@ -39,7 +40,8 @@ public class LoopByRow {
     this.readerTool = readerTool;
     this.writerTool = writerTool;
     this.preparedStatementDest = preparedStatementDest;
-    long lineWritten = 0, lastID = 0, lastIDOfPreviousBlock = 0;
+    long lineWritten = 0, lastIDOfPreviousBlock = 0;
+    lastID = 0;
     String tableName = sourceTable.getName();
     int nbRowsInTable = sourceTable.getNbRows();
 
@@ -79,8 +81,9 @@ public class LoopByRow {
   }
 
   private void getAndSetEachRowDependingOnType(ResultSet resultSetSource) {
+    int indexColumn = 0;
     try {
-      for (int indexColumn = 0; indexColumn < sourceTable.getNbColumns(); indexColumn++) {
+      for (indexColumn = 0; indexColumn < sourceTable.getNbColumns(); indexColumn++) {
         Object objectGetted = resultSetSource.getObject(indexColumn + 1);
 
         if (objectGetted == null) {
@@ -100,7 +103,7 @@ public class LoopByRow {
         }
       }
     } catch (SQLException e) {
-      this.displayContextLog(e, logCurrentRowForAddBatch);
+      this.displayContextLog(e, logCurrentRowForAddBatch, "read and write at col: " + indexColumn + " and id=" + lastID);
     }
   }
 
@@ -108,7 +111,7 @@ public class LoopByRow {
     try {
       preparedStatementDest.addBatch();
     } catch (SQLException e) {
-      this.displayContextLog(e, logCurrentRowForAddBatch);
+      this.displayContextLog(e, logCurrentRowForAddBatch, "add batch at id=" + lastID);
     }
   }
 
@@ -116,7 +119,7 @@ public class LoopByRow {
     try {
       preparedStatementDest.executeBatch();
     } catch (SQLException e) {
-      this.displayContextLog(e, logRowsForExecuteBatch);
+      this.displayContextLog(e, logRowsForExecuteBatch, "execute batch");
     }
   }
 
@@ -124,7 +127,7 @@ public class LoopByRow {
     try {
       preparedStatementDest.getConnection().commit();
     } catch (SQLException e) {
-      this.displayContextLog(e, logRowsForExecuteBatch);
+      this.displayContextLog(e, logRowsForExecuteBatch, "commit");
     }
   }
 
@@ -146,8 +149,8 @@ public class LoopByRow {
     LOGGER.info(tableName + space + lineWritten + " / " + nbRowsInTable);
   }
 
-  private void displayContextLog(SQLException e, String logRow) {
-    LOGGER.error("ERROR IN TABLE: " + sourceTable.getName());
+  private void displayContextLog(SQLException e, String logRow, String kingOfError) {
+    LOGGER.error("ERROR IN TABLE: " + sourceTable.getName() + " when " + kingOfError + ".");
     LOGGER.error(tableContentSource);
     LOGGER.error(tableContentDest);
     LOGGER.error("LINES NOT COPIED " + logRow);

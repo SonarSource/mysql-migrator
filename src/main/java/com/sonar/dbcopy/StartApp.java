@@ -44,7 +44,7 @@ public class StartApp {
     int maxVersionIdSource = vvSource.lastVersionId(connecterDatasSource);
     VersionVerifier vvDest = new VersionVerifier();
     int maxVersionIdDestination = vvDest.lastVersionId(connecterDatasDest);
-    if (maxVersionIdSource != maxVersionIdDestination && maxVersionIdDestination != 0) {
+    if (maxVersionIdSource != maxVersionIdDestination && maxVersionIdDestination != 0 && maxVersionIdSource != 0) {
       throw new DbException("Version of schema migration are not the same between source (" + maxVersionIdSource + ") and destination (" + maxVersionIdDestination + ").", new Exception());
     } else if (maxVersionIdDestination == 0) {
       LOGGER.info("WARNING !! The versions of SonarQube schema migration destination is (" + maxVersionIdDestination + ") when source is (" + maxVersionIdSource + ").");

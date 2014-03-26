@@ -15,7 +15,7 @@ public interface WriterTool {
 
   public void writeBlob(byte[] byteArray, int indexColumn) throws SQLException;
 
-  public void writeClob(byte[] byteArray, int indexColumn) throws SQLException;
+  public void writeClob(String stringAsclob, int indexColumn) throws SQLException;
 
   public void writeBoolean(boolean bool, int indexColumn) throws SQLException;
 
