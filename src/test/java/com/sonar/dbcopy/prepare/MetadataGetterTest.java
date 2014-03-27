@@ -6,11 +6,11 @@
 
 package com.sonar.dbcopy.prepare;
 
-import com.sonar.dbcopy.utils.toolconfig.Closer;
-import com.sonar.dbcopy.utils.toolconfig.DbException;
 import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.data.ConnecterDatas;
 import com.sonar.dbcopy.utils.data.Database;
+import com.sonar.dbcopy.utils.toolconfig.Closer;
+import com.sonar.dbcopy.utils.toolconfig.DbException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +32,7 @@ public class MetadataGetterTest {
   public void setUp() throws SQLException, ClassNotFoundException {
     Utils utils = new Utils();
     database = new Database();
-    connectionForFilled = utils.makeFilledH2("filledDatabase",false);
+    connectionForFilled = utils.makeFilledH2("filledDatabase", false);
     connectionWithoutTable = utils.makeH2("withoutTables");
     closer = new Closer("MetadataGetterTest");
   }
@@ -41,7 +41,7 @@ public class MetadataGetterTest {
   public void testFilledDatabase() throws Exception {
     ConnecterDatas cdSource = new ConnecterDatas("org.h2.Driver", "jdbc:h2:mem:filledDatabase;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     mdg = new MetadataGetter(cdSource, database);
-    mdg.execute();
+    mdg.execute(null);
 
     assertNotNull(mdg);
     assertEquals(2, database.getNbTables());
@@ -71,7 +71,7 @@ public class MetadataGetterTest {
     ConnecterDatas cdSource = new ConnecterDatas("org.h2.Driver", "jdbc:h2:mem:withoutTables;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     try {
       mdg = new MetadataGetter(cdSource, database);
-      mdg.execute();
+      mdg.execute(null);
       fail();
     } catch (Exception e) {
       assertThat(e).isInstanceOf(DbException.class).hasMessage("*** ERROR : CAN'T FIND ANY TABLE IN DATABASE SOURCE ***");

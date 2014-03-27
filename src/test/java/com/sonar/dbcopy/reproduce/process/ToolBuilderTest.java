@@ -13,7 +13,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import static org.fest.assertions.Assertions.assertThat;
@@ -22,13 +21,12 @@ import static org.junit.Assert.fail;
 public class ToolBuilderTest {
 
   private Connection connectionSource, connectionDest;
-  private PreparedStatement preparedStatementDest;
 
   @Before
   public void setUp() throws SQLException {
     Utils utils = new Utils();
-    connectionSource = utils.makeFilledH2("source",false);
-    connectionDest = utils.makeEmptyH2("destination",false);
+    connectionSource = utils.makeFilledH2("source", false);
+    connectionDest = utils.makeEmptyH2("destination", false);
   }
 
   @Test

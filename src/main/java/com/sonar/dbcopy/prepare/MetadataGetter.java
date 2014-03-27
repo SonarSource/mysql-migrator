@@ -27,7 +27,7 @@ public class MetadataGetter {
     this.database = db;
   }
 
-  public void execute() {
+  public void execute(String[] tablesToCopy) {
     closer = new Closer("MetadataGetter");
 
     Connection connectionSource = new Connecter().doConnection(this.cd);
@@ -44,7 +44,11 @@ public class MetadataGetter {
 
       /* GET TABLES FROM SCHEMA AND ADD TO DATABASE */
       resultSetTables = metaData.getTables(connectionSource.getCatalog(), schema, "%", new String[]{"TABLE"});
-      this.addTables(resultSetTables);
+      if (tablesToCopy == null) {
+        this.addTables(resultSetTables);
+      } else {
+        this.addOnlyTablesRequiredInCommandLine(resultSetTables, tablesToCopy);
+      }
       closer.closeResultSet(resultSetTables);
 
       /* GET COLUMNS FROM TABLES */
@@ -69,6 +73,32 @@ public class MetadataGetter {
       while (resultSetTables.next()) {
         String tableName = resultSetTables.getString("TABLE_NAME").toLowerCase();
         database.addTable(tableName);
+      }
+    }
+  }
+
+  private void addOnlyTablesRequiredInCommandLine(ResultSet resultSetTables, String[] tablesToCopy) throws SQLException {
+    if (!resultSetTables.isBeforeFirst()) {
+      throw new DbException("*** ERROR : CAN'T FIND ANY TABLE IN DATABASE SOURCE ***", new Exception("resultset is empty"));
+    } else {
+      while (resultSetTables.next()) {
+        boolean tablehasBeenrequired = false;
+        String tableNameFoundInDb = resultSetTables.getString("TABLE_NAME").toLowerCase();
+        for (int indexTablesRequired = 0; indexTablesRequired < tablesToCopy.length; indexTablesRequired++) {
+          if (tablesToCopy[indexTablesRequired].equals(tableNameFoundInDb)) {
+            tablehasBeenrequired = true;
+          }
+        }
+        if (tablehasBeenrequired) {
+          database.addTable(tableNameFoundInDb);
+        }
+      }
+      if (database.getNbTables() == 0) {
+        String allTablesRequired = "";
+        for (int indexTable = 0; indexTable < tablesToCopy.length; indexTable++) {
+          allTablesRequired += tablesToCopy[indexTable];
+        }
+        throw new DbException("It seems that the table(s): " + allTablesRequired + " you required do not exist.", new Exception("Mistake in command line."));
       }
     }
   }

@@ -34,16 +34,34 @@ public class StartAppTest {
   @Test
   public void testMain() throws Exception {
 
-    String[] args = {"org.h2.Driver", "jdbc:h2:mem:source;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar", "org.h2.Driver", "jdbc:h2:mem:destination;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar"};
+    String[] args = {
+      "-driverSrc", "org.h2.Driver",
+      "-urlSrc", "jdbc:h2:mem:source;DB_CLOSE_ON_EXIT=-1;",
+      "-userSrc", "sonar",
+      "-pwdSrc", "sonar",
+      "-driverDest", "org.h2.Driver",
+      "-urlDest", "jdbc:h2:mem:destination;DB_CLOSE_ON_EXIT=-1;",
+      "-userDest", "sonar",
+      "-pwdDest", "sonar"
+    };
     StartApp startApp = new StartApp();
     startApp.main(args);
 
-    String[] argsBadVersion = {"org.h2.Driver", "jdbc:h2:mem:source;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar", "org.h2.Driver", "jdbc:h2:mem:destinationWithBadVersion;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar"};
-    try{
+    String[] argsBadVersion = {
+      "-driverSrc", "org.h2.Driver",
+      "-urlSrc", "jdbc:h2:mem:source;DB_CLOSE_ON_EXIT=-1;",
+      "-userSrc", "sonar",
+      "-pwdSrc", "sonar",
+      "-driverDest", "org.h2.Driver",
+      "-urlDest", "jdbc:h2:mem:destinationWithBadVersion;DB_CLOSE_ON_EXIT=-1;",
+      "-userDest", "sonar",
+      "-pwdDest", "sonar"
+    };
+    try {
       startApp.main(argsBadVersion);
       fail();
 
-    } catch (DbException e){
+    } catch (DbException e) {
       assertThat(e).isInstanceOf(DbException.class).hasMessage("Version of schema migration are not the same between source (1) and destination (2).");
     }
 
