@@ -78,6 +78,7 @@ public class MetadataGetter {
   }
 
   private void addOnlyTablesRequiredInCommandLine(ResultSet resultSetTables, String[] tablesToCopy) throws SQLException {
+    String[] tableSearched = tablesToCopy;
     if (!resultSetTables.isBeforeFirst()) {
       throw new DbException("*** ERROR : CAN'T FIND ANY TABLE IN DATABASE SOURCE ***", new Exception("resultset is empty"));
     } else {
@@ -94,10 +95,12 @@ public class MetadataGetter {
         }
       }
       if (database.getNbTables() == 0) {
-        String allTablesRequired = "";
-        for (int indexTable = 0; indexTable < tablesToCopy.length; indexTable++) {
-          allTablesRequired += tablesToCopy[indexTable];
+        // This is better
+        StringBuffer buf = new StringBuffer();
+        for (int i = 0; i < tablesToCopy.length; ++i) {
+          buf.append(tablesToCopy[i]+" ");
         }
+        String allTablesRequired = buf.toString();
         throw new DbException("It seems that the table(s): " + allTablesRequired + " you required do not exist.", new Exception("Mistake in command line."));
       }
     }
