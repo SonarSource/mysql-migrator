@@ -27,8 +27,8 @@ public class StartAppTest {
     Connection connectionDest = utils.makeEmptyH2("destination", true);
     utils.addContentInThirdTable(connectionDest, 1);
 
-    Connection connectionVersionDifferent = utils.makeEmptyH2("destinationWithBadVersion", true);
-    utils.addContentInThirdTable(connectionVersionDifferent, 2);
+    Connection connectionWithDifferentVersion = utils.makeEmptyH2("destinationWithBadVersion", true);
+    utils.addContentInThirdTable(connectionWithDifferentVersion, 2);
   }
 
   @Test
@@ -60,7 +60,6 @@ public class StartAppTest {
     try {
       startApp.main(argsBadVersion);
       fail();
-
     } catch (DbException e) {
       assertThat(e).isInstanceOf(DbException.class).hasMessage("Version of schema migration are not the same between source (1) and destination (2).");
     }

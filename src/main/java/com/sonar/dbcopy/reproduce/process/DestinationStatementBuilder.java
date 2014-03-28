@@ -7,6 +7,7 @@
 package com.sonar.dbcopy.reproduce.process;
 
 import com.sonar.dbcopy.utils.data.Table;
+import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
 import com.sonar.dbcopy.utils.toolconfig.DbException;
 import com.sonar.dbcopy.utils.toolconfig.ListColumnsAsString;
 
@@ -18,12 +19,12 @@ public class DestinationStatementBuilder {
 
   public PreparedStatement getDestinationStatement(Connection connectionDestination, Table tableSource) {
     PreparedStatement preparedStatementDest;
-    String tableSourceName = tableSource.getName();
-
-    ListColumnsAsString lcas = new ListColumnsAsString(tableSource);
-    String sqlInsertRequest = "INSERT INTO " + tableSourceName + " (" + lcas.makeColumnString() + ") VALUES(" + lcas.makeQuestionMarkString() + ")";
-
+    CharacteristicsRelatedToEditor chRelToEd = new CharacteristicsRelatedToEditor();
     try {
+      String tableSourceName = chRelToEd.transfromCaseOfTableName(connectionDestination.getMetaData(), tableSource.getName());
+      ListColumnsAsString lcas = new ListColumnsAsString(tableSource);
+      String sqlInsertRequest = "INSERT INTO " + tableSourceName + " (" + lcas.makeColumnString() + ") VALUES(" + lcas.makeQuestionMarkString() + ")";
+
       preparedStatementDest = connectionDestination.prepareStatement(sqlInsertRequest);
     } catch (SQLException e) {
       throw new DbException("Problem when buiding destination prepared statement", e);

@@ -128,12 +128,12 @@ public class Utils {
     }
   }
 
-  public void addContentInThirdTable(Connection connection, int version) {
+  public void addContentInThirdTable(Connection connection, int versionToInsert) {
     PreparedStatement preparedStatement = null;
     try {
       String stringToInsert = "INSERT INTO schema_migrations (version ) VALUES (?)";
       preparedStatement = connection.prepareStatement(stringToInsert);
-      preparedStatement.setInt(1, version);
+      preparedStatement.setInt(1, versionToInsert);
       preparedStatement.executeUpdate();
 
     } catch (SQLException e) {
