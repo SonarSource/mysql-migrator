@@ -6,6 +6,7 @@
 package com.sonar.dbcopy.prepare;
 
 import com.sonar.dbcopy.utils.data.ConnecterData;
+import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
 import com.sonar.dbcopy.utils.toolconfig.DbException;
 
@@ -20,11 +21,14 @@ public class VersionVerifier {
     Statement statement = null;
     ResultSet resultSet = null;
     Closer closer = new Closer("ConnectionVerifier");
+    CharacteristicsRelatedToEditor chRelToEd = new CharacteristicsRelatedToEditor();
     try {
       Class.forName(cd.getDriver());
       connection = DriverManager.getConnection(cd.getUrl(), cd.getUser(), cd.getPwd());
       statement = connection.createStatement();
-      resultSet = statement.executeQuery("SELECT version FROM schema_migrations");
+
+      String tableNameSchemaMigration = chRelToEd.transfromCaseOfTableName(connection.getMetaData(),"schema_migrations");
+      resultSet = statement.executeQuery("SELECT version FROM "+tableNameSchemaMigration);
 
       while (resultSet.next()) {
         String versionString = resultSet.getString(1);
