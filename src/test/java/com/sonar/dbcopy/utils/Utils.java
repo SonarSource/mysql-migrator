@@ -31,7 +31,6 @@ public class Utils {
   }
 
   private Connection makeH2WithTables(String dataBaseName, boolean trueToInsertThirdTable) throws SQLException, ClassNotFoundException {
-
     Connection connection = makeH2(dataBaseName);
     PreparedStatement preparedStatement = null;
 
@@ -52,8 +51,6 @@ public class Utils {
         preparedStatement = connection.prepareStatement("CREATE TABLE schema_migrations (version integer)");
         preparedStatement.executeUpdate();
       }
-
-
       return connection;
     } catch (SQLException e) {
       throw new DbException("Problem to make H2 for tests", e);
@@ -72,18 +69,13 @@ public class Utils {
       String stringToInsert = "INSERT INTO table_for_test (id , columnstring , columntimestamp, columnBlob , columnClob , columnBoolean  , columnTobeNull ) VALUES (?,?,?,?,?,?,?)";
       preparedStatement = connection.prepareStatement(stringToInsert);
 
-      /* CREATE DATAS */
+      /* CREATE DATA */
       Integer idForColumnId = 1;
       String stringObj = "This is a first string for test";
       Timestamp timestampObj = new Timestamp(123456);
       byte[] bytes = "first string to be convert in byte".getBytes();
       Blob blobObj = new SerialBlob(bytes);
-      //char[] charObj = "first string to be convert in clob".toCharArray();
-      //Clob clobObj = new SerialClob(charObj);
-
       boolean booleanObj = true;
-
-
 
       /* INSERT A FIRST ROW OF DATAS IN DATABASE */
       preparedStatement.setObject(1, idForColumnId);
@@ -145,12 +137,11 @@ public class Utils {
       preparedStatement.executeUpdate();
 
     } catch (SQLException e) {
-      throw new DbException("Problem to add version in H2 schema_migrations table.",e);
-    }     finally {
+      throw new DbException("Problem to add version in H2 schema_migrations table.", e);
+    } finally {
       closer.closeStatement(preparedStatement);
     }
   }
-
 
   /* JAVA OBJECTS */
 
