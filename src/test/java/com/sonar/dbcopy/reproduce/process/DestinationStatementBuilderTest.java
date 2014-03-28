@@ -49,7 +49,7 @@ public class DestinationStatementBuilderTest {
     // THE REQUEST RETURNED BY preparedStatement.toString() HAVE A NUMBER LIKE prep145:
     // SO WE MUST SPLIT THE STRING IN 2 PARTS SEPARATED BY " "  AND USE request[1] IN ASSERTEQUALS
     String[] request = preparedStatement.toString().split(" ", 2);
-    Assert.assertEquals("INSERT INTO table_for_test (id,columnstring,columntimestamp,columnblob,columnclob,columnboolean,columntobenull) VALUES(?,?,?,?,?,?,?)", request[1]);
+    Assert.assertEquals("INSERT INTO TABLE_FOR_TEST (id,columnstring,columntimestamp,columnblob,columnclob,columnboolean,columntobenull) VALUES(?,?,?,?,?,?,?)", request[1]);
 
     Table tableWrong = new Table("no_existent_table");
     tableWrong.addColumn(0, "first", Types.INTEGER);
