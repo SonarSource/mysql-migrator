@@ -5,7 +5,7 @@
  */
 package com.sonar.dbcopy.prepare;
 
-import com.sonar.dbcopy.utils.data.ConnecterDatas;
+import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
 import com.sonar.dbcopy.utils.toolconfig.DbException;
 
@@ -16,7 +16,7 @@ import java.sql.SQLException;
 
 public class ConnectionVerifier {
 
-  public void databaseIsReached(ConnecterDatas cd) {
+  public void databaseIsReached(ConnecterData cd) {
     Connection connection = null;
     Closer closer = new Closer("ConnectionVerifier");
     try {

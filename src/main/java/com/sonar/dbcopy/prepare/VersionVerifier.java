@@ -5,7 +5,7 @@
  */
 package com.sonar.dbcopy.prepare;
 
-import com.sonar.dbcopy.utils.data.ConnecterDatas;
+import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
 import com.sonar.dbcopy.utils.toolconfig.DbException;
 
@@ -15,7 +15,7 @@ public class VersionVerifier {
 
   private int maxVersionId = 0;
 
-  public int lastVersionId(ConnecterDatas cd) {
+  public int lastVersionId(ConnecterData cd) {
     Connection connection = null;
     Statement statement = null;
     ResultSet resultSet = null;
@@ -36,7 +36,7 @@ public class VersionVerifier {
       return maxVersionId;
 
     } catch (SQLException e) {
-      throw new DbException("", e);
+      throw new DbException("Problem in VersionVerifier.", e);
     } catch (ClassNotFoundException e) {
       throw new DbException("*** DRIVER " + cd.getDriver() + " CAN'T BE REACHED ***", e);
     } finally {

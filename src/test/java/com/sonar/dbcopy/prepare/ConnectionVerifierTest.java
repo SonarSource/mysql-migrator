@@ -8,7 +8,7 @@ package com.sonar.dbcopy.prepare;
 
 import com.sonar.dbcopy.utils.toolconfig.DbException;
 import com.sonar.dbcopy.utils.Utils;
-import com.sonar.dbcopy.utils.data.ConnecterDatas;
+import com.sonar.dbcopy.utils.data.ConnecterData;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,14 +28,14 @@ public class ConnectionVerifierTest {
 
   @Test
   public void testDatabaseIsReached() throws Exception {
-    ConnecterDatas availableCd = new ConnecterDatas("org.h2.Driver", "jdbc:h2:mem:sonar;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    ConnecterData availableCd = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:sonar;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     ConnectionVerifier connectionVerifier = new ConnectionVerifier();
     connectionVerifier.databaseIsReached(availableCd);
   }
 
   @Test
   public void testDatabaseIsNotReached() {
-    ConnecterDatas notAvailableURL = new ConnecterDatas("org.h2.Driver", ":h2:mem:sonar;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    ConnecterData notAvailableURL = new ConnecterData("org.h2.Driver", ":h2:mem:sonar;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     try {
       connectionVerifier.databaseIsReached(notAvailableURL);
       fail();
@@ -43,7 +43,7 @@ public class ConnectionVerifierTest {
       assertThat(e).isInstanceOf(DbException.class).hasMessage("*** DATABASE CAN'T BE REACHED AT ADDRESS :h2:mem:sonar;DB_CLOSE_ON_EXIT=-1; ***");
     }
 
-    ConnecterDatas notAvailableDriver = new ConnecterDatas("org..Driver", "jdbc:h2:mem:sonar;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    ConnecterData notAvailableDriver = new ConnecterData("org..Driver", "jdbc:h2:mem:sonar;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     try {
       connectionVerifier.databaseIsReached(notAvailableDriver);
       fail();

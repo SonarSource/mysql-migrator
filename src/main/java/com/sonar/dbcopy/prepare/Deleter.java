@@ -6,7 +6,7 @@
 
 package com.sonar.dbcopy.prepare;
 
-import com.sonar.dbcopy.utils.data.ConnecterDatas;
+import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.data.Database;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
 import com.sonar.dbcopy.utils.toolconfig.Connecter;
@@ -21,10 +21,10 @@ import java.sql.Statement;
 public class Deleter {
 
   private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-  private ConnecterDatas cdDest;
+  private ConnecterData cdDest;
   private Database databaseSource;
 
-  public Deleter(ConnecterDatas cdDest, Database databaseSource) {
+  public Deleter(ConnecterData cdDest, Database databaseSource) {
     this.cdDest = cdDest;
     this.databaseSource = databaseSource;
   }

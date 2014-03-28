@@ -5,7 +5,7 @@
  */
 package com.sonar.dbcopy.prepare;
 
-import com.sonar.dbcopy.utils.data.ConnecterDatas;
+import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.data.Database;
 import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
@@ -17,12 +17,12 @@ import java.sql.*;
 public class MetadataGetter {
 
   private Database database;
-  private ConnecterDatas cd;
+  private ConnecterData cd;
   private Closer closer;
   private DatabaseMetaData metaData;
   private CharacteristicsRelatedToEditor chRelToEd;
 
-  public MetadataGetter(ConnecterDatas cd, Database db) {
+  public MetadataGetter(ConnecterData cd, Database db) {
     this.cd = cd;
     this.database = db;
   }
@@ -78,7 +78,6 @@ public class MetadataGetter {
   }
 
   private void addOnlyTablesRequiredInCommandLine(ResultSet resultSetTables, String[] tablesToCopy) throws SQLException {
-    String[] tableSearched = tablesToCopy;
     if (!resultSetTables.isBeforeFirst()) {
       throw new DbException("*** ERROR : CAN'T FIND ANY TABLE IN DATABASE SOURCE ***", new Exception("resultset is empty"));
     } else {
@@ -94,14 +93,13 @@ public class MetadataGetter {
           database.addTable(tableNameFoundInDb);
         }
       }
-      if (database.getNbTables() == 0) {
-        // This is better
-        StringBuffer buf = new StringBuffer();
-        for (int i = 0; i < tablesToCopy.length; ++i) {
-          buf.append(tablesToCopy[i]+" ");
+      if (database.getNbTables() != tablesToCopy.length) {
+        StringBuilder stringBuilder = new StringBuilder();
+          for (int i = 0; i < tablesToCopy.length; ++i) {
+          stringBuilder.append(tablesToCopy[i] + " ");
         }
-        String allTablesRequired = buf.toString();
-        throw new DbException("It seems that the table(s): " + allTablesRequired + " you required do not exist.", new Exception("Mistake in command line."));
+        String allTablesRequired = stringBuilder.toString();
+        throw new DbException("It seems that some table(s) you required in ( " + allTablesRequired + ") do not exist.", new Exception("Mistake in command line."));
       }
     }
   }

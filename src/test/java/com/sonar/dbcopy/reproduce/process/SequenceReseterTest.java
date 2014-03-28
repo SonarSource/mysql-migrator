@@ -7,7 +7,7 @@
 package com.sonar.dbcopy.reproduce.process;
 
 import com.sonar.dbcopy.utils.Utils;
-import com.sonar.dbcopy.utils.data.ConnecterDatas;
+import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.toolconfig.DbException;
 import org.junit.After;
 import org.junit.Before;
@@ -32,8 +32,8 @@ public class SequenceReseterTest {
 
   @Test
   public void testExecuteWithoutJdbcDriver() throws Exception {
-    ConnecterDatas connecterDatas = new ConnecterDatas("Not a Driver", "jdbc:h2:mem:sonar;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
-    SequenceReseter sequenceReseter = new SequenceReseter("table_for_test", connecterDatas);
+    ConnecterData connecterData = new ConnecterData("Not a Driver", "jdbc:h2:mem:sonar;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    SequenceReseter sequenceReseter = new SequenceReseter("table_for_test", connecterData);
     try {
       sequenceReseter.execute();
       fail();
@@ -45,8 +45,8 @@ public class SequenceReseterTest {
   @Test
   public void testExecute() throws Exception {
     // ONLY VERIFY THERE IS NO EXCEPTION BUT DON'T KNOW IF IT WORKS BECAUSE IT NEEDS ORACLE CONNECTION
-    ConnecterDatas connecterDatas = new ConnecterDatas("org.h2.Driver", "jdbc:h2:mem:sonar;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
-    SequenceReseter sequenceReseter = new SequenceReseter("table_for_test", connecterDatas);
+    ConnecterData connecterData = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:sonar;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    SequenceReseter sequenceReseter = new SequenceReseter("table_for_test", connecterData);
     sequenceReseter.execute();
   }
 

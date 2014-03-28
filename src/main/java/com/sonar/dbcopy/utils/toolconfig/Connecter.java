@@ -6,7 +6,7 @@
 
 package com.sonar.dbcopy.utils.toolconfig;
 
-import com.sonar.dbcopy.utils.data.ConnecterDatas;
+import com.sonar.dbcopy.utils.data.ConnecterData;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,7 +14,7 @@ import java.sql.SQLException;
 
 public class Connecter {
 
-  public Connection doConnection(ConnecterDatas cd) {
+  public Connection doConnection(ConnecterData cd) {
     try {
       Class.forName(cd.getDriver());
       return DriverManager.getConnection(cd.getUrl(), cd.getUser(), cd.getPwd());

@@ -7,7 +7,7 @@
 package com.sonar.dbcopy.prepare;
 
 import com.sonar.dbcopy.utils.Utils;
-import com.sonar.dbcopy.utils.data.ConnecterDatas;
+import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.data.Database;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
 import com.sonar.dbcopy.utils.toolconfig.DbException;
@@ -24,14 +24,12 @@ import static org.junit.Assert.*;
 public class MetadataGetterTest {
 
   private MetadataGetter mdg;
-  private Database database;
   private Connection connectionForFilled, connectionWithoutTable;
   private Closer closer;
 
   @Before
   public void setUp() throws SQLException, ClassNotFoundException {
     Utils utils = new Utils();
-    database = new Database();
     connectionForFilled = utils.makeFilledH2("filledDatabase", false);
     connectionWithoutTable = utils.makeH2("withoutTables");
     closer = new Closer("MetadataGetterTest");
@@ -39,7 +37,9 @@ public class MetadataGetterTest {
 
   @Test
   public void testFilledDatabase() throws Exception {
-    ConnecterDatas cdSource = new ConnecterDatas("org.h2.Driver", "jdbc:h2:mem:filledDatabase;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    ConnecterData cdSource = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:filledDatabase;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    Database database = new Database();
+
     mdg = new MetadataGetter(cdSource, database);
     mdg.execute(null);
 
@@ -68,13 +68,59 @@ public class MetadataGetterTest {
 
   @Test
   public void testWithoutTablesDataBase() throws Exception {
-    ConnecterDatas cdSource = new ConnecterDatas("org.h2.Driver", "jdbc:h2:mem:withoutTables;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    ConnecterData cdSource = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:withoutTables;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    Database database = new Database();
+
     try {
       mdg = new MetadataGetter(cdSource, database);
       mdg.execute(null);
       fail();
     } catch (Exception e) {
       assertThat(e).isInstanceOf(DbException.class).hasMessage("*** ERROR : CAN'T FIND ANY TABLE IN DATABASE SOURCE ***");
+    }
+  }
+
+  @Test
+  public void testFilledDatabaseWithOnlyOneTable() throws Exception {
+    ConnecterData cdSource = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:filledDatabase;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    Database database = new Database();
+    String[] tablesRequiredAsStringTab = {"table_for_test"};
+    mdg = new MetadataGetter(cdSource, database);
+    mdg.execute(tablesRequiredAsStringTab);
+
+    assertNotNull(mdg);
+    assertEquals(1, database.getNbTables());
+
+    assertEquals("table_for_test", database.getTableName(0));
+    assertEquals(2, database.getTable(0).getNbRows());
+    assertEquals(7, database.getTable(0).getNbColumns());
+    assertEquals("id", database.getTable(0).getColumnName(0));
+    assertEquals("columnstring", database.getTable(0).getColumnName(1));
+    assertEquals("columntimestamp", database.getTable(0).getColumnName(2));
+    assertEquals("columnblob", database.getTable(0).getColumnName(3));
+    assertEquals("columnclob", database.getTable(0).getColumnName(4));
+    assertEquals("columnboolean", database.getTable(0).getColumnName(5));
+    assertEquals("columntobenull", database.getTable(0).getColumnName(6));
+    try {
+      assertEquals("empty_table_for_test", database.getTableName(1));
+      fail();
+    } catch (Exception e) {
+      assertThat(e).isInstanceOf(IndexOutOfBoundsException.class).hasMessage("Index: 1, Size: 1");
+    }
+  }
+
+  @Test
+  public void testFilledDatabaseWithAWrongTable() throws Exception {
+    ConnecterData cdSource = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:filledDatabase;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    Database database = new Database();
+    String[] tablesRequiredAsStringTab = {"non_existent_table"};
+    mdg = new MetadataGetter(cdSource, database);
+
+    try {
+      mdg.execute(tablesRequiredAsStringTab);
+      fail();
+    } catch (Exception e) {
+      assertThat(e).isInstanceOf(DbException.class).hasMessage("It seems that some table(s) you required in ( non_existent_table ) do not exist.");
     }
   }
 

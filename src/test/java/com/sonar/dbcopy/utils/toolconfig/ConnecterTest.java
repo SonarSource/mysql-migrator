@@ -7,9 +7,7 @@
 package com.sonar.dbcopy.utils.toolconfig;
 
 import com.sonar.dbcopy.utils.Utils;
-import com.sonar.dbcopy.utils.data.ConnecterDatas;
-import com.sonar.dbcopy.utils.toolconfig.Connecter;
-import com.sonar.dbcopy.utils.toolconfig.DbException;
+import com.sonar.dbcopy.utils.data.ConnecterData;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,20 +27,32 @@ public class ConnecterTest {
 
   @Test
   public void testDoConnection() {
-    ConnecterDatas connecterDatas = new ConnecterDatas("org.h2.Driver", "jdbc:h2:mem:databaseToConnect;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    ConnecterData connecterData = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:databaseToConnect;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     Connecter connecter = new Connecter();
-    assertThat(connecter.doConnection(connecterDatas)).isInstanceOf(Connection.class);
+    assertThat(connecter.doConnection(connecterData)).isInstanceOf(Connection.class);
   }
 
   @Test
-  public void testDoConnectionFailed() {
-    ConnecterDatas connecterDatas = new ConnecterDatas("wrongDriver", "jdbc:h2:mem:databaseToConnect;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+  public void testDoConnectionFailedForWrongDriver() {
+    ConnecterData connecterData = new ConnecterData("wrongDriver", "jdbc:h2:mem:databaseToConnect;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     try {
       Connecter connecter = new Connecter();
-      Connection connection = connecter.doConnection(connecterDatas);
+      Connection connection = connecter.doConnection(connecterData);
       fail();
     } catch (Exception e) {
       assertThat(e).isInstanceOf(DbException.class).hasMessage("Impossible to get the jdbc DRIVER wrongDriver.");
+    }
+  }
+
+  @Test
+  public void testDoConnectionFailedForWrongUrl() {
+    ConnecterData connecterData = new ConnecterData("org.h2.Driver", "wrongUrl", "sonar", "sonar");
+    try {
+      Connecter connecter = new Connecter();
+      Connection connection = connecter.doConnection(connecterData);
+      fail();
+    } catch (Exception e) {
+      assertThat(e).isInstanceOf(DbException.class).hasMessage("Open connection failed with URL :wrongUrl .");
     }
   }
 }

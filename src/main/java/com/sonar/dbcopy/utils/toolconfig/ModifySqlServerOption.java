@@ -11,14 +11,14 @@ public class ModifySqlServerOption {
 
   public void modifyIdentityInsert(Connection connection, String tableName, String onOroff) {
     Closer closer = new Closer("ModifySqlServerOption");
-    ResultSet rs = null;
+    ResultSet resultSet = null;
     Statement statement = null;
     try {
-      DatabaseMetaData dm = connection.getMetaData();
-      rs = dm.getPrimaryKeys(null, null, tableName);
+      DatabaseMetaData databaseMetaData = connection.getMetaData();
+      resultSet = databaseMetaData.getPrimaryKeys(null, null, tableName);
 
-      if (rs.isBeforeFirst()) {
-        closer.closeResultSet(rs);
+      if (resultSet.isBeforeFirst()) {
+        closer.closeResultSet(resultSet);
 
         statement = connection.createStatement();
         String request = "SET IDENTITY_INSERT " + tableName + " " + onOroff + " ;";
@@ -28,7 +28,7 @@ public class ModifySqlServerOption {
     } catch (SQLException e) {
       throw new DbException("Problem to SET IDENTITY_INSERT at " + onOroff + " in database Sqlserver for TABLE : " + tableName, e);
     } finally {
-      closer.closeResultSet(rs);
+      closer.closeResultSet(resultSet);
       closer.closeStatement(statement);
     }
   }

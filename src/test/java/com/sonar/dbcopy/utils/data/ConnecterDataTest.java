@@ -11,33 +11,33 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 
-public class ConnecterDatasTest {
+public class ConnecterDataTest {
 
-  private ConnecterDatas connecterDatas;
+  private ConnecterData connecterData;
 
   @Before
   public void setUp() throws Exception {
-    connecterDatas = new ConnecterDatas("driver","url","user","pwd");
+    connecterData = new ConnecterData("driver","url","user","pwd");
   }
 
   @Test
   public void testGetUrlSource() throws Exception {
-    assertEquals("url",connecterDatas.getUrl());
+    assertEquals("url", connecterData.getUrl());
   }
 
   @Test
   public void testGetDriverSource() throws Exception {
-    assertEquals("driver",connecterDatas.getDriver());
+    assertEquals("driver", connecterData.getDriver());
   }
 
   @Test
   public void testGetUserSource() throws Exception {
-    assertEquals("user",connecterDatas.getUser());
+    assertEquals("user", connecterData.getUser());
   }
 
   @Test
   public void testGetPwdSource() throws Exception {
-    assertEquals("pwd",connecterDatas.getPwd());
+    assertEquals("pwd", connecterData.getPwd());
   }
 
 }

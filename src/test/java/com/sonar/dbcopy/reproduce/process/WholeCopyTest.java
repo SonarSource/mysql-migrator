@@ -7,7 +7,7 @@
 package com.sonar.dbcopy.reproduce.process;
 
 import com.sonar.dbcopy.utils.Utils;
-import com.sonar.dbcopy.utils.data.ConnecterDatas;
+import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.data.Database;
 import com.sonar.dbcopy.utils.toolconfig.DbException;
 import org.junit.After;
@@ -23,7 +23,7 @@ import java.sql.Statement;
 public class WholeCopyTest {
 
   private Connection connectionSource, connectionDest;
-  private ConnecterDatas cdSource, cdDest;
+  private ConnecterData cdSource, cdDest;
   private Database databaseSource, databaseDest;
 
   @Before
@@ -40,8 +40,8 @@ public class WholeCopyTest {
 
     /* BE CAREFUL AT THE H2 DATABASE NAME: "source" AND "destination" */
 
-    cdSource = new ConnecterDatas("org.h2.Driver", "jdbc:h2:mem:source;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
-    cdDest = new ConnecterDatas("org.h2.Driver", "jdbc:h2:mem:destination;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    cdSource = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:source;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    cdDest = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:destination;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
 
   }
 

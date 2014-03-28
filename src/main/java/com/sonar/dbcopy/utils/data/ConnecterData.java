@@ -6,11 +6,11 @@
 
 package com.sonar.dbcopy.utils.data;
 
-public class ConnecterDatas {
+public class ConnecterData {
 
   private String driver, url, user, pwd;
 
-  public ConnecterDatas(String driver, String url, String user, String pwd) {
+  public ConnecterData(String driver, String url, String user, String pwd) {
     this.driver = driver;
     this.url = url;
     this.user = user;

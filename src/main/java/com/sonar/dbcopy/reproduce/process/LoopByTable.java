@@ -6,7 +6,7 @@
 
 package com.sonar.dbcopy.reproduce.process;
 
-import com.sonar.dbcopy.utils.data.ConnecterDatas;
+import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.data.Database;
 import com.sonar.dbcopy.utils.data.Table;
 import com.sonar.dbcopy.utils.toolconfig.*;
@@ -17,11 +17,11 @@ import java.sql.*;
 public class LoopByTable {
 
   private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-  private ConnecterDatas cdSource, cdDest;
+  private ConnecterData cdSource, cdDest;
   private Database databaseSource, databaseDest;
   private CharacteristicsRelatedToEditor chRelToEditor;
 
-  public LoopByTable(ConnecterDatas cdSource, ConnecterDatas cdDest, Database databaseSource, Database databaseDest) {
+  public LoopByTable(ConnecterData cdSource, ConnecterData cdDest, Database databaseSource, Database databaseDest) {
     this.cdSource = cdSource;
     this.cdDest = cdDest;
     this.databaseSource = databaseSource;

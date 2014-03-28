@@ -50,7 +50,7 @@ public class LoopByRow {
     while (resultSetSource.next()) {
 
       // RECORD CONTEXT
-      lastID = getIdIfPKAndPreserveCopyFromException(resultSetSource);
+      lastID = getIdIfPkButPreserveCopyFromException(resultSetSource);
       logRowsForExecuteBatch = " at ROW (" + lineWritten + ") WITH - id - BETWEEN (" + lastIDOfPreviousBlock + ") AND (" + lastID + ").";
       logCurrentRowForAddBatch = " at ROW (" + lineWritten + ") WITH  id = (" + lastID + ").";
 
@@ -63,18 +63,18 @@ public class LoopByRow {
       // COPY
       getAndSetEachRowDependingOnType(resultSetSource);
       // ADD BATCH
-      addBatchAndPreserveCopyFromException();
+      addBatchButPreserveCopyFromException();
 
       // COMMIT EACH 10 ROWS
       if (lineWritten % 10 == 0) {
-        executeBatchAndPreserveCopyFromException();
-        commitAndPreserveCopyFromException();
+        executeBatchButPreserveCopyFromException();
+        commitButPreserveCopyFromException();
         lastIDOfPreviousBlock = lastID;
       }
     }
     // COMMIT LAST ROWS
-    executeBatchAndPreserveCopyFromException();
-    commitAndPreserveCopyFromException();
+    executeBatchButPreserveCopyFromException();
+    commitButPreserveCopyFromException();
 
     //LOG LAST COPIED LINE
     logLinesCopied(tableName, lineWritten, nbRowsInTable);
@@ -107,7 +107,7 @@ public class LoopByRow {
     }
   }
 
-  private void addBatchAndPreserveCopyFromException() {
+  private void addBatchButPreserveCopyFromException() {
     try {
       preparedStatementDest.addBatch();
     } catch (SQLException e) {
@@ -115,7 +115,7 @@ public class LoopByRow {
     }
   }
 
-  private void executeBatchAndPreserveCopyFromException() {
+  private void executeBatchButPreserveCopyFromException() {
     try {
       preparedStatementDest.executeBatch();
     } catch (SQLException e) {
@@ -123,7 +123,7 @@ public class LoopByRow {
     }
   }
 
-  private void commitAndPreserveCopyFromException() {
+  private void commitButPreserveCopyFromException() {
     try {
       preparedStatementDest.getConnection().commit();
     } catch (SQLException e) {
@@ -131,7 +131,7 @@ public class LoopByRow {
     }
   }
 
-  private long getIdIfPKAndPreserveCopyFromException(ResultSet resultSetSource) {
+  private long getIdIfPkButPreserveCopyFromException(ResultSet resultSetSource) {
     long idToReturn = 0;
     try {
       idToReturn = resultSetSource.getLong(1);
@@ -154,11 +154,8 @@ public class LoopByRow {
     LOGGER.error(tableContentSource);
     LOGGER.error(tableContentDest);
     LOGGER.error("LINES NOT COPIED " + logRow);
-    LOGGER.error(e.getMessage()); // GIVE THE EXACT ROW WITH WHERE SQL REQUEST FAILED, BUT SOMETIMES IT'S TOO LONG WHEN IT DISPLAYS ENTIRE FILES
+    LOGGER.error(e.getMessage());
     LOGGER.error("NEXT EXCEPTION: " + e.getNextException());
-
   }
-
-
 }
 

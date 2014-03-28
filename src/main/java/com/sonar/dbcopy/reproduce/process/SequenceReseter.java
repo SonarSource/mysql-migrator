@@ -5,7 +5,7 @@
  */
 package com.sonar.dbcopy.reproduce.process;
 
-import com.sonar.dbcopy.utils.data.ConnecterDatas;
+import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
 import com.sonar.dbcopy.utils.toolconfig.Connecter;
@@ -16,9 +16,9 @@ import java.sql.*;
 public class SequenceReseter {
 
   private String sqlRequestToReset, tableName;
-  private ConnecterDatas cdDest;
+  private ConnecterData cdDest;
 
-  public SequenceReseter(String tableName, ConnecterDatas cdDest) {
+  public SequenceReseter(String tableName, ConnecterData cdDest) {
     this.tableName = tableName;
     this.cdDest = cdDest;
   }
