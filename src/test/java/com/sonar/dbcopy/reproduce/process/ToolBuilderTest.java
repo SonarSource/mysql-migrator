@@ -9,6 +9,8 @@ package com.sonar.dbcopy.reproduce.process;
 import com.sonar.dbcopy.reproduce.reader.ReaderTool;
 import com.sonar.dbcopy.reproduce.writer.WriterTool;
 import com.sonar.dbcopy.utils.Utils;
+import com.sonar.dbcopy.utils.toolconfig.Closer;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,8 +27,8 @@ public class ToolBuilderTest {
   @Before
   public void setUp() throws SQLException {
     Utils utils = new Utils();
-    connectionSource = utils.makeFilledH2("source", false);
-    connectionDest = utils.makeEmptyH2("destination", false);
+    connectionSource = utils.makeFilledH2("ToolBuilderTestSourceDB", false);
+    connectionDest = utils.makeEmptyH2("ToolBuilderTestDestinationDB", false);
   }
 
   @Test
@@ -53,5 +55,12 @@ public class ToolBuilderTest {
     }
     toolBuilder = new ToolBuilder(connectionSource, connectionDest);
     assertThat(toolBuilder.buildWriterTool(null)).isNotNull().isInstanceOf(WriterTool.class);
+  }
+
+  @After
+  public void  tearDown(){
+    Closer closer = new Closer("ToolBuilderTest");
+    closer.closeConnection(connectionSource);
+    closer.closeConnection(connectionDest);
   }
 }

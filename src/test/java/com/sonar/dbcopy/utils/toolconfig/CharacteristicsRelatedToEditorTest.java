@@ -8,6 +8,7 @@ package com.sonar.dbcopy.utils.toolconfig;
 
 import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,13 +22,19 @@ public class CharacteristicsRelatedToEditorTest {
 
   private CharacteristicsRelatedToEditor chRelToEd;
   private DatabaseMetaData metaData;
+  private Connection connection;
 
   @Before
   public void setUp() throws Exception {
     Utils utils = new Utils();
-    Connection connection = utils.makeFilledH2("sonar",false);
+    connection = utils.makeFilledH2("CharacteristicsRelatedToEditorTestDB",false);
     metaData = connection.getMetaData();
     chRelToEd = new CharacteristicsRelatedToEditor();
+  }
+  @After
+  public void tearDown() throws Exception {
+    Closer closer = new Closer("CharacteristicsRelatedToEditorTest");
+    closer.closeConnection(connection);
   }
 
   @Test

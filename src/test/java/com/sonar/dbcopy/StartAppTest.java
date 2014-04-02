@@ -21,13 +21,13 @@ public class StartAppTest {
   @Before
   public void setUp() {
     Utils utils = new Utils();
-    Connection connectionSource = utils.makeFilledH2("source", true);
+    Connection connectionSource = utils.makeFilledH2("StartAppTestSourceDB", true);
     utils.addContentInThirdTable(connectionSource, 1);
 
-    Connection connectionDest = utils.makeEmptyH2("destination", true);
+    Connection connectionDest = utils.makeEmptyH2("StartAppTestDestinationDB", true);
     utils.addContentInThirdTable(connectionDest, 1);
 
-    Connection connectionWithDifferentVersion = utils.makeEmptyH2("destinationWithBadVersion", true);
+    Connection connectionWithDifferentVersion = utils.makeEmptyH2("StartAppTestDestinationWithWrongVersionDB", true);
     utils.addContentInThirdTable(connectionWithDifferentVersion, 2);
   }
 
@@ -36,11 +36,11 @@ public class StartAppTest {
 
     String[] args = {
       "-driverSrc", "org.h2.Driver",
-      "-urlSrc", "jdbc:h2:mem:source;DB_CLOSE_ON_EXIT=-1;",
+      "-urlSrc", "jdbc:h2:mem:StartAppTestSourceDB;DB_CLOSE_ON_EXIT=-1;",
       "-userSrc", "sonar",
       "-pwdSrc", "sonar",
       "-driverDest", "org.h2.Driver",
-      "-urlDest", "jdbc:h2:mem:destination;DB_CLOSE_ON_EXIT=-1;",
+      "-urlDest", "jdbc:h2:mem:StartAppTestDestinationDB;DB_CLOSE_ON_EXIT=-1;",
       "-userDest", "sonar",
       "-pwdDest", "sonar"
     };
@@ -49,11 +49,11 @@ public class StartAppTest {
 
     String[] argsBadVersion = {
       "-driverSrc", "org.h2.Driver",
-      "-urlSrc", "jdbc:h2:mem:source;DB_CLOSE_ON_EXIT=-1;",
+      "-urlSrc", "jdbc:h2:mem:StartAppTestSourceDB;DB_CLOSE_ON_EXIT=-1;",
       "-userSrc", "sonar",
       "-pwdSrc", "sonar",
       "-driverDest", "org.h2.Driver",
-      "-urlDest", "jdbc:h2:mem:destinationWithBadVersion;DB_CLOSE_ON_EXIT=-1;",
+      "-urlDest", "jdbc:h2:mem:StartAppTestDestinationWithWrongVersionDB;DB_CLOSE_ON_EXIT=-1;",
       "-userDest", "sonar",
       "-pwdDest", "sonar"
     };

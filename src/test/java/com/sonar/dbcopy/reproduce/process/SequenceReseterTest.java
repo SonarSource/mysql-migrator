@@ -27,12 +27,12 @@ public class SequenceReseterTest {
   @Before
   public void setUp() {
     Utils utils = new Utils();
-    connection = utils.makeFilledH2("source",false);
+    connection = utils.makeFilledH2("SequenceReseterTestDB",false);
   }
 
   @Test
   public void testExecuteWithoutJdbcDriver() throws Exception {
-    ConnecterData connecterData = new ConnecterData("Not a Driver", "jdbc:h2:mem:sonar;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    ConnecterData connecterData = new ConnecterData("Not a Driver", "jdbc:h2:mem:SequenceReseterTestDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     SequenceReseter sequenceReseter = new SequenceReseter("table_for_test", connecterData);
     try {
       sequenceReseter.execute();
@@ -45,7 +45,7 @@ public class SequenceReseterTest {
   @Test
   public void testExecute() throws Exception {
     // ONLY VERIFY THERE IS NO EXCEPTION BUT DON'T KNOW IF IT WORKS BECAUSE IT NEEDS ORACLE CONNECTION
-    ConnecterData connecterData = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:sonar;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    ConnecterData connecterData = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:SequenceReseterTestDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     SequenceReseter sequenceReseter = new SequenceReseter("table_for_test", connecterData);
     sequenceReseter.execute();
   }

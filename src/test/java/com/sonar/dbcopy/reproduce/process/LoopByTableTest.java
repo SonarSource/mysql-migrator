@@ -9,6 +9,7 @@ package com.sonar.dbcopy.reproduce.process;
 import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.data.Database;
+import com.sonar.dbcopy.utils.toolconfig.Closer;
 import com.sonar.dbcopy.utils.toolconfig.DbException;
 import org.junit.After;
 import org.junit.Assert;
@@ -20,33 +21,36 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class WholeCopyTest {
+public class LoopByTableTest {
 
   private Connection connectionSource, connectionDest;
   private ConnecterData cdSource, cdDest;
   private Database databaseSource, databaseDest;
+  private Closer closer;
 
   @Before
   public void setUp() throws Exception {
-    boolean threeTablesInSource=true;
-    boolean threeTablesInDestination=false;
+    boolean threeTablesInSource = true;
+    boolean threeTablesInDestination = false;
+
+    closer = new Closer("LoopByTableTest");
 
     Utils utils = new Utils();
-    connectionSource = utils.makeFilledH2("source",threeTablesInSource);
-    connectionDest = utils.makeEmptyH2("destination",threeTablesInDestination);
+    connectionSource = utils.makeFilledH2("LoopByTableTestSourceDB", threeTablesInSource);
+    connectionDest = utils.makeEmptyH2("LoopByTableTestDestinationDB", threeTablesInDestination);
 
     databaseSource = utils.makeDatabase(threeTablesInSource);
     databaseDest = utils.makeDatabase(threeTablesInDestination);
 
     /* BE CAREFUL AT THE H2 DATABASE NAME: "source" AND "destination" */
 
-    cdSource = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:source;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
-    cdDest = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:destination;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    cdSource = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:LoopByTableTestSourceDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    cdDest = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:LoopByTableTestDestinationDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
 
   }
 
   @Test
-  public void testExecute() {
+  public void testLoopByTable() {
     LoopByTable loopByTable = new LoopByTable(cdSource, cdDest, databaseSource, databaseDest);
     loopByTable.execute();
 
@@ -74,37 +78,17 @@ public class WholeCopyTest {
 
     } catch (SQLException e) {
       throw new DbException("Problem when testing Reproducer.", e);
-
     } finally {
-      try {
-        resultSetSource.close();
-      } catch (SQLException e) {
-        throw new DbException("Problem when closing object in WholeCopyTest.", e);
-      }
-
-      try {
-        resultSetDest.close();
-      } catch (SQLException e) {
-        throw new DbException("Problem when closing object in WholeCopyTest.", e);
-      }
-
-      try {
-        statementSource.close();
-      } catch (SQLException e) {
-        throw new DbException("Problem when closing object in WholeCopyTest.", e);
-      }
-
-      try {
-        statementDest.close();
-      } catch (SQLException e) {
-        throw new DbException("Problem when closing object in WholeCopyTest.", e);
-      }
+      closer.closeResultSet(resultSetSource);
+      closer.closeResultSet(resultSetDest);
+      closer.closeStatement(statementSource);
+      closer.closeStatement(statementDest);
     }
   }
 
   @After
   public void tearDown() throws Exception {
-    connectionSource.close();
-    connectionDest.close();
+    closer.closeConnection(connectionSource);
+    closer.closeConnection(connectionDest);
   }
 }

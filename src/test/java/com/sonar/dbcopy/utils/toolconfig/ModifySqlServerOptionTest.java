@@ -21,8 +21,7 @@ public class ModifySqlServerOptionTest {
   @Before
   public void setUp() throws Exception {
     Utils utils = new Utils();
-    connection = utils.makeFilledH2("source", false);
-
+    connection = utils.makeFilledH2("ModifySqlServerOptionTestDB", false);
     modifySqlServerOption = new ModifySqlServerOption();
   }
 

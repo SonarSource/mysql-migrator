@@ -39,11 +39,11 @@ public class DeleterTest {
     databaseToBeDeletedWithMissingTable = utils.makeDatabase(false);
 
     // build a filled  H2 databaseSource
-    cdToBeDeleted = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:databaseToBeDeleted;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
-    connectionToBeDeleted = utils.makeFilledH2("databaseToBeDeleted", aThirdTableIsAddedInDb);
+    cdToBeDeleted = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:DeleterTestDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    connectionToBeDeleted = utils.makeFilledH2("DeleterTestDB", aThirdTableIsAddedInDb);
 
-    cdToBeDeletedWithMissingTable = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:databaseWithMissingTable;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
-    connectionToBeDeletedWithMissingTable = utils.makeFilledH2("databaseWithMissingTable", false);
+    cdToBeDeletedWithMissingTable = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:DeleterTestWithMissingTableDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    connectionToBeDeletedWithMissingTable = utils.makeFilledH2("DeleterTestWithMissingTableDB", false);
   }
 
   @Test

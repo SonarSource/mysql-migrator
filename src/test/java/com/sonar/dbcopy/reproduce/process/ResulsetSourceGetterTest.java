@@ -7,6 +7,7 @@
 package com.sonar.dbcopy.reproduce.process;
 
 import com.sonar.dbcopy.utils.Utils;
+import com.sonar.dbcopy.utils.toolconfig.Closer;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -31,16 +32,17 @@ public class ResulsetSourceGetterTest {
   @Before
   public void setUp() throws Exception {
     Utils utils = new Utils();
-    connection = utils.makeFilledH2("source", false);
+    connection = utils.makeFilledH2("ResulsetSourceGetterTestDB", false);
 
     resulsetSourceGetter = new ResulsetSourceGetter("table_for_test");
   }
 
   @After
   public void tearDown() throws Exception {
-    resultSet.close();
-    statement.close();
-    connection.close();
+    Closer closer = new Closer("ResulsetSourceGetterTest");
+    closer.closeResultSet(resultSet);
+    closer.closeStatement(statement);
+    closer.closeConnection(connection);
   }
 
   @Test

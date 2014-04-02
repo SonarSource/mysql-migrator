@@ -27,7 +27,7 @@ public class WriterToolTest {
     closer = new Closer("ReaderTootTest");
     Utils utils = new Utils();
 
-    connection = utils.makeEmptyH2("destination", false);
+    connection = utils.makeEmptyH2("ReaderTootTestDestinationDB", false);
     connection.setAutoCommit(false);
     String stringToInsert = "INSERT INTO table_for_test (id , columnstring , columntimestamp, columnBlob , columnClob , columnBoolean  , columnTobeNull ) VALUES (?,?,?,?,?,?,?)";
     preparedStatement = connection.prepareStatement(stringToInsert);

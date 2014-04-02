@@ -26,8 +26,8 @@ public class VersionVerifierTest {
   @Before
   public void setUp() {
     utils = new Utils();
-    connectionSource = utils.makeFilledH2("source", true);
-    connectionDest = utils.makeEmptyH2("destination", true);
+    connectionSource = utils.makeFilledH2("VersionVerifierTestSourceDB", true);
+    connectionDest = utils.makeEmptyH2("VersionVerifierTestDestinationDB", true);
     utils.addContentInThirdTable(connectionSource, 1);
     utils.addContentInThirdTable(connectionDest, 1);
 
@@ -36,8 +36,8 @@ public class VersionVerifierTest {
 
   @Test
   public void testLastVersionId() throws Exception {
-    ConnecterData cdSource = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:source;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
-    ConnecterData cdDest = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:destination;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    ConnecterData cdSource = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:VersionVerifierTestSourceDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    ConnecterData cdDest = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:VersionVerifierTestDestinationDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
 
     VersionVerifier versionVerifier = new VersionVerifier();
     assertEquals(versionVerifier.lastVersionId(cdSource), versionVerifier.lastVersionId(cdDest));
@@ -48,8 +48,8 @@ public class VersionVerifierTest {
 
   @Test
   public void testLastVersionIdExceptions() throws Exception {
-    ConnecterData cdWithWrongUrl = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:wrongDataBase;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
-    ConnecterData cdWithWrongDriver = new ConnecterData("not_a_driver", "jdbc:h2:mem:destination;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    ConnecterData cdWithWrongUrl = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:wrongDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    ConnecterData cdWithWrongDriver = new ConnecterData("not_a_driver", "jdbc:h2:mem:VersionVerifierTestDestinationDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     VersionVerifier versionVerifier = new VersionVerifier();
 
     try {

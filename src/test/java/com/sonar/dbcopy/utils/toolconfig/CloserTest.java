@@ -8,6 +8,7 @@ package com.sonar.dbcopy.utils.toolconfig;
 import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
 import com.sonar.dbcopy.utils.toolconfig.DbException;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,7 +31,7 @@ public class CloserTest {
   public void setUp() throws SQLException {
     closer = new Closer("CloserTest");
     Utils utils = new Utils();
-    connection = utils.makeFilledH2("sonar",false);
+    connection = utils.makeFilledH2("CloserTestDB",false);
     statement = connection.createStatement();
     resultSet = statement.executeQuery("SELECT * FROM table_for_test");
   }
@@ -52,7 +53,6 @@ public class CloserTest {
     } catch (Exception e) {
       throw new DbException("Problem in CloserTest", e);
     }
-
     closer.closeResultSet(resultSet);
     closer.closeStatement(statement);
     closer.closeConnection(connection);

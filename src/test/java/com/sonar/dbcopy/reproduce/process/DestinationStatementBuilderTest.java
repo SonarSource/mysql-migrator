@@ -9,6 +9,7 @@ package com.sonar.dbcopy.reproduce.process;
 import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.data.Database;
 import com.sonar.dbcopy.utils.data.Table;
+import com.sonar.dbcopy.utils.toolconfig.Closer;
 import com.sonar.dbcopy.utils.toolconfig.DbException;
 import org.junit.After;
 import org.junit.Assert;
@@ -31,13 +32,15 @@ public class DestinationStatementBuilderTest {
   @Before
   public void setUp() throws Exception {
     Utils utils = new Utils();
-    connection = utils.makeEmptyH2("destination", false);
+    connection = utils.makeEmptyH2("DestinationStatementBuilderTestDB", false);
     database = utils.makeDatabase(false);
+
   }
 
   @After
   public void tearDown() throws Exception {
-    connection.close();
+    Closer closer = new Closer("DestinationStatementBuilderTest");
+    closer.closeConnection(connection);
   }
 
   @Test

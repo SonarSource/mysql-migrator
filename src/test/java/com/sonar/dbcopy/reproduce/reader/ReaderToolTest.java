@@ -37,7 +37,7 @@ public class ReaderToolTest {
     readerToolList.add(new SqlServerReader());
 
     Utils utils = new Utils();
-    connection = utils.makeFilledH2("source", false);
+    connection = utils.makeFilledH2("ReaderToolTestDB", false);
     statement = connection.createStatement();
     resultSet = statement.executeQuery("SELECT * FROM table_for_test");
   }
@@ -51,7 +51,7 @@ public class ReaderToolTest {
 
   @Test
   public void testReadTimestamp() throws Exception {
-    // TO UNDERSTAND indexColumn GO AND SEE utils.makeFilledH2
+    // indexColumn CORRESPONDS TO THE COLUMN IN H2 DATABASE TO HAVE A TIMESTAMP (GO AND SEE utils.makeFilledH2)
     int indexColumn = 2;
     resultSet.beforeFirst();
     while (resultSet.next()) {
@@ -63,7 +63,7 @@ public class ReaderToolTest {
 
   @Test
   public void testReadBlob() throws Exception {
-    // TO UNDERSTAND indexColumn GO AND SEE utils.makeFilledH2
+    // indexColumn CORRESPONDS TO THE COLUMN IN H2 DATABASE TO HAVE A BLOB (GO AND SEE utils.makeFilledH2)
     int indexColumn = 3;
     resultSet.beforeFirst();
     while (resultSet.next()) {
@@ -76,7 +76,7 @@ public class ReaderToolTest {
 
   @Test
   public void testReadClob() throws Exception {
-    // TO UNDERSTAND indexColumn GO AND SEE utils.makeFilledH2
+    // indexColumn CORRESPONDS TO THE COLUMN IN H2 DATABASE TO HAVE A CLOB (GO AND SEE utils.makeFilledH2)
     int indexColumn = 4;
     resultSet.beforeFirst();
     while (resultSet.next()) {
@@ -89,7 +89,7 @@ public class ReaderToolTest {
 
   @Test
   public void testReadBoolean() throws Exception {
-    // TO UNDERSTAND indexColumn GO AND SEE utils.makeFilledH2
+    // indexColumn CORRESPONDS TO THE COLUMN IN H2 DATABASE TO HAVE A BOOLEAN (GO AND SEE utils.makeFilledH2)
     int indexColumn = 5;
     resultSet.beforeFirst();
     while (resultSet.next()) {
@@ -101,7 +101,7 @@ public class ReaderToolTest {
 
   @Test
   public void testReadObject() throws Exception {
-    // TO UNDERSTAND indexColumn GO AND SEE utils.makeFilledH2
+    // indexColumn CORRESPONDS TO THE COLUMN IN H2 DATABASE TO HAVE AN INTEGER(GO AND SEE utils.makeFilledH2)
     int indexColumn = 0;
     resultSet.beforeFirst();
     while (resultSet.next()) {
@@ -113,7 +113,7 @@ public class ReaderToolTest {
 
   @Test
   public void testReadVarchar() throws Exception {
-    // TO UNDERSTAND indexColumn GO AND SEE utils.makeFilledH2
+    // indexColumn CORRESPONDS TO THE COLUMN IN H2 DATABASE TO HAVE VARCHAR (GO AND SEE utils.makeFilledH2)
     int indexColumn = 1;
     resultSet.beforeFirst();
     while (resultSet.next()) {

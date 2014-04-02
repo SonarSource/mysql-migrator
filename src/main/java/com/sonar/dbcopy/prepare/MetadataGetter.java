@@ -95,7 +95,7 @@ public class MetadataGetter {
       }
       if (database.getNbTables() != tablesToCopy.length) {
         StringBuilder stringBuilder = new StringBuilder();
-          for (int i = 0; i < tablesToCopy.length; ++i) {
+        for (int i = 0; i < tablesToCopy.length; ++i) {
           stringBuilder.append(tablesToCopy[i] + " ");
         }
         String allTablesRequired = stringBuilder.toString();

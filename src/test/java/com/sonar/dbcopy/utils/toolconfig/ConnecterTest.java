@@ -22,19 +22,19 @@ public class ConnecterTest {
   @Before
   public void setUp() {
     Utils utils = new Utils();
-    utils.makeEmptyH2("databaseToConnect",false);
+    utils.makeEmptyH2("ConnecterTestDB",false);
   }
 
   @Test
   public void testDoConnection() {
-    ConnecterData connecterData = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:databaseToConnect;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    ConnecterData connecterData = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:ConnecterTestDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     Connecter connecter = new Connecter();
     assertThat(connecter.doConnection(connecterData)).isInstanceOf(Connection.class);
   }
 
   @Test
   public void testDoConnectionFailedForWrongDriver() {
-    ConnecterData connecterData = new ConnecterData("wrongDriver", "jdbc:h2:mem:databaseToConnect;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    ConnecterData connecterData = new ConnecterData("wrongDriver", "jdbc:h2:mem:ConnecterTestDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     try {
       Connecter connecter = new Connecter();
       Connection connection = connecter.doConnection(connecterData);

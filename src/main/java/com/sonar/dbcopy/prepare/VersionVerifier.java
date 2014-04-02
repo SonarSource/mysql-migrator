@@ -29,6 +29,7 @@ public class VersionVerifier {
 
       String tableNameSchemaMigration = chRelToEd.transfromCaseOfTableName(connection.getMetaData(),"schema_migrations");
       resultSet = statement.executeQuery("SELECT version FROM "+tableNameSchemaMigration);
+//      resultSet = statement.executeQuery("SELECT version FROM schema_migrations");
 
       while (resultSet.next()) {
         String versionString = resultSet.getString(1);
