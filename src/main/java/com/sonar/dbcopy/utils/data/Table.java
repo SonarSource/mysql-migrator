@@ -104,120 +104,17 @@ public class Table {
   }
 
 
-  private String getStringType(int typesAsInt) {
-    String typesAsStringToreturn;
-    switch (typesAsInt) {
-      case 2003:
-        typesAsStringToreturn = "ARRAY";
-        break;
-      case -5:
-        typesAsStringToreturn = "BIGINT";
-        break;
-      case -2:
-        typesAsStringToreturn = "BINARY";
-        break;
-      case -7:
-        typesAsStringToreturn = "BIT";
-        break;
-      case 2004:
-        typesAsStringToreturn = "BLOB";
-        break;
-      case 16:
-        typesAsStringToreturn = "BOOLEAN";
-        break;
-      case 1:
-        typesAsStringToreturn = "CHAR";
-        break;
-      case 2005:
-        typesAsStringToreturn = "CLOB";
-        break;
-      case 70:
-        typesAsStringToreturn = "DATALINK";
-        break;
-      case 91:
-        typesAsStringToreturn = "DATE";
-        break;
-      case 3:
-        typesAsStringToreturn = "DECIMAL";
-        break;
-      case 2001:
-        typesAsStringToreturn = "DISTINCT";
-        break;
-      case 8:
-        typesAsStringToreturn = "DOUBLE";
-        break;
-      case 6:
-        typesAsStringToreturn = "FLOAT";
-        break;
-      case 4:
-        typesAsStringToreturn = "INTEGER";
-        break;
-      case 2000:
-        typesAsStringToreturn = "JAVA_OBJECT";
-        break;
-      case -16:
-        typesAsStringToreturn = "LONGNVARCHAR";
-        break;
-      case -4:
-        typesAsStringToreturn = "LONGVARBINARY";
-        break;
-      case -1:
-        typesAsStringToreturn = "LONGVARCHAR";
-        break;
-      case -15:
-        typesAsStringToreturn = "NCHAR";
-        break;
-      case 2011:
-        typesAsStringToreturn = "NCLOB";
-        break;
-      case 0:
-        typesAsStringToreturn = "NULL";
-        break;
-      case 2:
-        typesAsStringToreturn = "NUMERIC";
-        break;
-      case -9:
-        typesAsStringToreturn = "NVARCHAR";
-        break;
-      case 1111:
-        typesAsStringToreturn = "OTHER";
-        break;
-      case 7:
-        typesAsStringToreturn = "REAL";
-        break;
-      case 2006:
-        typesAsStringToreturn = "REF";
-        break;
-      case -8:
-        typesAsStringToreturn = "ROWID";
-        break;
-      case 5:
-        typesAsStringToreturn = "SMALLINT";
-        break;
-      case 2009:
-        typesAsStringToreturn = "SQLXML";
-        break;
-      case 2002:
-        typesAsStringToreturn = "STRUCT";
-        break;
-      case 92:
-        typesAsStringToreturn = "TIME";
-        break;
-      case 93:
-        typesAsStringToreturn = "TIMESTAMP";
-        break;
-      case -6:
-        typesAsStringToreturn = "TINYINT";
-        break;
-      case -3:
-        typesAsStringToreturn = "VARBINARY";
-        break;
-      case 12:
-        typesAsStringToreturn = "VARCHAR";
-        break;
-      default:
-        typesAsStringToreturn = "null";
+  private String getStringType(int typeAsInt) {
+    String stringToReturn = null;
+    Integer[] typesIntegerTab = {2003, -5, -2, -7, 2004, 16, 1, 2005, 70, 91, 3, 2001, 8, 6, 4, 2000, -16, -4, -1, -15, 2011, 0, 2, -9, 1111, 7, 2006, -8, 5, 2009, 2002, 92, 93, -6, 3, 12};
+    String[] typesStringTab = {"ARRAY", "BIGINT", "BINARY", "BIT", "BLOB", "BOOLEAN", "CHAR", "CLOB", "DATALINK", "DATE", "DECIMAL", "DISTINCT", "DOUBLE",
+      "FLOAT", "INTEGER", "JAVA_OBJECT", "LONGNVARCHAR", "LONGVARBINARY", "LONGVARCHAR", "NCHAR", "NCLOB", "NULL", "NUMERIC", "NVARCHAR", "OTHER", "REAL", "REF", "ROWID",
+      "SMALLINT", "SQLXML", "STRUCT", "TIME", "TIMESTAMP", "TINYINT", "VARBINARY", "VARCHAR"};
+    for (int indexInteger = 0; indexInteger < typesIntegerTab.length; indexInteger++) {
+      if (typesIntegerTab[indexInteger] == typeAsInt) {
+        stringToReturn = typesStringTab[indexInteger];
+      }
     }
-    return typesAsStringToreturn;
+    return stringToReturn;
   }
 }
