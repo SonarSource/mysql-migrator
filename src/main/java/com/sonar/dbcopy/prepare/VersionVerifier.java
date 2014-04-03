@@ -43,7 +43,7 @@ public class VersionVerifier {
     } catch (SQLException e) {
       throw new SqlDbException("Problem when verifying version database. Please build your destination database with SonarQube at the same SonarQube source version.", e);
     } catch (ClassNotFoundException e) {
-      throw new MessageDbException("ERROR: Driver " + cd.getDriver() + " does not exist.");
+      throw new MessageDbException("ERROR: Driver " + cd.getDriver() + " does not exist. Class not found: "+ e.getMessage());
     } finally {
       closer.closeResultSet(resultSet);
       closer.closeStatement(statement);

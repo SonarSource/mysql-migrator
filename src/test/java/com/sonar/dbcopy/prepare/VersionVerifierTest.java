@@ -71,7 +71,7 @@ public class VersionVerifierTest {
       versionVerifier.lastVersionId(cdWithWrongDriver);
       fail();
     } catch (Exception e) {
-      assertThat(e).isInstanceOf(MessageDbException.class).hasMessage("ERROR: Driver not_a_driver does not exist.");
+      assertThat(e).isInstanceOf(MessageDbException.class).hasMessage("ERROR: Driver not_a_driver does not exist. Class not found: not_a_driver");
     }
   }
 }

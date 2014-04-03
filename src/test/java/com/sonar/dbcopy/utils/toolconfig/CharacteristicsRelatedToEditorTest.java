@@ -7,6 +7,7 @@
 package com.sonar.dbcopy.utils.toolconfig;
 
 import com.sonar.dbcopy.utils.Utils;
+import org.fest.assertions.Assertions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +17,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class CharacteristicsRelatedToEditorTest {
 
@@ -45,5 +47,22 @@ public class CharacteristicsRelatedToEditorTest {
   @Test
   public void testGiveTableNameRelatedToVendor() throws SQLException {
     assertEquals("TABLE", chRelToEd.transfromCaseOfTableName(metaData, "table"));
+  }
+
+  @Test
+  public void testGiveDriverWithUrlFromUser() {
+    assertEquals("com.mysql.jdbc.Driver", chRelToEd.giveDriverWithUrlFromUser("jdbc:my"));
+    assertEquals("oracle.jdbc.OracleDriver", chRelToEd.giveDriverWithUrlFromUser("jdbc:or"));
+    assertEquals("org.h2.Driver", chRelToEd.giveDriverWithUrlFromUser("jdbc:h2"));
+    assertEquals("org.postgresql.Driver", chRelToEd.giveDriverWithUrlFromUser("jdbc:po"));
+    assertEquals("net.sourceforge.jtds.jdbc.Driver", chRelToEd.giveDriverWithUrlFromUser("jdbc:jt"));
+
+    try {
+      chRelToEd.giveDriverWithUrlFromUser("wrongUrl");
+      fail();
+    } catch (Exception e) {
+      Assertions.assertThat(e).isInstanceOf(MessageDbException.class).hasMessage("ERROR: url wrongUrl does not correspond to a correct format to get the good jdbc driver.");
+
+    }
   }
 }
