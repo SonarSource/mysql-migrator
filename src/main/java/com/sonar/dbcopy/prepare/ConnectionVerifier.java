@@ -7,7 +7,7 @@ package com.sonar.dbcopy.prepare;
 
 import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
-import com.sonar.dbcopy.utils.toolconfig.UserDbException;
+import com.sonar.dbcopy.utils.toolconfig.MessageDbException;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -28,9 +28,9 @@ public class ConnectionVerifier {
         throw new SQLException();
       }
     } catch (SQLException e) {
-      throw new UserDbException("*** DATABASE CAN'T BE REACHED AT ADDRESS " + cd.getUrl() + " ***");
+      throw new MessageDbException("ERROR: Database can not be reached at url " + cd.getUrl()+ ". Verify url, user name and password. "+e.getMessage());
     } catch (ClassNotFoundException e) {
-      throw new UserDbException("*** DRIVER " + cd.getDriver() + " DOES NOT EXIST ***");
+      throw new MessageDbException("ERROR: Driver " + cd.getDriver() + " does not exists : "+e.getMessage());
     } finally {
       closer.closeConnection(connection);
     }

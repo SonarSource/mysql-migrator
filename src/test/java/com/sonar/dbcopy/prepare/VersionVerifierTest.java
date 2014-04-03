@@ -9,8 +9,8 @@ package com.sonar.dbcopy.prepare;
 import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
+import com.sonar.dbcopy.utils.toolconfig.MessageDbException;
 import com.sonar.dbcopy.utils.toolconfig.SqlDbException;
-import com.sonar.dbcopy.utils.toolconfig.UserDbException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -71,7 +71,7 @@ public class VersionVerifierTest {
       versionVerifier.lastVersionId(cdWithWrongDriver);
       fail();
     } catch (Exception e) {
-      assertThat(e).isInstanceOf(UserDbException.class).hasMessage("*** DRIVER not_a_driver CAN'T BE REACHED ***");
+      assertThat(e).isInstanceOf(MessageDbException.class).hasMessage("ERROR: Driver not_a_driver does not exist.");
     }
   }
 }

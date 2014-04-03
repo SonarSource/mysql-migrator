@@ -65,7 +65,7 @@ public class MetadataGetter {
 
   private void addTables(ResultSet resultSetTables) throws SQLException {
     if (!resultSetTables.isBeforeFirst()) {
-      throw new UserDbException("*** ERROR : CAN'T FIND ANY TABLE IN DATABASE SOURCE ***");
+      throw new MessageDbException("ERROR : can not find tables in database source.");
     } else {
       while (resultSetTables.next()) {
         String tableName = resultSetTables.getString("TABLE_NAME").toLowerCase();
@@ -76,7 +76,7 @@ public class MetadataGetter {
 
   private void addOnlyTablesRequiredInCommandLine(ResultSet resultSetTables, String[] tablesToCopy) throws SQLException {
     if (!resultSetTables.isBeforeFirst()) {
-      throw new UserDbException("*** ERROR : CAN'T FIND ANY TABLE IN DATABASE SOURCE ***");
+      throw new MessageDbException("ERROR : can not find any table in database.");
     } else {
       while (resultSetTables.next()) {
         boolean tablehasBeenrequired = false;
@@ -96,7 +96,7 @@ public class MetadataGetter {
           stringBuilder.append(tablesToCopy[i] + " ");
         }
         String allTablesRequired = stringBuilder.toString();
-        throw new UserDbException("It seems that some table(s) you required in ( " + allTablesRequired + ") do not exist. Verify the name in the database.");
+        throw new MessageDbException("ERROR: It seems that some table(s) you required in ( " + allTablesRequired + ") do not exist. Verify the name in the database.");
       }
     }
   }

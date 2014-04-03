@@ -6,10 +6,9 @@
 
 package com.sonar.dbcopy.prepare;
 
-import com.sonar.dbcopy.utils.toolconfig.SqlDbException;
+import com.sonar.dbcopy.utils.toolconfig.MessageDbException;
 import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.data.ConnecterData;
-import com.sonar.dbcopy.utils.toolconfig.UserDbException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,20 +35,20 @@ public class ConnectionVerifierTest {
 
   @Test
   public void testDatabaseIsNotReached() {
-    ConnecterData notAvailableURL = new ConnecterData("org.h2.Driver", ":h2:mem:ConnectionVerifierTestDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    ConnecterData notAvailableURL = new ConnecterData("org.h2.Driver", "wrongUrl", "sonar", "sonar");
     try {
       connectionVerifier.databaseIsReached(notAvailableURL);
       fail();
     } catch (Exception e) {
-      assertThat(e).isInstanceOf(UserDbException.class).hasMessage("*** DATABASE CAN'T BE REACHED AT ADDRESS :h2:mem:ConnectionVerifierTestDB;DB_CLOSE_ON_EXIT=-1; ***");
+      assertThat(e).isInstanceOf(MessageDbException.class).hasMessage("ERROR: Database can not be reached at url wrongUrl. Verify url, user name and password. No suitable driver found for wrongUrl");
     }
 
-    ConnecterData notAvailableDriver = new ConnecterData("org..Driver", "jdbc:h2:mem:ConnectionVerifierTestDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    ConnecterData notAvailableDriver = new ConnecterData("wrong.Driver", "jdbc:h2:mem:ConnectionVerifierTestDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     try {
       connectionVerifier.databaseIsReached(notAvailableDriver);
       fail();
     } catch (Exception e) {
-      assertThat(e).isInstanceOf(UserDbException.class).hasMessage("*** DRIVER org..Driver DOES NOT EXIST ***");
+      assertThat(e).isInstanceOf(MessageDbException.class).hasMessage("ERROR: Driver wrong.Driver does not exists : wrong.Driver");
     }
 
   }

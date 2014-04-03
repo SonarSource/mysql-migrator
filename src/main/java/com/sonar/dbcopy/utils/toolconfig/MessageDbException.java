@@ -5,9 +5,9 @@
  */
 package com.sonar.dbcopy.utils.toolconfig;
 
-public class UserDbException extends RuntimeException {
+public class MessageDbException extends RuntimeException {
 
-  public UserDbException(String message) {
+  public MessageDbException(String message) {
     super(message);
   }
   /**

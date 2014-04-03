@@ -8,8 +8,8 @@ package com.sonar.dbcopy.prepare;
 import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
+import com.sonar.dbcopy.utils.toolconfig.MessageDbException;
 import com.sonar.dbcopy.utils.toolconfig.SqlDbException;
-import com.sonar.dbcopy.utils.toolconfig.UserDbException;
 
 import java.sql.*;
 
@@ -43,7 +43,7 @@ public class VersionVerifier {
     } catch (SQLException e) {
       throw new SqlDbException("Problem when verifying version database. Please build your destination database with SonarQube at the same SonarQube source version.", e);
     } catch (ClassNotFoundException e) {
-      throw new UserDbException("*** DRIVER " + cd.getDriver() + " CAN'T BE REACHED ***");
+      throw new MessageDbException("ERROR: Driver " + cd.getDriver() + " does not exist.");
     } finally {
       closer.closeResultSet(resultSet);
       closer.closeStatement(statement);
