@@ -7,7 +7,6 @@
 package com.sonar.dbcopy.utils.toolconfig;
 
 import com.sonar.dbcopy.utils.Utils;
-import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,10 +26,11 @@ public class CharacteristicsRelatedToEditorTest {
   @Before
   public void setUp() throws Exception {
     Utils utils = new Utils();
-    connection = utils.makeFilledH2("CharacteristicsRelatedToEditorTestDB",false);
+    connection = utils.makeFilledH2("CharacteristicsRelatedToEditorTestDB", false);
     metaData = connection.getMetaData();
     chRelToEd = new CharacteristicsRelatedToEditor();
   }
+
   @After
   public void tearDown() throws Exception {
     Closer closer = new Closer("CharacteristicsRelatedToEditorTest");
@@ -39,7 +39,7 @@ public class CharacteristicsRelatedToEditorTest {
 
   @Test
   public void testGetSchema() throws SQLException {
-    assertEquals(null, chRelToEd.getSchema(metaData));
+    assertEquals("PUBLIC", chRelToEd.getSchema(metaData));
   }
 
   @Test

@@ -11,12 +11,14 @@ import java.sql.*;
 public class CharacteristicsRelatedToEditor {
 
   public String getSchema(DatabaseMetaData metaData) throws SQLException {
-    // USED FOR metadata.getTables WHICH NEED "public" WITH POSTGRESQL AND UPPERCASE USER NAME WITH ORACLE
+    // USED FOR metadata.getTables or getColumns WHICH NEED "public" WITH POSTGRESQL , UPPERCASE USER NAME WITH ORACLE , AND UPPERCASE "PUBLIC" FOR H2
     String schema;
     if (isPostgresql(metaData)) {
       schema = "public";
     } else if (isOracle(metaData)) {
       schema = metaData.getUserName().toUpperCase();
+    } else if (isH2(metaData)) {
+      schema = "PUBLIC";
     } else {
       schema = null;
     }

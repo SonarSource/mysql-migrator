@@ -111,7 +111,8 @@ public class MetadataGetter {
         String tableNameWithAdaptedCase = chRelToEd.transfromCaseOfTableName(metaData, database.getTableName(indexTable));
 
         //ORACLE NEEDS UPERCASE TO EXECUTE getColumns()
-        resultSetCol = metaData.getColumns(null, null, tableNameWithAdaptedCase, "%");
+        String schema = chRelToEd.getSchema(metaData);
+        resultSetCol = metaData.getColumns(null, schema, tableNameWithAdaptedCase, "%");
         while (resultSetCol.next()) {
           String columnNameToInsert = resultSetCol.getString("COLUMN_NAME").toLowerCase();
           int columnType = resultSetCol.getInt("DATA_TYPE");
