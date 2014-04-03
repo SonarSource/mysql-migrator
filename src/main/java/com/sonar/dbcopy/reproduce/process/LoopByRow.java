@@ -9,7 +9,6 @@ package com.sonar.dbcopy.reproduce.process;
 import com.sonar.dbcopy.reproduce.reader.ReaderTool;
 import com.sonar.dbcopy.reproduce.writer.WriterTool;
 import com.sonar.dbcopy.utils.data.Table;
-import com.sonar.dbcopy.utils.toolconfig.ListColumnsAsString;
 import org.slf4j.LoggerFactory;
 
 import java.sql.PreparedStatement;
@@ -30,10 +29,8 @@ public class LoopByRow {
   public LoopByRow(Table sourceTable, Table destTable) {
     this.sourceTable = sourceTable;
     this.destTable = destTable;
-    ListColumnsAsString lcasSource = new ListColumnsAsString(sourceTable);
-    ListColumnsAsString lcasDest = new ListColumnsAsString(destTable);
-    tableContentSource = "SOURCE COLUMNS      ( " + lcasSource.makeColumnString() + " ) with TYPES (" + lcasSource.makeStringOfTypes() + " ).";
-    tableContentDest = "DESTINATION COLUMNS ( " + lcasDest.makeColumnString() + " ) with TYPES (" + lcasDest.makeStringOfTypes() + " ).";
+    tableContentSource = "SOURCE COLUMNS      ( " + sourceTable.getColumnNamesAsString()+ " ) with TYPES (" + sourceTable.getTypesAsString() + " ).";
+    tableContentDest = "DESTINATION COLUMNS ( " + destTable.getColumnNamesAsString() + " ) with TYPES (" + destTable.getTypesAsString() + " ).";
   }
 
   public void executeCopy(ResultSet resultSetSource, PreparedStatement preparedStatementDest, ReaderTool readerTool, WriterTool writerTool) throws SQLException {
@@ -150,12 +147,12 @@ public class LoopByRow {
   }
 
   private void displayContextLog(SQLException e, String logRow, String kingOfError) {
-    LOGGER.error("ERROR IN TABLE: " + sourceTable.getName() + " when " + kingOfError + ".");
-    LOGGER.error(tableContentSource);
-    LOGGER.error(tableContentDest);
-    LOGGER.error("LINES NOT COPIED " + logRow);
-    LOGGER.error(e.getMessage());
-    LOGGER.error("NEXT EXCEPTION: " + e.getNextException());
+    LOGGER.error(" ** ERROR ** IN TABLE: " + sourceTable.getName() + " when " + kingOfError + ".");
+    LOGGER.error(" ** ERROR ** "+tableContentSource);
+    LOGGER.error(" ** ERROR ** "+tableContentDest);
+    LOGGER.error(" ** ERROR ** "+"LINES NOT COPIED " + logRow);
+    LOGGER.error(" ** ERROR ** "+e.getMessage());
+    LOGGER.error(" ** ERROR ** NEXT EXCEPTION: " + e.getNextException());
   }
 }
 

@@ -33,7 +33,6 @@ public class ResulsetSourceGetterTest {
   public void setUp() throws Exception {
     Utils utils = new Utils();
     connection = utils.makeFilledH2("ResulsetSourceGetterTestDB", false);
-
     resulsetSourceGetter = new ResulsetSourceGetter("table_for_test");
   }
 

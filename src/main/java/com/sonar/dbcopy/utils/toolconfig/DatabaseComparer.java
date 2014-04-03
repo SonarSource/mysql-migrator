@@ -26,11 +26,11 @@ public class DatabaseComparer {
       displayTableContent(tableSource);
       // DISPLAY DESTINATION TABLE IF EXISTS
       Table tableDestToFind = dbDestination.getTableByName(tableSourceName);
+      LOGGER.info("   DESTINATION:");
       if (tableDestToFind == null) {
-        LOGGER.warn("   DESTINATION:  WARNING !! TABLE " + dbSource.getTableName(indexTable) + " is not present in the DESTINATION database.");
+        LOGGER.warn(" !  WARNING - TABLE " + dbSource.getTableName(indexTable) + " is not present in the DESTINATION database.");
         nbMissingTableInDest++;
       } else {
-        LOGGER.info("   DESTINATION:");
         displayTableContent(tableDestToFind);
       }
     }
@@ -45,7 +45,7 @@ public class DatabaseComparer {
         if (tableSourceToFind == null) {
           LOGGER.info("");
           LOGGER.info("FOUND TABLE : " + dbDestination.getTableName(indexTable));
-          LOGGER.warn("   SOURCE:  WARNING!! TABLE " + dbDestination.getTableName(indexTable) + " is not present in the SOURCE database.");
+          LOGGER.warn(" !  WARNING - TABLE " + dbDestination.getTableName(indexTable) + " is not present in the SOURCE database.");
           LOGGER.info("   DESTINATION:");
           displayTableContent(dbDestination.getTable(indexTable));
         }
@@ -54,9 +54,8 @@ public class DatabaseComparer {
   }
 
   private void displayTableContent(Table tableToDisplay) {
-    ListColumnsAsString lcas = new ListColumnsAsString(tableToDisplay);
-    LOGGER.info("         COLUMNS : (" + lcas.makeColumnString() + ")");
-    LOGGER.info("           TYPES : (" + lcas.makeStringOfTypes() + ")");
+    LOGGER.info("         COLUMNS : (" + tableToDisplay.getColumnNamesAsString() + ")");
+    LOGGER.info("           TYPES : (" + tableToDisplay.getTypesAsString() + ")");
   }
 
   public void displayMissingTableInDb(Database completeDb, Database dbToEvaluate, String sourceOrDestination) {
@@ -65,7 +64,7 @@ public class DatabaseComparer {
       realTable = completeDb.getTable(indexTable);
       missingTableToFind = dbToEvaluate.getTableByName(realTable.getName());
       if (missingTableToFind == null) {
-        LOGGER.warn("TABLE " + completeDb.getTableName(indexTable) + " is not present in the " + sourceOrDestination + " database. Have a look to the logs \"FOUND TABLES\" upper.");
+        LOGGER.warn(" !  WARNING - TABLE " + completeDb.getTableName(indexTable) + " is not present in the " + sourceOrDestination + " database and have not been copied.");
       }
     }
   }
@@ -75,7 +74,7 @@ public class DatabaseComparer {
       Table tableSource = dbSource.getTable(indexTable);
       Table tableDest = dbDest.getTableByName(tableSource.getName());
       if (tableDest != null && tableDest.getNbRows() != tableSource.getNbRows()) {
-        LOGGER.warn("TABLE " + tableSource.getName() + " add " + tableSource.getNbRows() + " ROWS in SOURCE while " + tableDest.getNbRows() + " in DESTINATION");
+        LOGGER.warn(" !  WARNING - TABLE " + tableSource.getName() + " has " + tableSource.getNbRows() + " ROWS in SOURCE while " + tableDest.getNbRows() + " in DESTINATION");
         LOGGER.info("*");
       }
     }

@@ -35,6 +35,7 @@ public class Deleter {
     String tableNameSource = null;
     Statement statementToDelete = null;
     Connection connectionDest = null;
+    int nbTablesDeleted =0;
     try {
       connectionDest = new Connecter().doConnection(cdDest);
       statementToDelete = connectionDest.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
@@ -44,10 +45,12 @@ public class Deleter {
         tableNameSource = this.databaseSource.getTableName(indexTable);
         if (databaseDest.getTableByName(tableNameSource) != null) {
           statementToDelete.execute("TRUNCATE TABLE " + tableNameSource);
+          nbTablesDeleted++;
         } else {
-          LOGGER.error("WARNING !! Can't DELETE  TABLE :" + tableNameSource + " because it doesn't exist in destination database. ");
+          LOGGER.warn(" !  WARNING - Can't DELETE  TABLE :" + tableNameSource + " because it doesn't exist in destination database. ");
         }
       }
+      LOGGER.info("  "+nbTablesDeleted +" TABLES DELETED IN DESTINATION.");
       closer.closeStatement(statementToDelete);
 
     } catch (SQLException e) {

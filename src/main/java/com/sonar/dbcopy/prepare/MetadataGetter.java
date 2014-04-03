@@ -99,7 +99,7 @@ public class MetadataGetter {
           stringBuilder.append(tablesToCopy[i] + " ");
         }
         String allTablesRequired = stringBuilder.toString();
-        throw new DbException("It seems that some table(s) you required in ( " + allTablesRequired + ") do not exist.", new Exception("Mistake in command line."));
+        throw new DbException("It seems that some table(s) you required in ( " + allTablesRequired + ") do not exist. Verify the name in the database.", new Exception("Mistake in command line."));
       }
     }
   }
@@ -122,6 +122,7 @@ public class MetadataGetter {
           indexColumn++;
         }
         closer.closeResultSet(resultSetCol);
+        database.getTable(indexTable).makeStringsUsedForTable();
       }
     } catch (SQLException e) {
       throw new DbException("Problem to add columns in TABLE : " + database.getTableName(indexTable) + ".", e);

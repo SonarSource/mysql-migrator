@@ -9,7 +9,6 @@ package com.sonar.dbcopy.reproduce.process;
 import com.sonar.dbcopy.utils.data.Table;
 import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
 import com.sonar.dbcopy.utils.toolconfig.DbException;
-import com.sonar.dbcopy.utils.toolconfig.ListColumnsAsString;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,8 +21,8 @@ public class DestinationStatementBuilder {
     CharacteristicsRelatedToEditor chRelToEd = new CharacteristicsRelatedToEditor();
     try {
       String tableSourceName = chRelToEd.transfromCaseOfTableName(connectionDestination.getMetaData(), tableSource.getName());
-      ListColumnsAsString lcas = new ListColumnsAsString(tableSource);
-      String sqlInsertRequest = "INSERT INTO " + tableSourceName + " (" + lcas.makeColumnString() + ") VALUES(" + lcas.makeQuestionMarkString() + ")";
+
+      String sqlInsertRequest = "INSERT INTO " + tableSourceName + " (" + tableSource.getColumnNamesAsString() + ") VALUES(" + tableSource.getQuestionMarksAsString() + ")";
 
       preparedStatementDest = connectionDestination.prepareStatement(sqlInsertRequest);
     } catch (SQLException e) {

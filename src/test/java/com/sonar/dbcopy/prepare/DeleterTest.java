@@ -105,5 +105,7 @@ public class DeleterTest {
   @After
   public void tearDown() {
     closer.closeConnection(connectionToBeDeleted);
+    closer.closeConnection(connectionToBeDeletedWithMissingTable);
+
   }
 }

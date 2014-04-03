@@ -20,22 +20,27 @@ public class TableTest {
   @Before
   public void setUp() throws Exception {
     table = new Table("table1");
-    table.setNbRows(5);
+    table.setNbRows(12);
     table.addColumn(0,"col0", Types.VARCHAR);
     table.addColumn(1,"col1", Types.INTEGER);
-    table.addColumn(2,null,null);
+    table.addColumn(2, "col2", Types.TIMESTAMP);
+    table.addColumn(3, "col3", Types.BLOB);
+    table.addColumn(4,null,null);
+    table.makeStringsUsedForTable();
   }
 
   @Test
   public void testGetNbColumns() throws Exception {
-    assertEquals(3,table.getNbColumns());
+    assertEquals(5,table.getNbColumns());
   }
 
   @Test
   public void testAddAndGetColumn() throws Exception {
     assertEquals("col0",table.getColumnName(0));
     assertEquals("col1",table.getColumnName(1));
-    assertEquals("null",table.getColumnName(2));
+    assertEquals("col2",table.getColumnName(2));
+    assertEquals("col3",table.getColumnName(3));
+    assertEquals("null",table.getColumnName(4));
   }
 
   @Test
@@ -45,14 +50,32 @@ public class TableTest {
 
   @Test
   public void testSetAndGetNbRows() throws Exception {
-    assertEquals(5,table.getNbRows());
+    assertEquals(12,table.getNbRows());
   }
 
   @Test
   public void testSetAndGetTypes(){
     assertEquals((long) Types.VARCHAR,(long) table.getType(0));
     assertEquals((long) Types.INTEGER,(long) table.getType(1));
-    assertEquals(0 ,(long) table.getType(2));
+    assertEquals((long) Types.TIMESTAMP,(long) table.getType(2));
+    assertEquals((long) Types.BLOB,(long) table.getType(3));
+    assertEquals(0 ,(long) table.getType(4));
+
+  }
+
+  @Test
+  public void testMakeColumnString() throws Exception {
+    assertEquals("col0,col1,col2,col3,null", table.getColumnNamesAsString());
+  }
+
+  @Test
+  public void testMakeQuestionMarkString() throws Exception {
+    assertEquals("?,?,?,?,?", table.getQuestionMarksAsString());
+  }
+
+  @Test
+  public void testmakeStringOfTypes() {
+    assertEquals("VARCHAR,INTEGER,TIMESTAMP,BLOB,NULL", table.getTypesAsString());
 
   }
 }

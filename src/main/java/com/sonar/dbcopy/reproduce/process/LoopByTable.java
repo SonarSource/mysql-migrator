@@ -60,7 +60,7 @@ public class LoopByTable {
 
         // VERIFY IF TABLE EXISTS IN DESTINATION
         if (tableDest == null) {
-          LOGGER.error("WARNING !! Can't WRITE in TABLE :" + tableSourceName + " because it doesn't exist in destination database. ");
+          LOGGER.warn(" !  WARNING - Can't WRITE in TABLE :" + tableSourceName + " because it doesn't exist in destination database. ");
         } else {
 
           //SQL SERVER DESTINATION OPTION :  PUT IDENTITY_INSERT AT on FOR THE CURRENT TABLE

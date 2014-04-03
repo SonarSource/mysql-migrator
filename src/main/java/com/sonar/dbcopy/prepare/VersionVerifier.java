@@ -29,7 +29,6 @@ public class VersionVerifier {
 
       String tableNameSchemaMigration = chRelToEd.transfromCaseOfTableName(connection.getMetaData(),"schema_migrations");
       resultSet = statement.executeQuery("SELECT version FROM "+tableNameSchemaMigration);
-//      resultSet = statement.executeQuery("SELECT version FROM schema_migrations");
 
       while (resultSet.next()) {
         String versionString = resultSet.getString(1);
@@ -41,7 +40,7 @@ public class VersionVerifier {
       return maxVersionId;
 
     } catch (SQLException e) {
-      throw new DbException("Problem in VersionVerifier.", e);
+      throw new DbException("Problem when verifying version database. Please build your destination database with SonarQube at the same SonarQube source version.", e);
     } catch (ClassNotFoundException e) {
       throw new DbException("*** DRIVER " + cd.getDriver() + " CAN'T BE REACHED ***", e);
     } finally {

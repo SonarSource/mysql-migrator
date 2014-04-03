@@ -24,11 +24,9 @@ public class ReaderToolTest {
   private Connection connection;
   private Statement statement;
   private ResultSet resultSet;
-  private Closer closer;
 
   @Before
   public void setUp() throws Exception {
-    closer = new Closer("ReaderTootTest");
     readerToolList = new ArrayList<ReaderTool>();
     readerToolList.add(new H2Reader());
     readerToolList.add(new MySqlReader());
@@ -44,6 +42,7 @@ public class ReaderToolTest {
 
   @After
   public void tearDown() throws Exception {
+    Closer closer = new Closer("ReaderTootTest");
     closer.closeResultSet(resultSet);
     closer.closeStatement(statement);
     closer.closeConnection(connection);

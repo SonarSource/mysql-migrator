@@ -8,7 +8,9 @@ package com.sonar.dbcopy.prepare;
 
 import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.data.ConnecterData;
+import com.sonar.dbcopy.utils.toolconfig.Closer;
 import com.sonar.dbcopy.utils.toolconfig.DbException;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,8 +32,13 @@ public class VersionVerifierTest {
     connectionDest = utils.makeEmptyH2("VersionVerifierTestDestinationDB", true);
     utils.addContentInThirdTable(connectionSource, 1);
     utils.addContentInThirdTable(connectionDest, 1);
+  }
 
-
+  @After
+  public void tearDown() {
+    Closer closer = new Closer("VersionVerifierTest");
+    closer.closeConnection(connectionSource);
+    closer.closeConnection(connectionDest);
   }
 
   @Test
@@ -56,7 +63,7 @@ public class VersionVerifierTest {
       versionVerifier.lastVersionId(cdWithWrongUrl);
       fail();
     } catch (Exception e) {
-      assertThat(e).isInstanceOf(DbException.class).hasMessage("Problem in VersionVerifier.");
+      assertThat(e).isInstanceOf(DbException.class).hasMessage("Problem when verifying version database. Please build your destination database with SonarQube at the same SonarQube source version.");
     }
 
     try {

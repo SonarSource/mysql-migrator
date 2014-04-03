@@ -23,31 +23,34 @@ public class ArgumentsParser {
 
     String[] optionNames = {"driverSrc", "urlSrc", "userSrc", "pwdSrc", "driverDest", "urlDest", "userDest", "pwdDest"};
     String[] optionDescription = {
-      "The driver source is required like  org.postgresql.Driver for example.",
-      "The url source is required like  jdbc:postgresql://localhost:15432/sonar for example.",
-      "The user name recorded in database source is required.",
-      "The password recorded in database source for the user name used in userSrc option is required.",
+      "OPTIONNAL: driver source",
+      "REQUIRED:  url source",
+      "REQUIRED:  user name source",
+      "REQUIRED:  password source",
 
-      "The driver destination is required like  com.mysql.jdbc.Driver for example.",
-      "The url destination is required like   jdbc:mysql://localhost:13306/sonar?autoReconnect=true for example.",
-      "The user name recorded in database destination is required.",
-      "The password recorded in database destination for the user name used in userDest option is required."
+      "OPTIONNAL: driver destination",
+      "REQUIRED:  url destination",
+      "REQUIRED:  user name destination",
+      "REQUIRED:  password destination"
     };
 
     for (int indexForString = 0; indexForString < optionNames.length; indexForString++) {
       Option option = OptionBuilder
         .hasArg()
-        .isRequired()
         .withValueSeparator(' ')
         .withDescription(optionDescription[indexForString])
         .create(optionNames[indexForString]);
+      if (!"driver".equals(optionNames[indexForString].substring(0, 6))) {
+        option.isRequired();
+      }
       options.addOption(option);
     }
 
     Option option = OptionBuilder
       .hasArgs()
       .withValueSeparator(' ')
-      .withDescription("Use values to copy only tables mentionned after command line option -T.")
+      .withValueSeparator(',')
+      .withDescription("OPTIONAL: table names to copy")
       .create("T");
     options.addOption(option);
   }
@@ -57,8 +60,7 @@ public class ArgumentsParser {
     try {
       commandLine = commandLineParser.parse(options, args);
     } catch (ParseException e) {
-      LOGGER.error(e.getMessage());
-      getHelp();
+      LOGGER.error(" ** ERROR ** " + e.getMessage());
     }
   }
 
@@ -72,7 +74,7 @@ public class ArgumentsParser {
 
   public void getHelp() {
     HelpFormatter formatter = new HelpFormatter();
-    formatter.printHelp("ant", options);
+    formatter.printHelp("help", options);
   }
 
   public CommandLine getCommandLine() {

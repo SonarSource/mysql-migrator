@@ -14,7 +14,6 @@ import org.junit.Test;
 public class DatabaseComparerTest {
 
   private Database databaseSource, databaseCorrectDest, databaseUncorrectDest;
-
   private DatabaseComparer databaseComparer;
 
   @Before
@@ -23,9 +22,7 @@ public class DatabaseComparerTest {
     databaseSource = utils.makeDatabase(true);
     databaseCorrectDest = utils.makeDatabase(true);
     databaseUncorrectDest = utils.makeDatabase(false);
-
     databaseComparer = new DatabaseComparer();
-
   }
 
   @Test
@@ -35,12 +32,11 @@ public class DatabaseComparerTest {
 
   @Test
   public void testDisplayMissingTableInDb() throws Exception {
-    databaseComparer.displayMissingTableInDb(databaseSource, databaseUncorrectDest,"UNCORRECT DESTINATION" );
+    databaseComparer.displayMissingTableInDb(databaseSource, databaseUncorrectDest, "UNCORRECT DESTINATION");
   }
 
   @Test
   public void testDisplayDiffNumberRows() throws Exception {
-    databaseComparer.displayDiffNumberRows(databaseSource,databaseUncorrectDest);
-
+    databaseComparer.displayDiffNumberRows(databaseSource, databaseUncorrectDest);
   }
 }

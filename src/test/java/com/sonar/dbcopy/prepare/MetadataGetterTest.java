@@ -120,7 +120,7 @@ public class MetadataGetterTest {
       mdg.execute(tablesRequiredAsStringTab);
       fail();
     } catch (Exception e) {
-      assertThat(e).isInstanceOf(DbException.class).hasMessage("It seems that some table(s) you required in ( non_existent_table ) do not exist.");
+      assertThat(e).isInstanceOf(DbException.class).hasMessage("It seems that some table(s) you required in ( non_existent_table ) do not exist. Verify the name in the database.");
     }
   }
 
