@@ -6,11 +6,10 @@
 
 package com.sonar.dbcopy.prepare;
 
-import com.sonar.dbcopy.utils.toolconfig.Closer;
-import com.sonar.dbcopy.utils.toolconfig.DbException;
+import com.sonar.dbcopy.utils.toolconfig.SqlDbException;
 import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.data.ConnecterData;
-import org.junit.After;
+import com.sonar.dbcopy.utils.toolconfig.UserDbException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,7 +41,7 @@ public class ConnectionVerifierTest {
       connectionVerifier.databaseIsReached(notAvailableURL);
       fail();
     } catch (Exception e) {
-      assertThat(e).isInstanceOf(DbException.class).hasMessage("*** DATABASE CAN'T BE REACHED AT ADDRESS :h2:mem:ConnectionVerifierTestDB;DB_CLOSE_ON_EXIT=-1; ***");
+      assertThat(e).isInstanceOf(UserDbException.class).hasMessage("*** DATABASE CAN'T BE REACHED AT ADDRESS :h2:mem:ConnectionVerifierTestDB;DB_CLOSE_ON_EXIT=-1; ***");
     }
 
     ConnecterData notAvailableDriver = new ConnecterData("org..Driver", "jdbc:h2:mem:ConnectionVerifierTestDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
@@ -50,7 +49,7 @@ public class ConnectionVerifierTest {
       connectionVerifier.databaseIsReached(notAvailableDriver);
       fail();
     } catch (Exception e) {
-      assertThat(e).isInstanceOf(DbException.class).hasMessage("*** DRIVER org..Driver CAN'T BE REACHED ***");
+      assertThat(e).isInstanceOf(UserDbException.class).hasMessage("*** DRIVER org..Driver DOES NOT EXIST ***");
     }
 
   }

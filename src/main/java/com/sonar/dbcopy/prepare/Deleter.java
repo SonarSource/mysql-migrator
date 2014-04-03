@@ -10,7 +10,7 @@ import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.data.Database;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
 import com.sonar.dbcopy.utils.toolconfig.Connecter;
-import com.sonar.dbcopy.utils.toolconfig.DbException;
+import com.sonar.dbcopy.utils.toolconfig.SqlDbException;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
@@ -54,7 +54,7 @@ public class Deleter {
       closer.closeStatement(statementToDelete);
 
     } catch (SQLException e) {
-      throw new DbException("Deleting datas from destination failed for TABLE : " + tableNameSource + " .", e);
+      throw new SqlDbException("Deleting datas from destination failed for TABLE : " + tableNameSource + " .", e);
     } finally {
       closer.closeStatement(statementToDelete);
       closer.closeConnection(connectionDest);

@@ -8,9 +8,8 @@ package com.sonar.dbcopy;
 
 import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
-import com.sonar.dbcopy.utils.toolconfig.DbException;
+import com.sonar.dbcopy.utils.toolconfig.UserDbException;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.sql.Connection;
@@ -20,7 +19,8 @@ import static org.junit.Assert.fail;
 
 public class StartAppTest {
 
-  private Connection connectionSourceV1,connectionSourceV2,connectionDestV1,connectiondestV3;
+  private Connection connectionSourceV1, connectionSourceV2, connectionDestV1, connectiondestV3;
+
   @Test
   public void testMain() throws Exception {
 
@@ -31,7 +31,7 @@ public class StartAppTest {
     connectionDestV1 = utils.makeEmptyH2("StartAppTest_Destination_Version_1_DB", true);
     utils.addContentInThirdTable(connectionDestV1, 1);
 
-    Closer closer=new Closer("startAppTestMain");
+    Closer closer = new Closer("startAppTestMain");
     closer.closeConnection(connectionSourceV1);
     closer.closeConnection(connectionDestV1);
 
@@ -52,13 +52,13 @@ public class StartAppTest {
   @Test
   public void testMainWithDifferentVersion() throws Exception {
     Utils utils = new Utils();
-    connectionSourceV2= utils.makeFilledH2("StartAppTest_Source_Version_2_DB", true);
+    connectionSourceV2 = utils.makeFilledH2("StartAppTest_Source_Version_2_DB", true);
     utils.addContentInThirdTable(connectionSourceV2, 2);
 
-    connectiondestV3= utils.makeEmptyH2("StartAppTest_Destination_Version_3_DB", true);
+    connectiondestV3 = utils.makeEmptyH2("StartAppTest_Destination_Version_3_DB", true);
     utils.addContentInThirdTable(connectiondestV3, 3);
 
-    Closer closer=new Closer("startAppTestMainWithDifferentVersion");
+    Closer closer = new Closer("startAppTestMainWithDifferentVersion");
     closer.closeConnection(connectionSourceV2);
     closer.closeConnection(connectiondestV3);
 
@@ -76,15 +76,15 @@ public class StartAppTest {
       StartApp startApp = new StartApp();
       startApp.main(argsBadVersion);
       fail();
-    } catch (DbException e) {
-      assertThat(e).isInstanceOf(DbException.class).hasMessage("Version of schema migration are not the same between source (2) and destination (3).");
+    } catch (UserDbException e) {
+      assertThat(e).isInstanceOf(UserDbException.class).hasMessage("Version of schema migration are not the same between source (2) and destination (3).");
     }
 
   }
 
   @After
-  public void tearDown(){
-    Closer closer=new Closer("startAppTesttearDown");
+  public void tearDown() {
+    Closer closer = new Closer("startAppTesttearDown");
     closer.closeConnection(connectionSourceV1);
     closer.closeConnection(connectionDestV1);
     closer.closeConnection(connectionSourceV2);

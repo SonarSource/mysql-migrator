@@ -8,7 +8,7 @@ package com.sonar.dbcopy.reproduce.process;
 
 import com.sonar.dbcopy.utils.data.Table;
 import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
-import com.sonar.dbcopy.utils.toolconfig.DbException;
+import com.sonar.dbcopy.utils.toolconfig.SqlDbException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -26,7 +26,7 @@ public class DestinationStatementBuilder {
 
       preparedStatementDest = connectionDestination.prepareStatement(sqlInsertRequest);
     } catch (SQLException e) {
-      throw new DbException("Problem when buiding destination prepared statement", e);
+      throw new SqlDbException("Problem when buiding destination prepared statement", e);
     }
     return preparedStatementDest;
   }

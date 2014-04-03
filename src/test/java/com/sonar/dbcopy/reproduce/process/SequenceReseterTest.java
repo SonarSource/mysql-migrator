@@ -8,7 +8,7 @@ package com.sonar.dbcopy.reproduce.process;
 
 import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.data.ConnecterData;
-import com.sonar.dbcopy.utils.toolconfig.DbException;
+import com.sonar.dbcopy.utils.toolconfig.SqlDbException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +38,7 @@ public class SequenceReseterTest {
       sequenceReseter.execute();
       fail();
     } catch (Exception e) {
-      assertThat(e).isInstanceOf(DbException.class).hasMessage("Impossible to get the jdbc DRIVER Not a Driver.");
+      assertThat(e).isInstanceOf(SqlDbException.class).hasMessage("Impossible to get the jdbc DRIVER Not a Driver.");
     }
   }
 

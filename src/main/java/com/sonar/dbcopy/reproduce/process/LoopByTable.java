@@ -98,7 +98,7 @@ public class LoopByTable {
         closer.closeConnection(connectionDestination);
       }
     } catch (SQLException e) {
-      throw new DbException("Problem when do loop for tables in LoopByTable at TABLE : " + databaseSource.getTableName(indexTable), e);
+      throw new SqlDbException("Problem when do loop for tables in LoopByTable at TABLE : " + databaseSource.getTableName(indexTable), e);
     } finally {
       closer.closeResultSet(resultSetCountDest);
       closer.closeStatement(statementCountDest);

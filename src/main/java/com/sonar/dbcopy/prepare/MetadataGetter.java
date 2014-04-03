@@ -7,10 +7,7 @@ package com.sonar.dbcopy.prepare;
 
 import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.data.Database;
-import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
-import com.sonar.dbcopy.utils.toolconfig.Closer;
-import com.sonar.dbcopy.utils.toolconfig.Connecter;
-import com.sonar.dbcopy.utils.toolconfig.DbException;
+import com.sonar.dbcopy.utils.toolconfig.*;
 
 import java.sql.*;
 
@@ -58,7 +55,7 @@ public class MetadataGetter {
       this.addNbRowInTables(statementSource);
 
     } catch (SQLException e) {
-      throw new DbException("Problem to get schema from database source.", e);
+      throw new SqlDbException("Problem to get schema from database source.", e);
     } finally {
       closer.closeResultSet(resultSetTables);
       closer.closeStatement(statementSource);
@@ -68,7 +65,7 @@ public class MetadataGetter {
 
   private void addTables(ResultSet resultSetTables) throws SQLException {
     if (!resultSetTables.isBeforeFirst()) {
-      throw new DbException("*** ERROR : CAN'T FIND ANY TABLE IN DATABASE SOURCE ***", new Exception("resultset is empty"));
+      throw new UserDbException("*** ERROR : CAN'T FIND ANY TABLE IN DATABASE SOURCE ***");
     } else {
       while (resultSetTables.next()) {
         String tableName = resultSetTables.getString("TABLE_NAME").toLowerCase();
@@ -79,7 +76,7 @@ public class MetadataGetter {
 
   private void addOnlyTablesRequiredInCommandLine(ResultSet resultSetTables, String[] tablesToCopy) throws SQLException {
     if (!resultSetTables.isBeforeFirst()) {
-      throw new DbException("*** ERROR : CAN'T FIND ANY TABLE IN DATABASE SOURCE ***", new Exception("resultset is empty"));
+      throw new UserDbException("*** ERROR : CAN'T FIND ANY TABLE IN DATABASE SOURCE ***");
     } else {
       while (resultSetTables.next()) {
         boolean tablehasBeenrequired = false;
@@ -99,7 +96,7 @@ public class MetadataGetter {
           stringBuilder.append(tablesToCopy[i] + " ");
         }
         String allTablesRequired = stringBuilder.toString();
-        throw new DbException("It seems that some table(s) you required in ( " + allTablesRequired + ") do not exist. Verify the name in the database.", new Exception("Mistake in command line."));
+        throw new UserDbException("It seems that some table(s) you required in ( " + allTablesRequired + ") do not exist. Verify the name in the database.");
       }
     }
   }
@@ -125,7 +122,7 @@ public class MetadataGetter {
         database.getTable(indexTable).makeStringsUsedForTable();
       }
     } catch (SQLException e) {
-      throw new DbException("Problem to add columns in TABLE : " + database.getTableName(indexTable) + ".", e);
+      throw new SqlDbException("Problem to add columns in TABLE : " + database.getTableName(indexTable) + ".", e);
     } finally {
       closer.closeResultSet(resultSetCol);
     }
@@ -143,7 +140,7 @@ public class MetadataGetter {
         closer.closeResultSet(resultSetRows);
       }
     } catch (SQLException e) {
-      throw new DbException("Problem to add number of rows in TABLE : " + database.getTableName(indexTable) + ".", e);
+      throw new SqlDbException("Problem to add number of rows in TABLE : " + database.getTableName(indexTable) + ".", e);
     } finally {
       closer.closeResultSet(resultSetRows);
     }

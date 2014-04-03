@@ -18,7 +18,7 @@ public class ArgumentsParser {
   public ArgumentsParser() {
     options = new Options();
 
-    Option help = new Option("help", false, "Print this message");
+    Option help = new Option("help", false, "           Print this message");
     options.addOption(help);
 
     String[] optionNames = {"driverSrc", "urlSrc", "userSrc", "pwdSrc", "driverDest", "urlDest", "userDest", "pwdDest"};
@@ -50,7 +50,7 @@ public class ArgumentsParser {
       .hasArgs()
       .withValueSeparator(' ')
       .withValueSeparator(',')
-      .withDescription("OPTIONAL: table names to copy")
+      .withDescription("OPTIONAL:  table to copy separated by space or ,")
       .create("T");
     options.addOption(option);
   }

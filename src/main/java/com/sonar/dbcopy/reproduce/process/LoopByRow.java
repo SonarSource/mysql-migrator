@@ -152,7 +152,9 @@ public class LoopByRow {
     LOGGER.error(" ** ERROR ** "+tableContentDest);
     LOGGER.error(" ** ERROR ** "+"LINES NOT COPIED " + logRow);
     LOGGER.error(" ** ERROR ** "+e.getMessage());
-    LOGGER.error(" ** ERROR ** NEXT EXCEPTION: " + e.getNextException());
+    if(e.getNextException()!=null){
+      LOGGER.error(" ** ERROR ** NEXT EXCEPTION: " + e.getNextException());
+    }
   }
 }
 

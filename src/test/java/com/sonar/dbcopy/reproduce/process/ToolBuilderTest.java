@@ -37,7 +37,7 @@ public class ToolBuilderTest {
     try {
       toolBuilder.buildReaderTool();
       fail();
-    } catch (NullPointerException e) {
+    } catch (Exception e) {
       assertThat(e).isInstanceOf(NullPointerException.class);
     }
     toolBuilder = new ToolBuilder(connectionSource, connectionDest);
@@ -50,7 +50,7 @@ public class ToolBuilderTest {
     try {
       toolBuilder.buildWriterTool(null);
       fail();
-    } catch (NullPointerException e) {
+    } catch (Exception e) {
       assertThat(e).isInstanceOf(NullPointerException.class);
     }
     toolBuilder = new ToolBuilder(connectionSource, connectionDest);

@@ -11,7 +11,7 @@ import com.sonar.dbcopy.reproduce.writer.WriterTool;
 import com.sonar.dbcopy.utils.data.Table;
 import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
-import com.sonar.dbcopy.utils.toolconfig.DbException;
+import com.sonar.dbcopy.utils.toolconfig.SqlDbException;
 
 import java.sql.*;
 
@@ -57,7 +57,7 @@ public class PrepareCopyTable {
       loopByRow.executeCopy(resultSetSource, preparedStatementDest, readerTool, writerTool);
 
     } catch (SQLException e) {
-      throw new DbException("Problem when fetching size of mysql statement source to Integer.MIN_VALUE at TABLE: " + tableSource.getName(), e);
+      throw new SqlDbException("Problem when fetching size of mysql statement source to Integer.MIN_VALUE at TABLE: " + tableSource.getName(), e);
     } finally {
       closer.closeResultSet(resultSetSource);
       closer.closeStatement(statementSource);

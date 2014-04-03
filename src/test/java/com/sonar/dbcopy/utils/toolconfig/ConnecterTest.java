@@ -43,7 +43,7 @@ public class ConnecterTest {
       connectionFailingDriver = connecter.doConnection(connecterData);
       fail();
     } catch (Exception e) {
-      assertThat(e).isInstanceOf(DbException.class).hasMessage("Impossible to get the jdbc DRIVER wrongDriver.");
+      assertThat(e).isInstanceOf(SqlDbException.class).hasMessage("Impossible to get the jdbc DRIVER wrongDriver.");
     }
   }
 
@@ -55,7 +55,7 @@ public class ConnecterTest {
       connectionFailingUrl = connecter.doConnection(connecterData);
       fail();
     } catch (Exception e) {
-      assertThat(e).isInstanceOf(DbException.class).hasMessage("Open connection failed with URL :wrongUrl .");
+      assertThat(e).isInstanceOf(SqlDbException.class).hasMessage("Open connection failed with URL :wrongUrl .");
     }
   }
 

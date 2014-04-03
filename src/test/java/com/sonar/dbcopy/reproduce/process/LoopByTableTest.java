@@ -10,7 +10,7 @@ import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.data.Database;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
-import com.sonar.dbcopy.utils.toolconfig.DbException;
+import com.sonar.dbcopy.utils.toolconfig.SqlDbException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -77,7 +77,7 @@ public class LoopByTableTest {
       Assert.assertFalse(resultSetDest.isBeforeFirst());
 
     } catch (SQLException e) {
-      throw new DbException("Problem when testing Reproducer.", e);
+      throw new SqlDbException("Problem when testing Reproducer.", e);
     } finally {
       closer.closeResultSet(resultSetSource);
       closer.closeResultSet(resultSetDest);

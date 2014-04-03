@@ -8,7 +8,8 @@ package com.sonar.dbcopy.prepare;
 import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
-import com.sonar.dbcopy.utils.toolconfig.DbException;
+import com.sonar.dbcopy.utils.toolconfig.SqlDbException;
+import com.sonar.dbcopy.utils.toolconfig.UserDbException;
 
 import java.sql.*;
 
@@ -27,8 +28,8 @@ public class VersionVerifier {
       connection = DriverManager.getConnection(cd.getUrl(), cd.getUser(), cd.getPwd());
       statement = connection.createStatement();
 
-      String tableNameSchemaMigration = chRelToEd.transfromCaseOfTableName(connection.getMetaData(),"schema_migrations");
-      resultSet = statement.executeQuery("SELECT version FROM "+tableNameSchemaMigration);
+      String tableNameSchemaMigration = chRelToEd.transfromCaseOfTableName(connection.getMetaData(), "schema_migrations");
+      resultSet = statement.executeQuery("SELECT version FROM " + tableNameSchemaMigration);
 
       while (resultSet.next()) {
         String versionString = resultSet.getString(1);
@@ -40,9 +41,9 @@ public class VersionVerifier {
       return maxVersionId;
 
     } catch (SQLException e) {
-      throw new DbException("Problem when verifying version database. Please build your destination database with SonarQube at the same SonarQube source version.", e);
+      throw new SqlDbException("Problem when verifying version database. Please build your destination database with SonarQube at the same SonarQube source version.", e);
     } catch (ClassNotFoundException e) {
-      throw new DbException("*** DRIVER " + cd.getDriver() + " CAN'T BE REACHED ***", e);
+      throw new UserDbException("*** DRIVER " + cd.getDriver() + " CAN'T BE REACHED ***");
     } finally {
       closer.closeResultSet(resultSet);
       closer.closeStatement(statement);

@@ -6,9 +6,6 @@
 package com.sonar.dbcopy.utils.toolconfig;
 
 import com.sonar.dbcopy.utils.Utils;
-import com.sonar.dbcopy.utils.toolconfig.Closer;
-import com.sonar.dbcopy.utils.toolconfig.DbException;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -51,7 +48,7 @@ public class CloserTest {
       assertTrue(statement.isClosed());
       assertTrue(connection.isClosed());
     } catch (Exception e) {
-      throw new DbException("Problem in CloserTest", e);
+      throw new SqlDbException("Problem in CloserTest", e);
     }
     closer.closeResultSet(resultSet);
     closer.closeStatement(statement);

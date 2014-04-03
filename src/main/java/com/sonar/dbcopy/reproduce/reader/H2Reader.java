@@ -6,7 +6,7 @@
 
 package com.sonar.dbcopy.reproduce.reader;
 
-import com.sonar.dbcopy.utils.toolconfig.DbException;
+import com.sonar.dbcopy.utils.toolconfig.SqlDbException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class H2Reader implements ReaderTool {
         output.write(buffer, 0, bytesRead);
       }
     } catch (IOException e) {
-      throw new DbException("Problem to get bytes when reading Blob", e);
+      throw new SqlDbException("Problem to get bytes when reading Blob", e);
     }
     return output.toByteArray();
   }

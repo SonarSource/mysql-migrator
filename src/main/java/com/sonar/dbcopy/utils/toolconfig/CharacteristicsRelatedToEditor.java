@@ -51,7 +51,7 @@ public class CharacteristicsRelatedToEditor {
     } else if (isH2(metadata)) {
       sqlRequest = "ALTER TABLE " + tableName + " ALTER COLUMN id RESTART WITH " + idMaxPlusOne + ";";
     } else {
-      throw new DbException("Url does not correspond to a correct format to reset auto increment idMaxPlusOne.", new Exception());
+      throw new UserDbException("Url does not correspond to a correct format to reset auto increment idMaxPlusOne.");
     }
     return sqlRequest;
   }
@@ -69,11 +69,30 @@ public class CharacteristicsRelatedToEditor {
       }
       return idMaxToReturn + 1;
     } catch (SQLException e) {
-      throw new DbException("Problem with sql request to select id max in Sequence Reseter at TABLE : " + tableName + ".", e);
+      throw new SqlDbException("Problem with sql request to select id max in Sequence Reseter at TABLE : " + tableName + ".", e);
     } finally {
       closer.closeResultSet(resultSet);
       closer.closeStatement(statement);
     }
+  }
+
+  public String giveDriverForUrlFromUser(String url) {
+    String driverAsString;
+    String urlBeginning = url.substring(0, 7);
+    if ("jdbc:my".equals(urlBeginning)) {
+      driverAsString = "com.mysql.jdbc.Driver";
+    } else if ("jdbc:or".equals(urlBeginning)) {
+      driverAsString = "oracle.jdbc.OracleDriver";
+    } else if ("jdbc:h2".equals(urlBeginning)) {
+      driverAsString = "org.h2.Driver";
+    } else if ("jdbc:po".equals(urlBeginning)) {
+      driverAsString = "org.postgresql.Driver";
+    } else if ("jdbc:jt".equals(urlBeginning)) {
+      driverAsString = "net.sourceforge.jtds.jdbc.Driver";
+    } else {
+      throw new UserDbException("Url does not correspond to a correct format to get the good jdbc driver.");
+    }
+    return driverAsString;
   }
 
   public boolean isSqlServer(DatabaseMetaData metaData) throws SQLException {
