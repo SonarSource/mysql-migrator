@@ -25,48 +25,29 @@ public class StartApp {
   public static void main(String[] args) {
     String starLine = "****************";
     String[] tablesToCopy = null;
-    String driverSrc = null, driverDest = null;
-    CharacteristicsRelatedToEditor chRelToEd = new CharacteristicsRelatedToEditor();
     ArgumentsParser argumentsParser = new ArgumentsParser();
     argumentsParser.doParsing(args);
 
-    if (argumentsParser.getCommandLine().hasOption("help")) {
+    if (argumentsParser.commandLineIsHelp()) {
       argumentsParser.getHelp();
     } else {
-      if (argumentsParser.getOptionTables() != null && argumentsParser.getOptionTables().length != 0) {
-        tablesToCopy = new String[argumentsParser.getOptionTables().length];
-        for (int i = 0; i < argumentsParser.getOptionTables().length; i++) {
-          tablesToCopy[i] = argumentsParser.getOptionTables()[i];
-        }
-      }
 
       Database databaseSource = new Database();
       Database databaseDest = new Database();
-      if (argumentsParser.getCommandLine().hasOption("driverSrc")) {
-        driverSrc = argumentsParser.getOptionValue("driverSrc");
-      } else {
-        driverSrc = chRelToEd.giveDriverForUrlFromUser(argumentsParser.getOptionValue("urlSrc"));
-      }
-      if (argumentsParser.getCommandLine().hasOption("driverDest")) {
-        driverDest = argumentsParser.getOptionValue("driverDest");
-      } else {
-        driverDest = chRelToEd.giveDriverForUrlFromUser(argumentsParser.getOptionValue("urlDest"));
-      }
 
       ConnecterData connecterDataSource = new ConnecterData(
-        driverSrc,
-        argumentsParser.getOptionValue("urlSrc"),
-        argumentsParser.getOptionValue("userSrc"),
-        argumentsParser.getOptionValue("pwdSrc"));
+        argumentsParser.getDriverSrc(),
+        argumentsParser.getUrlSrc(),
+        argumentsParser.getUserSrc(),
+        argumentsParser.getPwdSrc());
       ConnecterData connecterDataDest = new ConnecterData(
-        driverDest,
-        argumentsParser.getOptionValue("urlDest"),
-        argumentsParser.getOptionValue("userDest"),
-        argumentsParser.getOptionValue("pwdDest"));
+        argumentsParser.getDriverDest(),
+        argumentsParser.getUrlDest(),
+        argumentsParser.getUserDest(),
+        argumentsParser.getPwdDest());
 
 
     /* VERIFY CONNECTION */
-
       ConnectionVerifier connectionVerifier = new ConnectionVerifier();
       connectionVerifier.databaseIsReached(connecterDataSource);
       LOGGER.info(starLine + " CONFIGURATION VERIFICATIONS " + starLine);
@@ -89,6 +70,8 @@ public class StartApp {
 
     /* GET METADATA FROM SOURCE AND FROM DESTINATION */
       LOGGER.info(starLine + " SEARCH TABLES " + starLine);
+      tablesToCopy = argumentsParser.getTablesToCopy();
+
       LOGGER.info("START GETTING METADATA IN SOURCE...");
       MetadataGetter metadataGetterSource = new MetadataGetter(connecterDataSource, databaseSource);
       metadataGetterSource.execute(tablesToCopy);
