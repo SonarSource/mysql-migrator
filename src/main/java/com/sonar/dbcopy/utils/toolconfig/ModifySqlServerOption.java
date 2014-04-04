@@ -26,7 +26,7 @@ public class ModifySqlServerOption {
         closer.closeStatement(statement);
       }
     } catch (SQLException e) {
-      throw new SqlDbException("Problem to SET IDENTITY_INSERT at " + onOroff + " in database Sqlserver for TABLE : " + tableName, e);
+      throw new SqlDbCopyException("Problem to SET IDENTITY_INSERT at " + onOroff + " in database Sqlserver for TABLE : " + tableName, e);
     } finally {
       closer.closeResultSet(resultSet);
       closer.closeStatement(statement);

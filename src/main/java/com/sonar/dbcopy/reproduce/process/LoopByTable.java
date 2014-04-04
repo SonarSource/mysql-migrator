@@ -60,7 +60,7 @@ public class LoopByTable {
 
         // VERIFY IF TABLE EXISTS IN DESTINATION
         if (tableDest == null) {
-          LOGGER.warn(" !  WARNING - Can't WRITE in TABLE :" + tableSourceName + " because it doesn't exist in destination database. ");
+          LOGGER.warn("Can't WRITE in TABLE :" + tableSourceName + " because it doesn't exist in destination database. ");
         } else {
 
           //SQL SERVER DESTINATION OPTION :  PUT IDENTITY_INSERT AT on FOR THE CURRENT TABLE
@@ -98,7 +98,7 @@ public class LoopByTable {
         closer.closeConnection(connectionDestination);
       }
     } catch (SQLException e) {
-      throw new SqlDbException("Problem when do loop for tables in LoopByTable at TABLE : " + databaseSource.getTableName(indexTable), e);
+      throw new SqlDbCopyException("Problem when do loop for tables in LoopByTable at TABLE : " + databaseSource.getTableName(indexTable), e);
     } finally {
       closer.closeResultSet(resultSetCountDest);
       closer.closeStatement(statementCountDest);

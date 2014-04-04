@@ -9,7 +9,7 @@ package com.sonar.dbcopy.reproduce.process;
 import com.sonar.dbcopy.reproduce.reader.*;
 import com.sonar.dbcopy.reproduce.writer.*;
 import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
-import com.sonar.dbcopy.utils.toolconfig.SqlDbException;
+import com.sonar.dbcopy.utils.toolconfig.SqlDbCopyException;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -50,7 +50,7 @@ public class ToolBuilder {
       }
       return readerTool;
     } catch (SQLException e) {
-      throw new SqlDbException("Problem when building reader tool", e);
+      throw new SqlDbCopyException("Problem when building reader tool", e);
     }
   }
 
@@ -77,7 +77,7 @@ public class ToolBuilder {
       }
       return writerTool;
     } catch (SQLException e) {
-      throw new SqlDbException("Problem when building writer tool", e);
+      throw new SqlDbCopyException("Problem when building writer tool", e);
     }
   }
 }

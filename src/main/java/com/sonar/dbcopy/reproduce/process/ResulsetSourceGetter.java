@@ -6,7 +6,7 @@
 
 package com.sonar.dbcopy.reproduce.process;
 
-import com.sonar.dbcopy.utils.toolconfig.SqlDbException;
+import com.sonar.dbcopy.utils.toolconfig.SqlDbCopyException;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -25,7 +25,7 @@ public class ResulsetSourceGetter {
     try {
       return connectionSource.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
     } catch (SQLException e) {
-      throw new SqlDbException("Problem when creating statement on TABLE source: " + tableName, e);
+      throw new SqlDbCopyException("Problem when creating statement on TABLE source: " + tableName, e);
     }
   }
 
@@ -33,7 +33,7 @@ public class ResulsetSourceGetter {
     try {
       return statementSource.executeQuery("SELECT * FROM " + tableName);
     } catch (SQLException e) {
-      throw new SqlDbException("Problem when executing the sql select request on TABLE source: " + tableName, e);
+      throw new SqlDbCopyException("Problem when executing the sql select request on TABLE source: " + tableName, e);
     }
   }
 }

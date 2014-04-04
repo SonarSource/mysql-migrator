@@ -10,7 +10,7 @@ import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.data.Database;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
 import com.sonar.dbcopy.utils.toolconfig.Connecter;
-import com.sonar.dbcopy.utils.toolconfig.SqlDbException;
+import com.sonar.dbcopy.utils.toolconfig.SqlDbCopyException;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
@@ -35,7 +35,7 @@ public class Deleter {
     String tableNameSource = null;
     Statement statementToDelete = null;
     Connection connectionDest = null;
-    int nbTablesDeleted =0;
+    int nbTablesDeleted = 0;
     try {
       connectionDest = new Connecter().doConnection(cdDest);
       statementToDelete = connectionDest.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
@@ -47,14 +47,14 @@ public class Deleter {
           statementToDelete.execute("TRUNCATE TABLE " + tableNameSource);
           nbTablesDeleted++;
         } else {
-          LOGGER.warn(" !  WARNING - Can't DELETE  TABLE :" + tableNameSource + " because it doesn't exist in destination database. ");
+          LOGGER.warn("Can't DELETE  TABLE :" + tableNameSource + " because it doesn't exist in destination database. ");
         }
       }
-      LOGGER.info("  "+nbTablesDeleted +" TABLES DELETED IN DESTINATION.");
+      LOGGER.info("  " + nbTablesDeleted + " TABLES DELETED IN DESTINATION.");
       closer.closeStatement(statementToDelete);
 
     } catch (SQLException e) {
-      throw new SqlDbException("Deleting datas from destination failed for TABLE : " + tableNameSource + " .", e);
+      throw new SqlDbCopyException("Deleting datas from destination failed for TABLE : " + tableNameSource + " .", e);
     } finally {
       closer.closeStatement(statementToDelete);
       closer.closeConnection(connectionDest);

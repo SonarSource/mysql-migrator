@@ -5,11 +5,12 @@
  */
 package com.sonar.dbcopy.utils.toolconfig;
 
-public class MessageDbException extends RuntimeException {
+public class MessageException extends RuntimeException {
 
-  public MessageDbException(String message) {
+  public MessageException(String message) {
     super(message);
   }
+
   /**
    * Does not fill in the stack trace
    *

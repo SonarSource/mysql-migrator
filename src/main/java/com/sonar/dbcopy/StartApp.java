@@ -9,9 +9,8 @@ import com.sonar.dbcopy.prepare.*;
 import com.sonar.dbcopy.reproduce.process.LoopByTable;
 import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.data.Database;
-import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
 import com.sonar.dbcopy.utils.toolconfig.DatabaseComparer;
-import com.sonar.dbcopy.utils.toolconfig.MessageDbException;
+import com.sonar.dbcopy.utils.toolconfig.MessageException;
 import org.slf4j.LoggerFactory;
 
 public class StartApp {
@@ -61,7 +60,7 @@ public class StartApp {
       VersionVerifier vvDest = new VersionVerifier();
       int maxVersionIdDestination = vvDest.lastVersionId(connecterDataDest);
       if (maxVersionIdSource != maxVersionIdDestination && maxVersionIdDestination != 0 && maxVersionIdSource != 0) {
-        throw new MessageDbException("ERROR : Version of schema migration are not the same between source (" + maxVersionIdSource + ") and destination (" + maxVersionIdDestination + ").");
+        throw new MessageException("Version of schema migration are not the same between source (" + maxVersionIdSource + ") and destination (" + maxVersionIdDestination + ").");
       } else if (maxVersionIdDestination == 0) {
         LOGGER.warn(" !  WARNING - The versions of SonarQube schema migration source is (" + maxVersionIdSource + ") when destination is (" + maxVersionIdDestination + ").");
       } else {

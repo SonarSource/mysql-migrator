@@ -8,7 +8,7 @@ package com.sonar.dbcopy;
 
 import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
-import com.sonar.dbcopy.utils.toolconfig.MessageDbException;
+import com.sonar.dbcopy.utils.toolconfig.MessageException;
 import org.junit.After;
 import org.junit.Test;
 
@@ -76,10 +76,9 @@ public class StartAppTest {
       StartApp startApp = new StartApp();
       startApp.main(argsBadVersion);
       fail();
-    } catch (MessageDbException e) {
-      assertThat(e).isInstanceOf(MessageDbException.class).hasMessage("ERROR : Version of schema migration are not the same between source (2) and destination (3).");
+    } catch (MessageException e) {
+      assertThat(e).isInstanceOf(MessageException.class).hasMessage("Version of schema migration are not the same between source (2) and destination (3).");
     }
-
   }
 
   @After

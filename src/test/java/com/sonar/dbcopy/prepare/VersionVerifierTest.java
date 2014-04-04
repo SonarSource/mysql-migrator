@@ -9,8 +9,8 @@ package com.sonar.dbcopy.prepare;
 import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
-import com.sonar.dbcopy.utils.toolconfig.MessageDbException;
-import com.sonar.dbcopy.utils.toolconfig.SqlDbException;
+import com.sonar.dbcopy.utils.toolconfig.MessageException;
+import com.sonar.dbcopy.utils.toolconfig.SqlDbCopyException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,14 +64,14 @@ public class VersionVerifierTest {
       versionVerifier.lastVersionId(cdWithWrongUrl);
       fail();
     } catch (Exception e) {
-      assertThat(e).isInstanceOf(SqlDbException.class).hasMessage("Problem when verifying version database. Please build your destination database with SonarQube at the same SonarQube source version.");
+      assertThat(e).isInstanceOf(SqlDbCopyException.class).hasMessage("Problem when verifying version database. Please build your destination database with SonarQube at the same SonarQube source version.");
     }
 
     try {
       versionVerifier.lastVersionId(cdWithWrongDriver);
       fail();
     } catch (Exception e) {
-      assertThat(e).isInstanceOf(MessageDbException.class).hasMessage("ERROR: Driver not_a_driver does not exist. Class not found: not_a_driver");
+      assertThat(e).isInstanceOf(MessageException.class).hasMessage("Driver not_a_driver does not exist. Class not found: not_a_driver");
     }
   }
 }

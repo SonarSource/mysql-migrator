@@ -101,10 +101,8 @@ public class ArgumentsParser {
       }
 
 
-
-
     } catch (ParseException e) {
-      LOGGER.error("ERROR: " + e.getMessage());
+      LOGGER.error(e.getMessage());
     }
   }
 

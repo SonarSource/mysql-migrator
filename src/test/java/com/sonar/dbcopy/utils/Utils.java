@@ -7,7 +7,7 @@ package com.sonar.dbcopy.utils;
 
 import com.sonar.dbcopy.utils.data.Database;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
-import com.sonar.dbcopy.utils.toolconfig.SqlDbException;
+import com.sonar.dbcopy.utils.toolconfig.SqlDbCopyException;
 import org.h2.jdbcx.JdbcConnectionPool;
 
 import javax.sql.rowset.serial.SerialBlob;
@@ -53,7 +53,7 @@ public class Utils {
       }
       return connection;
     } catch (SQLException e) {
-      throw new SqlDbException("Problem to make H2 for tests", e);
+      throw new SqlDbCopyException("Problem to make H2 for tests", e);
     } finally {
       closer.closeStatement(preparedStatement);
     }
@@ -110,9 +110,9 @@ public class Utils {
       return connection;
 
     } catch (SQLException e) {
-      throw new SqlDbException("Problem to insert data in H2 for test", e);
+      throw new SqlDbCopyException("Problem to insert data in H2 for test", e);
     } catch (ClassNotFoundException e) {
-      throw new SqlDbException("Problem to insert data in H2 for test", e);
+      throw new SqlDbCopyException("Problem to insert data in H2 for test", e);
     } finally {
       closer.closeStatement(preparedStatement);
     }
@@ -122,9 +122,9 @@ public class Utils {
     try {
       return this.makeH2WithTables(databaseName, trueToInsertThirdTable);
     } catch (SQLException e) {
-      throw new SqlDbException("Problem to insert data in H2 for test", e);
+      throw new SqlDbCopyException("Problem to insert data in H2 for test", e);
     } catch (ClassNotFoundException e) {
-      throw new SqlDbException("Problem to insert data in H2 for test", e);
+      throw new SqlDbCopyException("Problem to insert data in H2 for test", e);
     }
   }
 
@@ -137,7 +137,7 @@ public class Utils {
       preparedStatement.executeUpdate();
 
     } catch (SQLException e) {
-      throw new SqlDbException("Problem to add version in H2 schema_migrations table.", e);
+      throw new SqlDbCopyException("Problem to add version in H2 schema_migrations table.", e);
     } finally {
       closer.closeStatement(preparedStatement);
     }

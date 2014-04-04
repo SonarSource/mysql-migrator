@@ -48,7 +48,7 @@ public class CloserTest {
       assertTrue(statement.isClosed());
       assertTrue(connection.isClosed());
     } catch (Exception e) {
-      throw new SqlDbException("Problem in CloserTest", e);
+      throw new SqlDbCopyException("Problem in CloserTest", e);
     }
     closer.closeResultSet(resultSet);
     closer.closeStatement(statement);

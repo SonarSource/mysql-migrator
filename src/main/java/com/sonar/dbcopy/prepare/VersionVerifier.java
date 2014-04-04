@@ -8,8 +8,8 @@ package com.sonar.dbcopy.prepare;
 import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
-import com.sonar.dbcopy.utils.toolconfig.MessageDbException;
-import com.sonar.dbcopy.utils.toolconfig.SqlDbException;
+import com.sonar.dbcopy.utils.toolconfig.MessageException;
+import com.sonar.dbcopy.utils.toolconfig.SqlDbCopyException;
 
 import java.sql.*;
 
@@ -41,9 +41,9 @@ public class VersionVerifier {
       return maxVersionId;
 
     } catch (SQLException e) {
-      throw new SqlDbException("Problem when verifying version database. Please build your destination database with SonarQube at the same SonarQube source version.", e);
+      throw new SqlDbCopyException("Problem when verifying version database. Please build your destination database with SonarQube at the same SonarQube source version.", e);
     } catch (ClassNotFoundException e) {
-      throw new MessageDbException("ERROR: Driver " + cd.getDriver() + " does not exist. Class not found: "+ e.getMessage());
+      throw new MessageException("Driver " + cd.getDriver() + " does not exist. Class not found: " + e.getMessage());
     } finally {
       closer.closeResultSet(resultSet);
       closer.closeStatement(statement);

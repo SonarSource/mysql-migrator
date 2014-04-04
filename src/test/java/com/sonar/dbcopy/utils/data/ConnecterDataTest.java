@@ -8,6 +8,7 @@ package com.sonar.dbcopy.utils.data;
 
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 
 
@@ -17,7 +18,7 @@ public class ConnecterDataTest {
 
   @Before
   public void setUp() throws Exception {
-    connecterData = new ConnecterData("driver","url","user","pwd");
+    connecterData = new ConnecterData("driver", "url", "user", "pwd");
   }
 
   @Test

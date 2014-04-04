@@ -10,7 +10,7 @@ import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.data.Database;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
-import com.sonar.dbcopy.utils.toolconfig.MessageDbException;
+import com.sonar.dbcopy.utils.toolconfig.MessageException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -76,7 +76,7 @@ public class MetadataGetterTest {
       mdg.execute(null);
       fail();
     } catch (Exception e) {
-      assertThat(e).isInstanceOf(MessageDbException.class).hasMessage("ERROR : can not find tables in database source.");
+      assertThat(e).isInstanceOf(MessageException.class).hasMessage("Can not find tables in database source.");
     }
   }
 
@@ -120,7 +120,7 @@ public class MetadataGetterTest {
       mdg.execute(tablesRequiredAsStringTab);
       fail();
     } catch (Exception e) {
-      assertThat(e).isInstanceOf(MessageDbException.class).hasMessage("ERROR: It seems that some table(s) you required in ( non_existent_table ) do not exist. Verify the name in the database.");
+      assertThat(e).isInstanceOf(MessageException.class).hasMessage("It seems that some table(s) you required in ( non_existent_table ) do not exist. Verify the name in the database.");
     }
   }
 

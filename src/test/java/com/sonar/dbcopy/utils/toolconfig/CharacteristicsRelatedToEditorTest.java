@@ -61,7 +61,7 @@ public class CharacteristicsRelatedToEditorTest {
       chRelToEd.giveDriverWithUrlFromUser("wrongUrl");
       fail();
     } catch (Exception e) {
-      Assertions.assertThat(e).isInstanceOf(MessageDbException.class).hasMessage("ERROR: url wrongUrl does not correspond to a correct format to get the good jdbc driver.");
+      Assertions.assertThat(e).isInstanceOf(MessageException.class).hasMessage("Url wrongUrl does not correspond to a correct format to get the good jdbc driver.");
 
     }
   }

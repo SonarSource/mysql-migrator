@@ -55,7 +55,7 @@ public class MetadataGetter {
       this.addNbRowInTables(statementSource);
 
     } catch (SQLException e) {
-      throw new SqlDbException("Problem to get schema from database source.", e);
+      throw new SqlDbCopyException("Problem to get schema from database source.", e);
     } finally {
       closer.closeResultSet(resultSetTables);
       closer.closeStatement(statementSource);
@@ -65,7 +65,7 @@ public class MetadataGetter {
 
   private void addTables(ResultSet resultSetTables) throws SQLException {
     if (!resultSetTables.isBeforeFirst()) {
-      throw new MessageDbException("ERROR : can not find tables in database source.");
+      throw new MessageException("Can not find tables in database source.");
     } else {
       while (resultSetTables.next()) {
         String tableName = resultSetTables.getString("TABLE_NAME").toLowerCase();
@@ -76,7 +76,7 @@ public class MetadataGetter {
 
   private void addOnlyTablesRequiredInCommandLine(ResultSet resultSetTables, String[] tablesToCopy) throws SQLException {
     if (!resultSetTables.isBeforeFirst()) {
-      throw new MessageDbException("ERROR : can not find any table in database.");
+      throw new MessageException("Can not find any table in database.");
     } else {
       while (resultSetTables.next()) {
         boolean tablehasBeenrequired = false;
@@ -96,7 +96,7 @@ public class MetadataGetter {
           stringBuilder.append(tablesToCopy[i] + " ");
         }
         String allTablesRequired = stringBuilder.toString();
-        throw new MessageDbException("ERROR: It seems that some table(s) you required in ( " + allTablesRequired + ") do not exist. Verify the name in the database.");
+        throw new MessageException("It seems that some table(s) you required in ( " + allTablesRequired + ") do not exist. Verify the name in the database.");
       }
     }
   }
@@ -123,7 +123,7 @@ public class MetadataGetter {
         database.getTable(indexTable).makeStringsUsedForTable();
       }
     } catch (SQLException e) {
-      throw new SqlDbException("Problem to add columns in TABLE : " + database.getTableName(indexTable) + ".", e);
+      throw new SqlDbCopyException("Problem to add columns in TABLE : " + database.getTableName(indexTable) + ".", e);
     } finally {
       closer.closeResultSet(resultSetCol);
     }
@@ -141,7 +141,7 @@ public class MetadataGetter {
         closer.closeResultSet(resultSetRows);
       }
     } catch (SQLException e) {
-      throw new SqlDbException("Problem to add number of rows in TABLE : " + database.getTableName(indexTable) + ".", e);
+      throw new SqlDbCopyException("Problem to add number of rows in TABLE : " + database.getTableName(indexTable) + ".", e);
     } finally {
       closer.closeResultSet(resultSetRows);
     }

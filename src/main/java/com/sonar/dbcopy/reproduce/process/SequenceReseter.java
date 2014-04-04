@@ -9,7 +9,7 @@ import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
 import com.sonar.dbcopy.utils.toolconfig.Connecter;
-import com.sonar.dbcopy.utils.toolconfig.SqlDbException;
+import com.sonar.dbcopy.utils.toolconfig.SqlDbCopyException;
 
 import java.sql.*;
 
@@ -55,7 +55,7 @@ public class SequenceReseter {
         statementDest.execute(sqlRequestToReset);
       }
     } catch (SQLException e) {
-      throw new SqlDbException("Problem to execute the adjustment of autoincrement  with last id +1 :" + sqlRequestToReset + " at TABLE : " + tableName + ".", e);
+      throw new SqlDbCopyException("Problem to execute the adjustment of autoincrement  with last id +1 :" + sqlRequestToReset + " at TABLE : " + tableName + ".", e);
     } finally {
       closer.closeResultSet(resultSetDest);
       closer.closeStatement(statementDest);

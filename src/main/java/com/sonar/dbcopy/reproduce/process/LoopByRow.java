@@ -29,7 +29,7 @@ public class LoopByRow {
   public LoopByRow(Table sourceTable, Table destTable) {
     this.sourceTable = sourceTable;
     this.destTable = destTable;
-    tableContentSource = "SOURCE COLUMNS      ( " + sourceTable.getColumnNamesAsString()+ " ) with TYPES (" + sourceTable.getTypesAsString() + " ).";
+    tableContentSource = "SOURCE COLUMNS      ( " + sourceTable.getColumnNamesAsString() + " ) with TYPES (" + sourceTable.getTypesAsString() + " ).";
     tableContentDest = "DESTINATION COLUMNS ( " + destTable.getColumnNamesAsString() + " ) with TYPES (" + destTable.getTypesAsString() + " ).";
   }
 
@@ -146,14 +146,14 @@ public class LoopByRow {
     LOGGER.info(tableName + space + lineWritten + " / " + nbRowsInTable);
   }
 
-  private void displayContextLog(SQLException e, String logRow, String kingOfError) {
-    LOGGER.error(" ** ERROR ** IN TABLE: " + sourceTable.getName() + " when " + kingOfError + ".");
-    LOGGER.error(" ** ERROR ** "+tableContentSource);
-    LOGGER.error(" ** ERROR ** "+tableContentDest);
-    LOGGER.error(" ** ERROR ** "+"LINES NOT COPIED " + logRow);
-    LOGGER.error(" ** ERROR ** "+e.getMessage());
-    if(e.getNextException()!=null){
-      LOGGER.error(" ** ERROR ** NEXT EXCEPTION: " + e.getNextException());
+  private void displayContextLog(SQLException e, String logRow, String kindOfError) {
+    LOGGER.error("IN TABLE: " + sourceTable.getName() + " when " + kindOfError + ".");
+    LOGGER.error(tableContentSource);
+    LOGGER.error(tableContentDest);
+    LOGGER.error("LINES NOT COPIED " + logRow);
+    LOGGER.error(e.getMessage());
+    if (e.getNextException() != null) {
+      LOGGER.error("NEXT EXCEPTION: " + e.getNextException());
     }
   }
 }

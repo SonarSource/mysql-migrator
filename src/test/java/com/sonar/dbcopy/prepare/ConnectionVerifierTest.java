@@ -6,9 +6,10 @@
 
 package com.sonar.dbcopy.prepare;
 
-import com.sonar.dbcopy.utils.toolconfig.MessageDbException;
 import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.data.ConnecterData;
+import com.sonar.dbcopy.utils.toolconfig.MessageException;
+import com.sonar.dbcopy.utils.toolconfig.SqlDbCopyException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,7 +41,7 @@ public class ConnectionVerifierTest {
       connectionVerifier.databaseIsReached(notAvailableURL);
       fail();
     } catch (Exception e) {
-      assertThat(e).isInstanceOf(MessageDbException.class).hasMessage("ERROR: Database can not be reached at url wrongUrl. Verify url, user name and password. No suitable driver found for wrongUrl");
+      assertThat(e).isInstanceOf(SqlDbCopyException.class).hasMessage("Database can not be reached at url wrongUrl. Verify url, user name and password.");
     }
 
     ConnecterData notAvailableDriver = new ConnecterData("wrong.Driver", "jdbc:h2:mem:ConnectionVerifierTestDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
@@ -48,8 +49,7 @@ public class ConnectionVerifierTest {
       connectionVerifier.databaseIsReached(notAvailableDriver);
       fail();
     } catch (Exception e) {
-      assertThat(e).isInstanceOf(MessageDbException.class).hasMessage("ERROR: Driver wrong.Driver does not exists : wrong.Driver");
+      assertThat(e).isInstanceOf(MessageException.class).hasMessage("Driver wrong.Driver does not exists : wrong.Driver");
     }
-
   }
 }

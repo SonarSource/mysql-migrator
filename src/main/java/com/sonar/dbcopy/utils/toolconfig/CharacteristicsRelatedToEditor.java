@@ -53,7 +53,7 @@ public class CharacteristicsRelatedToEditor {
     } else if (isH2(metadata)) {
       sqlRequest = "ALTER TABLE " + tableName + " ALTER COLUMN id RESTART WITH " + idMaxPlusOne + ";";
     } else {
-      throw new MessageDbException("ERROR: url "+metadata.getURL()+" does not correspond to a correct format to reset auto increment.");
+      throw new MessageException("Url " + metadata.getURL() + " does not correspond to a correct format to reset auto increment.");
     }
     return sqlRequest;
   }
@@ -71,7 +71,7 @@ public class CharacteristicsRelatedToEditor {
       }
       return idMaxToReturn + 1;
     } catch (SQLException e) {
-      throw new SqlDbException("Problem with sql request to select id max in Sequence Reseter at TABLE : " + tableName + ".", e);
+      throw new SqlDbCopyException("Problem with sql request to select id max in Sequence Reseter at TABLE : " + tableName + ".", e);
     } finally {
       closer.closeResultSet(resultSet);
       closer.closeStatement(statement);
@@ -92,7 +92,7 @@ public class CharacteristicsRelatedToEditor {
     } else if ("jdbc:jt".equals(urlBeginning)) {
       driverAsString = "net.sourceforge.jtds.jdbc.Driver";
     } else {
-      throw new MessageDbException("ERROR: url "+url+" does not correspond to a correct format to get the good jdbc driver.");
+      throw new MessageException("Url " + url + " does not correspond to a correct format to get the good jdbc driver.");
     }
     return driverAsString;
   }

@@ -10,7 +10,7 @@ import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.data.Database;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
-import com.sonar.dbcopy.utils.toolconfig.SqlDbException;
+import com.sonar.dbcopy.utils.toolconfig.SqlDbCopyException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -71,7 +71,7 @@ public class DeleterTest {
         assertNull(resultSet.getObject(1));
       }
     } catch (SQLException e) {
-      throw new SqlDbException("Problem in DeleterTest.", e);
+      throw new SqlDbCopyException("Problem in DeleterTest.", e);
     } finally {
       closer.closeResultSet(resultSet);
       closer.closeResultSet(resultSetTables);
@@ -106,6 +106,5 @@ public class DeleterTest {
   public void tearDown() {
     closer.closeConnection(connectionToBeDeleted);
     closer.closeConnection(connectionToBeDeletedWithMissingTable);
-
   }
 }

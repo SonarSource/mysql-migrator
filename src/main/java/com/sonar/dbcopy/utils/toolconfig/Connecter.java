@@ -19,9 +19,9 @@ public class Connecter {
       Class.forName(cd.getDriver());
       return DriverManager.getConnection(cd.getUrl(), cd.getUser(), cd.getPwd());
     } catch (SQLException e) {
-      throw new SqlDbException("Open connection failed with URL :" + cd.getUrl() + " .", e);
+      throw new SqlDbCopyException("Open connection failed with URL :" + cd.getUrl() + " .", e);
     } catch (ClassNotFoundException e) {
-      throw new SqlDbException("Impossible to get the jdbc DRIVER " + cd.getDriver() + ".", e);
+      throw new SqlDbCopyException("Impossible to get the jdbc DRIVER " + cd.getDriver() + ".", e);
     }
   }
 }
