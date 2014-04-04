@@ -43,6 +43,9 @@ public class PrepareCopyTable {
       CharacteristicsRelatedToEditor chRTEd = new CharacteristicsRelatedToEditor();
       if (chRTEd.isMySql(connectionSource.getMetaData())) {
         statementSource.setFetchSize(Integer.MIN_VALUE);
+      } else if (chRTEd.isPostgresql(connectionSource.getMetaData())) {
+        connectionSource.setAutoCommit(false);
+        statementSource.setFetchSize(1);
       }
       resultSetSource = resulsetSourceGetter.createAndReturnResultSetSource(statementSource);
 
