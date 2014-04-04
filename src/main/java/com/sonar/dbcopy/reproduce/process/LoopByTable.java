@@ -46,6 +46,8 @@ public class LoopByTable {
         connectionDestination = new Connecter().doConnection(cdDest);
         DatabaseMetaData metaDest = connectionDestination.getMetaData();
         boolean destinationIsSqlServer = chRelToEditor.isSqlServer(metaDest);
+
+        connectionSource.setAutoCommit(false);
         connectionDestination.setAutoCommit(false);
 
         // CREATE CLASS FOR SQL SERVER DESTINATION OPTION : TO AUTHORIZE INSERT ON TABLE
