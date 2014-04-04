@@ -7,17 +7,11 @@
 package com.sonar.dbcopy.reproduce.writer;
 
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
 
-public class MySqlWriter extends DefaultWriter implements WriterTool {
-
-  private PreparedStatement destinationStatement;
+public class MySqlWriter extends DefaultWriter {
 
   public MySqlWriter(PreparedStatement destinationStatement) {
     super(destinationStatement);
-    this.destinationStatement = destinationStatement;
   }
-
 }
 

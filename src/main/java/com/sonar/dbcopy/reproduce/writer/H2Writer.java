@@ -6,19 +6,12 @@
 
 package com.sonar.dbcopy.reproduce.writer;
 
-import com.sonar.dbcopy.reproduce.reader.DefaultReader;
-
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
 
-public class H2Writer extends DefaultWriter implements WriterTool {
-
-  private PreparedStatement destinationStatement;
+public class H2Writer extends DefaultWriter {
 
   public H2Writer(PreparedStatement destinationStatement) {
     super(destinationStatement);
-    this.destinationStatement = destinationStatement;
   }
 }
 

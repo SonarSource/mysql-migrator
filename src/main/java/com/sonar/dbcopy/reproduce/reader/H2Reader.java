@@ -9,7 +9,7 @@ package com.sonar.dbcopy.reproduce.reader;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class H2Reader extends DefaultReader implements ReaderTool {
+public class H2Reader extends DefaultReader {
 
   @Override
   public boolean readBoolean(ResultSet resultSetSource, int indexColumn) throws SQLException {

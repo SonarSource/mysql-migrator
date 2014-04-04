@@ -15,12 +15,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-public class DefaultReader {
+public class DefaultReader implements ReaderTool {
 
+  @Override
   public Timestamp readTimestamp(ResultSet resultSetSource, int indexColumn) throws SQLException {
     return resultSetSource.getTimestamp(indexColumn + 1);
   }
 
+  @Override
   public byte[] readBlob(ResultSet resultSetSource, int indexColumn) throws SQLException {
     InputStream inputStreamObj = resultSetSource.getBinaryStream(indexColumn + 1);
     byte[] buffer = new byte[8192];
@@ -36,14 +38,22 @@ public class DefaultReader {
     return output.toByteArray();
   }
 
+  @Override
   public String readClob(ResultSet resultSetSource, int indexColumn) throws SQLException {
     return resultSetSource.getString(indexColumn + 1);      //ok
   }
 
+  @Override
+  public boolean readBoolean(ResultSet resultSetSource, int indexColumn) throws SQLException {
+    return false;
+  }
+
+  @Override
   public Object readObject(ResultSet resultSetSource, int indexColumn) throws SQLException {
     return resultSetSource.getObject(indexColumn + 1);
   }                                                      //ok
 
+  @Override
   public String readVarchar(ResultSet resultSetSource, int indexColumn) throws SQLException {
     String stringToinsert = resultSetSource.getString(indexColumn + 1);
     return stringToinsert.replace("\u0000", "");

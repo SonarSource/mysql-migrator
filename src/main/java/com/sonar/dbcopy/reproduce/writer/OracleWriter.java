@@ -7,16 +7,11 @@
 package com.sonar.dbcopy.reproduce.writer;
 
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
 
-public class OracleWriter extends DefaultWriter implements WriterTool {
-
-  private PreparedStatement destinationStatement;
+public class OracleWriter extends DefaultWriter {
 
   public OracleWriter(PreparedStatement destinationStatement) {
     super(destinationStatement);
-    this.destinationStatement = destinationStatement;
   }
 }
 

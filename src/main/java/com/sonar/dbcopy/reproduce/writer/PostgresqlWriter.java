@@ -7,17 +7,11 @@
 package com.sonar.dbcopy.reproduce.writer;
 
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
 
-public class PostgresqlWriter extends DefaultWriter implements WriterTool {
-
-  private PreparedStatement destinationStatement;
+public class PostgresqlWriter extends DefaultWriter {
 
   public PostgresqlWriter(PreparedStatement destinationStatement) {
     super(destinationStatement);
-    this.destinationStatement = destinationStatement;
   }
-
 }
 
