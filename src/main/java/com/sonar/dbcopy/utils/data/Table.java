@@ -103,9 +103,9 @@ public class Table {
   }
 
 
-  private String getStringType(int typeAsInt) {
+  public String getStringType(int typeAsInt) {
     String stringToReturn = null;
-    Integer[] typesIntegerTab = {2003, -5, -2, -7, 2004, 16, 1, 2005, 70, 91, 3, 2001, 8, 6, 4, 2000, -16, -4, -1, -15, 2011, 0, 2, -9, 1111, 7, 2006, -8, 5, 2009, 2002, 92, 93, -6, 3, 12};
+    Integer[] typesIntegerTab = {2003, -5, -2, -7, 2004, 16, 1, 2005, 70, 91, 3, 2001, 8, 6, 4, 2000, -16, -4, -1, -15, 2011, 0, 2, -9, 1111, 7, 2006, -8, 5, 2009, 2002, 92, 93, -6, -3, 12};
     String[] typesStringTab = {"ARRAY", "BIGINT", "BINARY", "BIT", "BLOB", "BOOLEAN", "CHAR", "CLOB", "DATALINK", "DATE", "DECIMAL", "DISTINCT", "DOUBLE",
       "FLOAT", "INTEGER", "JAVA_OBJECT", "LONGNVARCHAR", "LONGVARBINARY", "LONGVARCHAR", "NCHAR", "NCLOB", "NULL", "NUMERIC", "NVARCHAR", "OTHER", "REAL", "REF", "ROWID",
       "SMALLINT", "SQLXML", "STRUCT", "TIME", "TIMESTAMP", "TINYINT", "VARBINARY", "VARCHAR"};
