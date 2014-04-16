@@ -23,37 +23,51 @@ public class ArgumentsParser {
     Option help = new Option("help", false, "           Print this message");
     options.addOption(help);
 
-    String[] optionNames = {"driverSrc", "urlSrc", "userSrc", "pwdSrc", "driverDest", "urlDest", "userDest", "pwdDest"};
-    String[] optionDescription = {
-      "OPTIONNAL: driver source",
-      "REQUIRED:  url source",
-      "REQUIRED:  user name source",
-      "REQUIRED:  password source",
+    String[] optionNames = {"urlSrc", "driverSrc", "userSrc", "pwdSrc", "driverDest", "urlDest", "userDest", "pwdDest"};
+    String[] optionDescription= {
+      "REQUIRED:  url for database source",
+      "OPTIONAL:  driver for database source",
+      "REQUIRED:  user name for database source",
+      "REQUIRED:  password for database source",
 
-      "OPTIONNAL: driver destination",
-      "REQUIRED:  url destination",
-      "REQUIRED:  user name destination",
-      "REQUIRED:  password destination"
+      "OPTIONAL:  driver for database destination",
+      "REQUIRED:  url for database destination",
+      "REQUIRED:  user name for database destination",
+      "REQUIRED:  password for database destination"
+    };
+    String[] optionArgument = {
+      "url",
+      "jdbc driver",
+      "login",
+      "password",
+
+      "jdbc driver",
+      "url",
+      "login",
+      "password"
     };
 
     for (int indexForString = 0; indexForString < optionNames.length; indexForString++) {
       Option option = OptionBuilder
-        .hasArg()
         .withValueSeparator(' ')
         .withDescription(optionDescription[indexForString])
         .create(optionNames[indexForString]);
+
       if (!"driver".equals(optionNames[indexForString].substring(0, 6))) {
         option.isRequired();
       }
+      option.setArgs(1);
+      option.setArgName(optionArgument[indexForString]);
       options.addOption(option);
     }
 
     Option option = OptionBuilder
-      .hasArgs()
       .withValueSeparator(' ')
       .withValueSeparator(',')
-      .withDescription("OPTIONAL:  table to copy separated by space or ,")
+      .withDescription("OPTIONAL:  table to copy separated by space or , (others will not be deleted)")
       .create("T");
+    option.setArgs(100);
+    option.setArgName("table1Name,table2Name ...");
     options.addOption(option);
   }
 
@@ -64,38 +78,40 @@ public class ArgumentsParser {
     try {
       commandLine = commandLineParser.parse(options, args);
 
-      // SOME OPTIONS ARE REQUIRED , NO NEED "IF" CONDITION
-      urlSrc = commandLine.getOptionValue("urlSrc");
-      urlDest = commandLine.getOptionValue("urlDest");
+      if (!commandLine.hasOption("help")) {
+        // SOME OPTIONS ARE REQUIRED , NO NEED "IF" CONDITION
+        urlSrc = commandLine.getOptionValue("urlSrc");
+        urlDest = commandLine.getOptionValue("urlDest");
 
-      userSrc = commandLine.getOptionValue("userSrc");
-      userDest = commandLine.getOptionValue("userDest");
+        userSrc = commandLine.getOptionValue("userSrc");
+        userDest = commandLine.getOptionValue("userDest");
 
-      pwdSrc = commandLine.getOptionValue("pwdSrc");
-      pwdDest = commandLine.getOptionValue("pwdDest");
+        pwdSrc = commandLine.getOptionValue("pwdSrc");
+        pwdDest = commandLine.getOptionValue("pwdDest");
 
-      // GET OPTION driverSrc if EXISTS
-      if (commandLine.hasOption("driverSrc")) {
-        driverSrc = commandLine.getOptionValue("driverSrc");
-      } else {
-        // IF NO OPTION DRIVER , DEDUCE IT FROM URL
-        driverSrc = chRelToEd.giveDriverWithUrlFromUser(urlSrc);
-      }
+        // GET OPTION driverSrc if EXISTS
+        if (commandLine.hasOption("driverSrc")) {
+          driverSrc = commandLine.getOptionValue("driverSrc");
+        } else {
+          // IF NO OPTION DRIVER , DEDUCE IT FROM URL
+          driverSrc = chRelToEd.giveDriverWithUrlFromUser(urlSrc);
+        }
 
-      // GET OPTION driverDest IF EXISTS
-      if (commandLine.hasOption("driverDest")) {
-        driverDest = commandLine.getOptionValue("driverDest");
-      } else {
-        // IF NO OPTION DRIVER , DEDUCE IT FROM URL
-        driverDest = chRelToEd.giveDriverWithUrlFromUser(urlDest);
-      }
+        // GET OPTION driverDest IF EXISTS
+        if (commandLine.hasOption("driverDest")) {
+          driverDest = commandLine.getOptionValue("driverDest");
+        } else {
+          // IF NO OPTION DRIVER , DEDUCE IT FROM URL
+          driverDest = chRelToEd.giveDriverWithUrlFromUser(urlDest);
+        }
 
-      // GET OPTION -T  IF EXISTS
-      if (commandLine.getOptionValues("T") != null && commandLine.getOptionValues("T").length != 0) {
-        int nbTablesrequired = commandLine.getOptionValues("T").length;
-        tablesToCopy = new String[nbTablesrequired];
-        for (int i = 0; i < nbTablesrequired; i++) {
-          tablesToCopy[i] = commandLine.getOptionValues("T")[i];
+        // GET OPTION -T  IF EXISTS
+        if (commandLine.getOptionValues("T") != null && commandLine.getOptionValues("T").length != 0) {
+          int nbTablesrequired = commandLine.getOptionValues("T").length;
+          tablesToCopy = new String[nbTablesrequired];
+          for (int i = 0; i < nbTablesrequired; i++) {
+            tablesToCopy[i] = commandLine.getOptionValues("T")[i];
+          }
         }
       }
 
