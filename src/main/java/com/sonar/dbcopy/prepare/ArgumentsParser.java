@@ -36,9 +36,6 @@ public class ArgumentsParser {
         .withDescription(description.get(OPTION_NAMES[indexForString]))
         .create(OPTION_NAMES[indexForString]);
 
-      if (!"driver".equals(OPTION_NAMES[indexForString].substring(0, 6))) {
-        option.setRequired(true);
-      }
       option.setArgs(1);
       option.setArgName(argumentHelpName.get(OPTION_NAMES[indexForString]));
       options.addOption(option);
