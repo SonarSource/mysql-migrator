@@ -108,7 +108,7 @@ public class StartApp {
       LOGGER.info("** THE COPY HAS FINISHED SUCCESSFULLY **");
       LOGGER.info(starLine + starLine + starLine);
     } else {
-      throw new MessageException("\n"+argumentsParser.giveArgumentsDebugString()+"\nPlease control your command line options.");
+      throw new MessageException("Some required parameters are missing. Type '-help' to know which parameters are required.\n"+argumentsParser.giveArgumentsDebugString());
     }
   }
 }
