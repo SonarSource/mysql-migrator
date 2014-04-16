@@ -26,24 +26,25 @@ public class StartApp {
     String[] tablesToCopy = null;
     ArgumentsParser argumentsParser = new ArgumentsParser();
     argumentsParser.doParsing(args);
+    boolean argumentsAreFilled = argumentsParser.allRequiredOptionsAreFilled();
 
     if (argumentsParser.commandLineIsHelp()) {
       argumentsParser.getHelp();
-    } else {
+    } else if (argumentsAreFilled) {
 
       Database databaseSource = new Database();
       Database databaseDest = new Database();
 
       ConnecterData connecterDataSource = new ConnecterData(
-        argumentsParser.getDriverSrc(),
-        argumentsParser.getUrlSrc(),
-        argumentsParser.getUserSrc(),
-        argumentsParser.getPwdSrc());
+        argumentsParser.getOptionContent("driverSrc"),
+        argumentsParser.getOptionContent("urlSrc"),
+        argumentsParser.getOptionContent("userSrc"),
+        argumentsParser.getOptionContent("pwdSrc"));
       ConnecterData connecterDataDest = new ConnecterData(
-        argumentsParser.getDriverDest(),
-        argumentsParser.getUrlDest(),
-        argumentsParser.getUserDest(),
-        argumentsParser.getPwdDest());
+        argumentsParser.getOptionContent("driverDest"),
+        argumentsParser.getOptionContent("urlDest"),
+        argumentsParser.getOptionContent("userDest"),
+        argumentsParser.getOptionContent("pwdDest"));
 
 
     /* VERIFY CONNECTION */
@@ -106,6 +107,8 @@ public class StartApp {
       LOGGER.info(starLine + starLine + starLine);
       LOGGER.info("** THE COPY HAS FINISHED SUCCESSFULLY **");
       LOGGER.info(starLine + starLine + starLine);
+    } else {
+      throw new MessageException("\n"+argumentsParser.giveArgumentsDebugString()+"\nPlease control your command line options.");
     }
   }
 }

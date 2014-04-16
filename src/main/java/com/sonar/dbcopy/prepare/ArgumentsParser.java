@@ -6,15 +6,20 @@
 package com.sonar.dbcopy.prepare;
 
 import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
+import com.sonar.dbcopy.utils.toolconfig.MessageException;
 import org.apache.commons.cli.*;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
 
 public class ArgumentsParser {
 
   private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
   private CommandLine commandLine;
   private Options options;
-  private String driverSrc, driverDest, urlSrc, urlDest, userSrc, userDest, pwdSrc, pwdDest;
+  private static String[] OPTION_NAMES = {"urlSrc", "driverSrc", "userSrc", "pwdSrc", "urlDest", "driverDest", "userDest", "pwdDest"};
+
+  private HashMap<String, String> optionContent, description, argumentHelpName;
   private String[] tablesToCopy;
 
   public ArgumentsParser() {
@@ -23,41 +28,19 @@ public class ArgumentsParser {
     Option help = new Option("help", false, "           Print this message");
     options.addOption(help);
 
-    String[] optionNames = {"urlSrc", "driverSrc", "userSrc", "pwdSrc", "driverDest", "urlDest", "userDest", "pwdDest"};
-    String[] optionDescription= {
-      "REQUIRED:  url for database source",
-      "OPTIONAL:  driver for database source",
-      "REQUIRED:  user name for database source",
-      "REQUIRED:  password for database source",
+    this.buildHashMap();
 
-      "OPTIONAL:  driver for database destination",
-      "REQUIRED:  url for database destination",
-      "REQUIRED:  user name for database destination",
-      "REQUIRED:  password for database destination"
-    };
-    String[] optionArgument = {
-      "url",
-      "jdbc driver",
-      "login",
-      "password",
-
-      "jdbc driver",
-      "url",
-      "login",
-      "password"
-    };
-
-    for (int indexForString = 0; indexForString < optionNames.length; indexForString++) {
+    for (int indexForString = 0; indexForString < OPTION_NAMES.length; indexForString++) {
       Option option = OptionBuilder
         .withValueSeparator(' ')
-        .withDescription(optionDescription[indexForString])
-        .create(optionNames[indexForString]);
+        .withDescription(description.get(OPTION_NAMES[indexForString]))
+        .create(OPTION_NAMES[indexForString]);
 
-      if (!"driver".equals(optionNames[indexForString].substring(0, 6))) {
-        option.isRequired();
-      }
+//      if (!"driver".equals(optionNames[indexForString].substring(0, 6))) {
+//        option.setRequired(true);
+//      }
       option.setArgs(1);
-      option.setArgName(optionArgument[indexForString]);
+      option.setArgName(argumentHelpName.get(OPTION_NAMES[indexForString]));
       options.addOption(option);
     }
 
@@ -80,29 +63,16 @@ public class ArgumentsParser {
 
       if (!commandLine.hasOption("help")) {
         // SOME OPTIONS ARE REQUIRED , NO NEED "IF" CONDITION
-        urlSrc = commandLine.getOptionValue("urlSrc");
-        urlDest = commandLine.getOptionValue("urlDest");
+        for (int indexArg = 0; indexArg < OPTION_NAMES.length; indexArg++) {
+          if ("driverSrc".equals(OPTION_NAMES[indexArg]) && !commandLine.hasOption("driverSrc") && commandLine.hasOption("urlSrc")) {
+            optionContent.put(OPTION_NAMES[indexArg], chRelToEd.giveDriverWithUrlFromUser(commandLine.getOptionValue("urlSrc")));
 
-        userSrc = commandLine.getOptionValue("userSrc");
-        userDest = commandLine.getOptionValue("userDest");
+          } else if ("driverDest".equals(OPTION_NAMES[indexArg]) && !commandLine.hasOption("driverDest") && commandLine.hasOption("urlDest")) {
+            optionContent.put(OPTION_NAMES[indexArg], chRelToEd.giveDriverWithUrlFromUser(commandLine.getOptionValue("urlDest")));
 
-        pwdSrc = commandLine.getOptionValue("pwdSrc");
-        pwdDest = commandLine.getOptionValue("pwdDest");
-
-        // GET OPTION driverSrc if EXISTS
-        if (commandLine.hasOption("driverSrc")) {
-          driverSrc = commandLine.getOptionValue("driverSrc");
-        } else {
-          // IF NO OPTION DRIVER , DEDUCE IT FROM URL
-          driverSrc = chRelToEd.giveDriverWithUrlFromUser(urlSrc);
-        }
-
-        // GET OPTION driverDest IF EXISTS
-        if (commandLine.hasOption("driverDest")) {
-          driverDest = commandLine.getOptionValue("driverDest");
-        } else {
-          // IF NO OPTION DRIVER , DEDUCE IT FROM URL
-          driverDest = chRelToEd.giveDriverWithUrlFromUser(urlDest);
+          } else {
+            optionContent.put(OPTION_NAMES[indexArg], commandLine.getOptionValue(OPTION_NAMES[indexArg]));
+          }
         }
 
         // GET OPTION -T  IF EXISTS
@@ -114,47 +84,17 @@ public class ArgumentsParser {
           }
         }
       }
-
-
     } catch (ParseException e) {
-      LOGGER.error(e.getMessage());
+      throw new MessageException(e.getMessage());
     }
+  }
+
+  public String getOptionContent(String optionName) {
+    return optionContent.get(optionName);
   }
 
   public String[] getTablesToCopy() {
     return tablesToCopy;
-  }
-
-  public String getDriverSrc() {
-    return driverSrc;
-  }
-
-  public String getDriverDest() {
-    return driverDest;
-  }
-
-  public String getUrlSrc() {
-    return urlSrc;
-  }
-
-  public String getUrlDest() {
-    return urlDest;
-  }
-
-  public String getUserSrc() {
-    return userSrc;
-  }
-
-  public String getUserDest() {
-    return userDest;
-  }
-
-  public String getPwdSrc() {
-    return pwdSrc;
-  }
-
-  public String getPwdDest() {
-    return pwdDest;
   }
 
   public void getHelp() {
@@ -164,5 +104,57 @@ public class ArgumentsParser {
 
   public boolean commandLineIsHelp() {
     return commandLine.hasOption("help");
+  }
+
+  public boolean allRequiredOptionsAreFilled() {
+    boolean optionsAreFilled = true;
+    for (int i = 0; i < OPTION_NAMES.length; i++) {
+      if (optionContent.get(OPTION_NAMES[i]) == null) {
+        optionsAreFilled = false;
+      }
+    }
+    return optionsAreFilled;
+  }
+
+  public String giveArgumentsDebugString() {
+    StringBuilder stringBuilder = new StringBuilder();
+    for (int i = 0; i < OPTION_NAMES.length; i++) {
+      stringBuilder.append(OPTION_NAMES[i] + " : " + optionContent.get(OPTION_NAMES[i]) + "\n");
+    }
+    return stringBuilder.toString();
+  }
+
+  public void buildHashMap() {
+    optionContent = new HashMap<String, String>(8);
+    description = new HashMap<String, String>(8);
+    argumentHelpName = new HashMap<String, String>(8);
+
+    optionContent.put(OPTION_NAMES[0], null);
+    optionContent.put(OPTION_NAMES[1], null);
+    optionContent.put(OPTION_NAMES[2], null);
+    optionContent.put(OPTION_NAMES[3], null);
+    optionContent.put(OPTION_NAMES[4], null);
+    optionContent.put(OPTION_NAMES[5], null);
+    optionContent.put(OPTION_NAMES[6], null);
+    optionContent.put(OPTION_NAMES[7], null);
+
+    description.put(OPTION_NAMES[0], "OPTIONAL:  driver for database source");
+    description.put(OPTION_NAMES[1], "REQUIRED:  url for database source");
+    description.put(OPTION_NAMES[2], "REQUIRED:  user name for database source");
+    description.put(OPTION_NAMES[3], "REQUIRED:  password for database source");
+    description.put(OPTION_NAMES[4], "REQUIRED:  url for database destination");
+    description.put(OPTION_NAMES[5], "OPTIONAL:  driver for database destination");
+    description.put(OPTION_NAMES[6], "REQUIRED:  user name for database destination");
+    description.put(OPTION_NAMES[7], "REQUIRED:  password for database destination");
+
+    argumentHelpName.put(OPTION_NAMES[0], "url");
+    argumentHelpName.put(OPTION_NAMES[1], "jdbc driver");
+    argumentHelpName.put(OPTION_NAMES[2], "login");
+    argumentHelpName.put(OPTION_NAMES[3], "password");
+    argumentHelpName.put(OPTION_NAMES[4], "url");
+    argumentHelpName.put(OPTION_NAMES[5], "jdbc driver");
+    argumentHelpName.put(OPTION_NAMES[6], "login");
+    argumentHelpName.put(OPTION_NAMES[7], "password");
+
   }
 }
