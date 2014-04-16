@@ -11,15 +11,15 @@ import org.apache.commons.cli.*;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class ArgumentsParser {
 
-  private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
   private CommandLine commandLine;
   private Options options;
   private static String[] OPTION_NAMES = {"urlSrc", "driverSrc", "userSrc", "pwdSrc", "urlDest", "driverDest", "userDest", "pwdDest"};
 
-  private HashMap<String, String> optionContent, description, argumentHelpName;
+  private Map<String, String> optionContent, description, argumentHelpName;
   private String[] tablesToCopy;
 
   public ArgumentsParser() {
