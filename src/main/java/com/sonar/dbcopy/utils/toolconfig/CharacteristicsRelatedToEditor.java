@@ -10,13 +10,19 @@ import java.sql.*;
 public class CharacteristicsRelatedToEditor {
 
   public String getSchema(DatabaseMetaData metaData) throws SQLException {
-    // USED FOR metadata.getTables or getColumns WHICH NEED "public" WITH POSTGRESQL , UPPERCASE USER NAME WITH ORACLE , AND UPPERCASE "PUBLIC" FOR H2
+    // USED FOR metadata.getTables or getColumns
     String schema;
     if (isPostgresql(metaData)) {
+      // WHICH NEED "public" WITH POSTGRESQL
       schema = "public";
     } else if (isOracle(metaData)) {
+      // UPPERCASE USER NAME WITH ORACLE , AND
       schema = metaData.getUserName().toUpperCase();
+    } else if (isSqlServer(metaData)) {
+      // UPPERCASE "dbo" FOR mssql
+      schema = "dbo";
     } else if (isH2(metaData)) {
+      // UPPERCASE "PUBLIC" FOR H2
       schema = "PUBLIC";
     } else {
       schema = null;
