@@ -19,7 +19,7 @@ public class CharacteristicsRelatedToEditor {
       // UPPERCASE USER NAME WITH ORACLE , AND
       schema = metaData.getUserName().toUpperCase();
     } else if (isSqlServer(metaData)) {
-      // UPPERCASE "dbo" FOR mssql
+      // lowercase "dbo" FOR mssql
       schema = "dbo";
     } else if (isH2(metaData)) {
       // UPPERCASE "PUBLIC" FOR H2
