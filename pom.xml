@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.sonarsource.parent</groupId>
         <artifactId>parent</artifactId>
-        <version>28</version>
+        <version>30</version>
     </parent>
     <groupId>com.sonarsource.dbcopy</groupId>
     <artifactId>sonar-db-copy</artifactId>
