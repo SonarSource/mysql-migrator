@@ -9,7 +9,9 @@ import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
 import com.sonar.dbcopy.utils.toolconfig.MessageException;
 import org.junit.After;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.SystemOutRule;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -20,6 +22,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class StartAppTest {
+
+  @Rule
+  public final SystemOutRule systemOutRule = new SystemOutRule().enableLog();
+
 
   private Connection connectionSourceV1, connectionSourceV2, connectionDestV1, connectiondestV3, connectionSourceToption, connectionDestToption;
 
@@ -129,7 +135,16 @@ public class StartAppTest {
     }
   }
 
-  @After
+  @Test
+  public void testHelp() throws Exception {
+
+    String[] helpArgument = {"-help"};
+    StartApp.main(helpArgument);
+
+    assert(systemOutRule.getLog().startsWith("usage:") );
+  }
+
+    @After
   public void tearDown() {
     Closer closer = new Closer("startAppTesttearDown");
     closer.closeConnection(connectionSourceToption);

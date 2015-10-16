@@ -23,28 +23,30 @@ public class StartApp {
 
   public static void main(String[] args) {
     String starLine = "****************";
-    String[] tablesToCopy = null;
-    ArgumentsParser argumentsParser = new ArgumentsParser();
-    argumentsParser.doParsing(args);
-    boolean argumentsAreFilled = argumentsParser.allRequiredOptionsAreFilled();
+    String[] tablesToCopy;
+    Arguments arguments = new Arguments();
+    arguments.doParsing(args);
+    boolean argumentsAreFilled = arguments.allRequiredOptionsAreFilled();
 
-    if (argumentsParser.commandLineIsHelp()) {
-      argumentsParser.getHelp();
+    if (arguments.commandLineIsHelp()) {
+      arguments.getHelp();
     } else if (argumentsAreFilled) {
 
       Database databaseSource = new Database();
       Database databaseDest = new Database();
 
       ConnecterData connecterDataSource = new ConnecterData(
-        argumentsParser.getOptionContent("driverSrc"),
-        argumentsParser.getOptionContent("urlSrc"),
-        argumentsParser.getOptionContent("userSrc"),
-        argumentsParser.getOptionContent("pwdSrc"));
+        arguments.getOptionContent(Arguments.OptionNames.driverSrc),
+        arguments.getOptionContent(Arguments.OptionNames.urlSrc),
+        arguments.getOptionContent(Arguments.OptionNames.userSrc),
+        arguments.getOptionContent(Arguments.OptionNames.pwdSrc)
+      );
       ConnecterData connecterDataDest = new ConnecterData(
-        argumentsParser.getOptionContent("driverDest"),
-        argumentsParser.getOptionContent("urlDest"),
-        argumentsParser.getOptionContent("userDest"),
-        argumentsParser.getOptionContent("pwdDest"));
+        arguments.getOptionContent(Arguments.OptionNames.driverDest),
+        arguments.getOptionContent(Arguments.OptionNames.urlDest),
+        arguments.getOptionContent(Arguments.OptionNames.userDest),
+        arguments.getOptionContent(Arguments.OptionNames.pwdDest)
+      );
 
 
     /* VERIFY CONNECTION */
@@ -70,7 +72,7 @@ public class StartApp {
 
     /* GET METADATA FROM SOURCE AND FROM DESTINATION */
       LOGGER.info(starLine + " SEARCH TABLES " + starLine);
-      tablesToCopy = argumentsParser.getTablesToCopy();
+      tablesToCopy = arguments.getTablesToCopy();
 
       LOGGER.info("START GETTING METADATA IN SOURCE...");
       MetadataGetter metadataGetterSource = new MetadataGetter(connecterDataSource, databaseSource);
@@ -108,7 +110,7 @@ public class StartApp {
       LOGGER.info("** THE COPY HAS FINISHED SUCCESSFULLY **");
       LOGGER.info(starLine + starLine + starLine);
     } else {
-      throw new MessageException("Some required parameters are missing. Type '-help' to know which parameters are required.\n"+argumentsParser.giveArgumentsDebugString());
+      throw new MessageException("Some required parameters are missing. Type '-help' to know which parameters are required.\n"+arguments.giveArgumentsDebugString());
     }
   }
 }
