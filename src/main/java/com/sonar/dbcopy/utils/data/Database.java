@@ -16,7 +16,7 @@ public class Database {
     tablesList = new ArrayList<Table>();
   }
 
-  public void addTable(String tableName) {
+  public void addToTablesList(String tableName) {
     Table table = new Table(tableName);
     tablesList.add(table);
   }

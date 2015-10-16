@@ -18,8 +18,8 @@ public class DatabaseTest {
   @Before
   public void setUp() throws Exception {
     database = new Database();
-    database.addTable("table1");
-    database.addTable("table2");
+    database.addToTablesList("table1");
+    database.addToTablesList("table2");
   }
 
   @Test
