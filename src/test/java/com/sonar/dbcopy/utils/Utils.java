@@ -147,7 +147,7 @@ public class Utils {
 
   public Database makeDatabase(boolean trueToAddTheThirdTableSource) {
     Database database = new Database();
-    database.addTable("table_for_test");
+    database.addToTablesList("table_for_test");
     database.getTable(0).addColumn(0, "id", Types.INTEGER);
     database.getTable(0).addColumn(1, "columnstring", Types.VARCHAR);
     database.getTable(0).addColumn(2, "columntimestamp", Types.TIMESTAMP);
@@ -158,7 +158,7 @@ public class Utils {
     database.getTable(0).setNbRows(2);
     database.getTable(0).makeStringsUsedForTable();
 
-    database.addTable("empty_table_for_test");
+    database.addToTablesList("empty_table_for_test");
     database.getTable(1).addColumn(0, "id", Types.SMALLINT);
     database.getTable(1).addColumn(1, "colstring", Types.VARCHAR);
     database.getTable(1).addColumn(2, "coltimestamp", Types.TIMESTAMP);
@@ -166,7 +166,7 @@ public class Utils {
     database.getTable(1).makeStringsUsedForTable();
 
     if (trueToAddTheThirdTableSource) {
-      database.addTable("schema_migrations");
+      database.addToTablesList("schema_migrations");
       database.getTable(2).addColumn(0, "version", Types.SMALLINT);
       database.getTable(2).makeStringsUsedForTable();
       // MODIFY NB ROWS TO TEST DatabaseComparer

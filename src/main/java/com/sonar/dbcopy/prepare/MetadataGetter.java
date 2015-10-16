@@ -42,17 +42,17 @@ public class MetadataGetter {
       /* GET TABLES FROM SCHEMA AND ADD TO DATABASE */
       resultSetTables = metaData.getTables(connectionSource.getCatalog(), schema, "%", new String[]{"TABLE"});
       if (tablesToCopy == null) {
-        this.addTables(resultSetTables);
+        this.fillTablesListFromDb(resultSetTables);
       } else {
-        this.addOnlyTablesRequiredInCommandLine(resultSetTables, tablesToCopy);
+        this.fillTablesListFromCommandLine(resultSetTables, tablesToCopy);
       }
       closer.closeResultSet(resultSetTables);
 
       /* GET COLUMNS FROM TABLES */
-      this.addColumns();
+      this.fetchColumns();
 
       /* GET NB ROWS BY TABLE */
-      this.addNbRowInTables(statementSource);
+      this.fetchNbRowInTables(statementSource);
 
     } catch (SQLException e) {
       throw new SqlDbCopyException("Problem to get schema from database source.", e);
@@ -63,18 +63,18 @@ public class MetadataGetter {
     }
   }
 
-  private void addTables(ResultSet resultSetTables) throws SQLException {
+  private void fillTablesListFromDb(ResultSet resultSetTables) throws SQLException {
     if (!resultSetTables.isBeforeFirst()) {
       throw new MessageException("Can not find tables in database source.");
     } else {
       while (resultSetTables.next()) {
         String tableName = resultSetTables.getString("TABLE_NAME").toLowerCase();
-        database.addTable(tableName);
+        database.addToTablesList(tableName);
       }
     }
   }
 
-  private void addOnlyTablesRequiredInCommandLine(ResultSet resultSetTables, String[] tablesToCopy) throws SQLException {
+  private void fillTablesListFromCommandLine(ResultSet resultSetTables, String[] tablesToCopy) throws SQLException {
     if (!resultSetTables.isBeforeFirst()) {
       throw new MessageException("Can not find any table in database.");
     } else {
@@ -87,7 +87,7 @@ public class MetadataGetter {
           }
         }
         if (tablehasBeenrequired) {
-          database.addTable(tableNameFoundInDb);
+          database.addToTablesList(tableNameFoundInDb);
         }
       }
       if (database.getNbTables() != tablesToCopy.length) {
@@ -101,7 +101,7 @@ public class MetadataGetter {
     }
   }
 
-  private void addColumns() {
+  private void fetchColumns() {
     ResultSet resultSetCol = null;
     int indexTable = 0;
     int indexColumn;
@@ -123,13 +123,13 @@ public class MetadataGetter {
         database.getTable(indexTable).makeStringsUsedForTable();
       }
     } catch (SQLException e) {
-      throw new SqlDbCopyException("Problem to add columns in TABLE : " + database.getTableName(indexTable) + ".", e);
+      throw new SqlDbCopyException("Problem fetching the columns from TABLE : " + database.getTableName(indexTable) + ".", e);
     } finally {
       closer.closeResultSet(resultSetCol);
     }
   }
 
-  private void addNbRowInTables(Statement statementSource) {
+  private void fetchNbRowInTables(Statement statementSource) {
     ResultSet resultSetRows = null;
     int indexTable = 0;
     try {
@@ -141,7 +141,7 @@ public class MetadataGetter {
         closer.closeResultSet(resultSetRows);
       }
     } catch (SQLException e) {
-      throw new SqlDbCopyException("Problem to add number of rows in TABLE : " + database.getTableName(indexTable) + ".", e);
+      throw new SqlDbCopyException("Problem fetching the number of rows in TABLE : " + database.getTableName(indexTable) + ".", e);
     } finally {
       closer.closeResultSet(resultSetRows);
     }
