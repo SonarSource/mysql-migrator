@@ -7,9 +7,17 @@ package com.sonar.dbcopy.prepare;
 
 import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.data.Database;
-import com.sonar.dbcopy.utils.toolconfig.*;
+import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
+import com.sonar.dbcopy.utils.toolconfig.Closer;
+import com.sonar.dbcopy.utils.toolconfig.Connecter;
+import com.sonar.dbcopy.utils.toolconfig.MessageException;
+import com.sonar.dbcopy.utils.toolconfig.SqlDbCopyException;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.SQLException;
 
 public class MetadataGetter {
 
