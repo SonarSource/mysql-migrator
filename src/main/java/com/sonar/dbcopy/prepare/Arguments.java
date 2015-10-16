@@ -135,8 +135,10 @@ public class Arguments {
   }
 
   public void getHelp() {
+    final int usualNbOfColumnsInTerminal = 80;
+
     HelpFormatter formatter = new HelpFormatter();
-    formatter.setOptionComparator(null);
+    formatter.setWidth(usualNbOfColumnsInTerminal);
     formatter.printHelp("help", options);
   }
 

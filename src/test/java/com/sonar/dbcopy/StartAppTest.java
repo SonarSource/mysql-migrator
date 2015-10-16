@@ -142,6 +142,10 @@ public class StartAppTest {
     StartApp.main(helpArgument);
 
     assertThat(systemOutRule.getLog().startsWith("usage:") ).isTrue();
+    // test a same line does not contain Src and dest, this must be a mix of option
+    assertThat(systemOutRule.getLog().matches("^ -\\w+Src.*destination$") ).isFalse();
+    assertThat(systemOutRule.getLog().matches("^ -\\w+Dest.*source$") ).isFalse();
+
   }
 
   @Test
