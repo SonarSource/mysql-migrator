@@ -9,6 +9,8 @@ import java.sql.*;
 
 public class CharacteristicsRelatedToEditor {
 
+  // TODO this class has no member, all its methods can be moved to static
+
   public String getSchema(DatabaseMetaData metaData) throws SQLException {
     // USED FOR metadata.getTables or getColumns
     String schema;
@@ -83,7 +85,7 @@ public class CharacteristicsRelatedToEditor {
     }
   }
 
-  public String giveDriverWithUrlFromUser(String url) {
+  public static String giveDriverWithUrlFromUser(String url) {
     String driverAsString;
     String urlBeginning = url.substring(0, 7);
     if ("jdbc:my".equals(urlBeginning)) {

@@ -57,7 +57,7 @@ public class StartAppTest {
     };
     StartApp.main(args);
 
-    assertThat(systemOutRule.getLog().contains("THE COPY HAS FINISHED SUCCESSFULLY") );
+    assertThat(systemOutRule.getLog().contains("THE COPY HAS FINISHED SUCCESSFULLY") ).isTrue();
   }
 
   @Test
@@ -141,7 +141,7 @@ public class StartAppTest {
     String[] helpArgument = {"-help"};
     StartApp.main(helpArgument);
 
-    assertThat(systemOutRule.getLog().startsWith("usage:") );
+    assertThat(systemOutRule.getLog().startsWith("usage:") ).isTrue();
   }
 
   @Test

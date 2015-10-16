@@ -30,6 +30,7 @@ public class StartApp {
     String[] tablesToCopy;
     Arguments arguments = new Arguments();
     arguments.doParsing(args);
+    arguments.processOptions();
     boolean argumentsAreFilled = arguments.allRequiredOptionsAreFilled();
 
     if (arguments.commandLineIsHelp()) {
