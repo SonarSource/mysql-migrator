@@ -102,27 +102,22 @@ public class Arguments {
   public void processOptions() {
 
     //copy content for all the options
-    for ( OptionNames oneOption : OptionNames.values())
-    {
+    for (OptionNames oneOption : OptionNames.values()) {
       optionContent.put(oneOption.toString(), commandLine.getOptionValue(oneOption.toString()));
     }
 
     // process driver option if it is given in URL instead.
-    if (!commandLine.hasOption("driverSrc") && commandLine.hasOption("urlSrc"))
-    {
-      optionContent.put(  OptionNames.driverSrc.toString()
-                          ,CharacteristicsRelatedToEditor.giveDriverWithUrlFromUser(commandLine.getOptionValue("urlSrc")));
+    if (!commandLine.hasOption("driverSrc") && commandLine.hasOption("urlSrc")) {
+      optionContent.put(OptionNames.driverSrc.toString()
+              , CharacteristicsRelatedToEditor.giveDriverWithUrlFromUser(commandLine.getOptionValue("urlSrc")));
     }
-
-    if (!commandLine.hasOption("driverDest") && commandLine.hasOption("urlDest"))
-    {
-      optionContent.put(  OptionNames.driverDest.toString()
-                          ,CharacteristicsRelatedToEditor.giveDriverWithUrlFromUser(commandLine.getOptionValue("urlDest")));
+    if (!commandLine.hasOption("driverDest") && commandLine.hasOption("urlDest")) {
+      optionContent.put(OptionNames.driverDest.toString()
+              , CharacteristicsRelatedToEditor.giveDriverWithUrlFromUser(commandLine.getOptionValue("urlDest")));
     }
 
     // GET OPTION -T  IF EXISTS
-    if (commandLine.getOptionValues("T") != null && commandLine.getOptionValues("T").length != 0)
-    {
+    if (commandLine.getOptionValues("T") != null && commandLine.getOptionValues("T").length != 0) {
       int nbTablesrequired = commandLine.getOptionValues("T").length;
       tablesToCopy = new String[nbTablesrequired];
       for (int i = 0; i < nbTablesrequired; i++) {
