@@ -39,9 +39,15 @@ public class CharacteristicsRelatedToEditorTest {
   }
 
   @Test
+  public void testMakeDropSequenceRequest() throws SQLException {
+    assertEquals("DROP SEQUENCE FOO_SEQ", chRelToEd.makeDropSequenceRequest("Foo"));
+  }
+
+  @Test
   public void testGetSchema() throws SQLException {
     assertEquals("PUBLIC", chRelToEd.getSchema(metaData));
   }
+
 
   @Test
   public void testGiveTableNameRelatedToVendor() throws SQLException {
