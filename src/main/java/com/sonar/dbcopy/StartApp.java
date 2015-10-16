@@ -5,7 +5,11 @@
  */
 package com.sonar.dbcopy;
 
-import com.sonar.dbcopy.prepare.*;
+import com.sonar.dbcopy.prepare.Arguments;
+import com.sonar.dbcopy.prepare.ConnectionVerifier;
+import com.sonar.dbcopy.prepare.MetadataGetter;
+import com.sonar.dbcopy.prepare.VersionVerifier;
+import com.sonar.dbcopy.prepare.Deleter;
 import com.sonar.dbcopy.reproduce.process.LoopByTable;
 import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.data.Database;

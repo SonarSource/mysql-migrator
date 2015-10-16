@@ -42,6 +42,7 @@ public class Arguments {
       this.helperString = helperString;
     }
 
+    @Override
     public String toString() {
       return name;
     }
@@ -99,15 +100,16 @@ public class Arguments {
     }
 
     if (!commandLine.hasOption("help")) {
-      // SOME OPTIONS ARE REQUIRED , NO NEED "IF" CONDITION
+      //copy content for all the options
       for (OptionNames oneOption : OptionNames.values()) {
-        if (oneOption == OptionNames.driverSrc && !commandLine.hasOption("driverSrc") && commandLine.hasOption("urlSrc")) {
-          optionContent.put(oneOption.toString(), chRelToEd.giveDriverWithUrlFromUser(commandLine.getOptionValue("urlSrc")));
-        } else if (oneOption == OptionNames.driverDest && !commandLine.hasOption("driverDest") && commandLine.hasOption("urlDest")) {
-          optionContent.put(oneOption.toString(), chRelToEd.giveDriverWithUrlFromUser(commandLine.getOptionValue("urlDest")));
-        } else {
-          optionContent.put(oneOption.toString(), commandLine.getOptionValue(oneOption.toString()));
-        }
+        optionContent.put(oneOption.toString(), commandLine.getOptionValue(oneOption.toString()));
+      }
+      // process driver option if it is given in URL instead.
+      if (!commandLine.hasOption("driverSrc") && commandLine.hasOption("urlSrc")) {
+        optionContent.put(OptionNames.driverSrc.toString(), chRelToEd.giveDriverWithUrlFromUser(commandLine.getOptionValue("urlSrc")));
+      }
+      if (!commandLine.hasOption("driverDest") && commandLine.hasOption("urlDest")) {
+        optionContent.put(OptionNames.driverDest.toString(), chRelToEd.giveDriverWithUrlFromUser(commandLine.getOptionValue("urlDest")));
       }
 
       // GET OPTION -T  IF EXISTS
@@ -131,7 +133,6 @@ public class Arguments {
 
   public void getHelp() {
     HelpFormatter formatter = new HelpFormatter();
-    // option will be displayed in the order they are declared
     formatter.setOptionComparator(null);
     formatter.printHelp("help", options);
   }

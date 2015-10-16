@@ -12,6 +12,7 @@ import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemOutRule;
+import org.junit.rules.ExpectedException;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -25,7 +26,8 @@ public class StartAppTest {
 
   @Rule
   public final SystemOutRule systemOutRule = new SystemOutRule().enableLog();
-
+  @Rule
+  public final ExpectedException thrown = ExpectedException.none();
 
   private Connection connectionSourceV1, connectionSourceV2, connectionDestV1, connectiondestV3, connectionSourceToption, connectionDestToption;
 
@@ -43,18 +45,19 @@ public class StartAppTest {
     closer.closeConnection(connectionSourceV1);
     closer.closeConnection(connectionDestV1);
 
+    // no driveDest to check the computation of the driver from the URL.
     String[] args = {
       "-driverSrc", "org.h2.Driver",
       "-urlSrc", "jdbc:h2:mem:StartAppTest_Source_Version_1_DB;DB_CLOSE_ON_EXIT=-1;",
       "-userSrc", "sonar",
       "-pwdSrc", "sonar",
-      "-driverDest", "org.h2.Driver",
       "-urlDest", "jdbc:h2:mem:StartAppTest_Destination_Version_1_DB;DB_CLOSE_ON_EXIT=-1;",
       "-userDest", "sonar",
       "-pwdDest", "sonar"
     };
-    StartApp startApp = new StartApp();
-    startApp.main(args);
+    StartApp.main(args);
+
+    assertThat(systemOutRule.getLog().contains("THE COPY HAS FINISHED SUCCESSFULLY") );
   }
 
   @Test
@@ -68,9 +71,8 @@ public class StartAppTest {
     connectionDestToption = utils.makeEmptyH2("StartAppTest_Destination_T_option_DB", true);
     utils.addContentInThirdTable(connectionDestToption, 2);
 
-
+    // no driveSrc to check the computation of the driver from the URL.
     String[] args = {
-      "-driverSrc", "org.h2.Driver",
       "-urlSrc", "jdbc:h2:mem:StartAppTest_Source_T_option_DB;DB_CLOSE_ON_EXIT=-1;",
       "-userSrc", "sonar",
       "-pwdSrc", "sonar",
@@ -80,8 +82,7 @@ public class StartAppTest {
       "-pwdDest", "sonar",
       "-T", "table_for_test"
     };
-    StartApp startApp = new StartApp();
-    startApp.main(args);
+    StartApp.main(args);
 
     Statement statementDestToption = connectionDestToption.createStatement();
     ResultSet resultSet = statementDestToption.executeQuery("SELECT * FROM schema_migrations");
@@ -127,8 +128,7 @@ public class StartAppTest {
       "-pwdDest", "sonar"
     };
     try {
-      StartApp startApp = new StartApp();
-      startApp.main(argsBadVersion);
+      StartApp.main(argsBadVersion);
       fail();
     } catch (MessageException e) {
       assertThat(e).isInstanceOf(MessageException.class).hasMessage("Version of schema migration are not the same between source (2) and destination (3).");
@@ -141,10 +141,28 @@ public class StartAppTest {
     String[] helpArgument = {"-help"};
     StartApp.main(helpArgument);
 
-    assert(systemOutRule.getLog().startsWith("usage:") );
+    assertThat(systemOutRule.getLog().startsWith("usage:") );
   }
 
-    @After
+  @Test
+  public void testMissingArgument() throws Exception {
+    thrown.expect(MessageException.class);
+
+    String[] aloneArgument = {"-urlSrc"};
+    StartApp.main(aloneArgument);
+    fail();
+  }
+
+  @Test
+  public void testBadArgument() throws Exception {
+    thrown.expect(MessageException.class);
+
+    String[] badArgument = {"badArgument"};
+    StartApp.main(badArgument);
+    fail();
+  }
+
+  @After
   public void tearDown() {
     Closer closer = new Closer("startAppTesttearDown");
     closer.closeConnection(connectionSourceToption);
