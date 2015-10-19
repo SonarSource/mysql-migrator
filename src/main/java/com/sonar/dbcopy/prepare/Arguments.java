@@ -15,7 +15,6 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.HelpFormatter;
-import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -166,8 +165,7 @@ public class Arguments {
       System.out.println(String.format("%s %s", title, version));
 
     } catch (java.io.IOException exception ) {
-      exception.printStackTrace();
-      throw new MessageException("Could recover version information from MANIFEST file");
+      throw new RuntimeException(exception);
     }
   }
 
