@@ -130,6 +130,7 @@
                 <configuration>
                     <archive>
                         <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <mainClass>com.sonar.dbcopy.StartApp</mainClass>
                         </manifest>
                     </archive>

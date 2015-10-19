@@ -15,11 +15,16 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.HelpFormatter;
+import org.slf4j.LoggerFactory;
 
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.jar.Manifest;
 
 public class Arguments {
+
   public enum OptionNames {
 
     driverSrc("driverSrc", "OPTIONAL:  driver for database source", "jdbc driver"),
@@ -30,7 +35,7 @@ public class Arguments {
     driverDest("driverDest", "OPTIONAL:  driver for database destination", "jdbc driver"),
     userDest("userDest", "REQUIRED:  user name for database destination", "login"),
     pwdDest("pwdDest", "REQUIRED:  password for database destination", "password");
-    // note that the help option is processed apart
+    // note that the help option, -T and -version are processed apart
 
     private String name;
     private String description;
@@ -67,6 +72,9 @@ public class Arguments {
 
     Option help = new Option("help", false, "           Print this message");
     options.addOption(help);
+
+    Option version = new Option("version", false, "           Displays version information");
+    options.addOption(version);
 
     this.allocatedEmptyOptionContent();
 
@@ -134,7 +142,7 @@ public class Arguments {
     return tablesToCopy;
   }
 
-  public void getHelp() {
+  public void printHelpStringAndExit() {
     final int usualNbOfColumnsInTerminal = 80;
 
     HelpFormatter formatter = new HelpFormatter();
@@ -142,8 +150,55 @@ public class Arguments {
     formatter.printHelp("help", options);
   }
 
+  /**
+   * Read Sonar DB Copy version from the MANIFEST.MF
+   * this MANIFEST.MF file being filled by Maven
+   * @throws MessageException
+   */
+  public void printVersionString() throws MessageException {
+    try {
+      URLClassLoader cl = (URLClassLoader) getClass().getClassLoader();
+      URL url = cl.findResource("META-INF/MANIFEST.MF");
+      Manifest manifest = new Manifest(url.openStream());
+      String title = manifest.getMainAttributes().getValue("Implementation-Title");
+      String version = manifest.getMainAttributes().getValue("Implementation-Version");
+
+      System.out.println(String.format("%s %s", title, version));
+
+    } catch (java.io.IOException exception ) {
+      exception.printStackTrace();
+      throw new MessageException("Could recover version information from MANIFEST file");
+    }
+  }
+
+  public void printJVMVersion() {
+
+    String printed = new String(String.format("Java %s %s "
+            ,System.getProperty("java.version")
+            ,System.getProperty("java.vendor")));
+
+    String bits = System.getProperty("sun.arch.data.model");
+    if ("32".equals(bits) || "64".equals(bits)) {
+      printed +=String.format(" (%s-bit)", bits);
+    }
+    System.out.println(printed);
+  }
+
+  public void printOSVersion() {
+
+    String printed = new String(String.format("%s %s %s "
+            ,System.getProperty("os.name")
+            ,System.getProperty("os.version")
+            ,System.getProperty("os.arch")));
+    System.out.println(printed);
+  }
+
   public boolean commandLineIsHelp() {
     return commandLine.hasOption("help");
+  }
+
+  public boolean commandLineIsVersion() {
+    return commandLine.hasOption("version");
   }
 
   public boolean allRequiredOptionsAreFilled() {

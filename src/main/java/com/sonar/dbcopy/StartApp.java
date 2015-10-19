@@ -34,23 +34,27 @@ public class StartApp {
     boolean argumentsAreFilled = arguments.allRequiredOptionsAreFilled();
 
     if (arguments.commandLineIsHelp()) {
-      arguments.getHelp();
+      arguments.printHelpStringAndExit();
+    } else if (arguments.commandLineIsVersion()) {
+      arguments.printVersionString();
+      arguments.printJVMVersion();
+      arguments.printOSVersion();
     } else if (argumentsAreFilled) {
 
       Database databaseSource = new Database();
       Database databaseDest = new Database();
 
       ConnecterData connecterDataSource = new ConnecterData(
-        arguments.getOptionContent(Arguments.OptionNames.driverSrc),
-        arguments.getOptionContent(Arguments.OptionNames.urlSrc),
-        arguments.getOptionContent(Arguments.OptionNames.userSrc),
-        arguments.getOptionContent(Arguments.OptionNames.pwdSrc)
+              arguments.getOptionContent(Arguments.OptionNames.driverSrc),
+              arguments.getOptionContent(Arguments.OptionNames.urlSrc),
+              arguments.getOptionContent(Arguments.OptionNames.userSrc),
+              arguments.getOptionContent(Arguments.OptionNames.pwdSrc)
       );
       ConnecterData connecterDataDest = new ConnecterData(
-        arguments.getOptionContent(Arguments.OptionNames.driverDest),
-        arguments.getOptionContent(Arguments.OptionNames.urlDest),
-        arguments.getOptionContent(Arguments.OptionNames.userDest),
-        arguments.getOptionContent(Arguments.OptionNames.pwdDest)
+              arguments.getOptionContent(Arguments.OptionNames.driverDest),
+              arguments.getOptionContent(Arguments.OptionNames.urlDest),
+              arguments.getOptionContent(Arguments.OptionNames.userDest),
+              arguments.getOptionContent(Arguments.OptionNames.pwdDest)
       );
 
 
@@ -115,7 +119,7 @@ public class StartApp {
       LOGGER.info("** THE COPY HAS FINISHED SUCCESSFULLY **");
       LOGGER.info(starLine + starLine + starLine);
     } else {
-      throw new MessageException("Some required parameters are missing. Type '-help' to know which parameters are required.\n"+arguments.giveArgumentsDebugString());
+      throw new MessageException("Some required parameters are missing. Type '-help' to know which parameters are required.\n" + arguments.giveArgumentsDebugString());
     }
   }
 }
