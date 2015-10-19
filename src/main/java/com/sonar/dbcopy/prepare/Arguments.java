@@ -154,7 +154,7 @@ public class Arguments {
    * this MANIFEST.MF file being filled by Maven
    * @throws MessageException
    */
-  public void printVersionString() throws MessageException {
+  public void printVersionString() {
     try {
       URLClassLoader cl = (URLClassLoader) getClass().getClassLoader();
       URL url = cl.findResource("META-INF/MANIFEST.MF");

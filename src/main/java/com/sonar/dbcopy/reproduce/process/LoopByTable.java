@@ -5,13 +5,23 @@
  */
 package com.sonar.dbcopy.reproduce.process;
 
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.DatabaseMetaData;
+
 import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.data.Database;
 import com.sonar.dbcopy.utils.data.Table;
-import com.sonar.dbcopy.utils.toolconfig.*;
+import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
+import com.sonar.dbcopy.utils.toolconfig.Closer;
+import com.sonar.dbcopy.utils.toolconfig.Connecter;
+import com.sonar.dbcopy.utils.toolconfig.ModifySqlServerOption;
+import com.sonar.dbcopy.utils.toolconfig.SqlDbCopyException;
 import org.slf4j.LoggerFactory;
 
-import java.sql.*;
 
 public class LoopByTable {
 

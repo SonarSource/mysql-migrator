@@ -5,7 +5,11 @@
  */
 package com.sonar.dbcopy.utils.toolconfig;
 
-import java.sql.*;
+import java.sql.Statement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
 
 public class ModifySqlServerOption {
 
