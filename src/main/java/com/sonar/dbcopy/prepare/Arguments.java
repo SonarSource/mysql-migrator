@@ -165,7 +165,7 @@ public class Arguments {
       System.out.println(String.format("%s %s", title, version));
 
     } catch (java.io.IOException exception ) {
-      throw new RuntimeException(exception);
+      throw new MessageException(exception);
     }
   }
 

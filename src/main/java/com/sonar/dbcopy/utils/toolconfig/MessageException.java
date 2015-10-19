@@ -11,6 +11,11 @@ public class MessageException extends RuntimeException {
     super(message);
   }
 
+
+  public MessageException(Exception exception) {
+    super(exception);
+  }
+
   /**
    * Does not fill in the stack trace
    *
