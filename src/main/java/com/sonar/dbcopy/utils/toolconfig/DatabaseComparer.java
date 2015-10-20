@@ -53,13 +53,14 @@ public class DatabaseComparer {
     }
   }
 
-  private void displayTableContent(Table tableToDisplay) {
+  private static void displayTableContent(Table tableToDisplay) {
     LOGGER.info("         COLUMNS : (" + tableToDisplay.getColumnNamesAsString() + ")");
     LOGGER.info("           TYPES : (" + tableToDisplay.getTypesAsString() + ")");
   }
 
   public void displayMissingTableInDb(Database completeDb, Database dbToEvaluate, String sourceOrDestination) {
-    Table realTable, missingTableToFind;
+    Table realTable;
+    Table missingTableToFind;
     for (int indexTable = 0; indexTable < completeDb.getNbTables(); indexTable++) {
       realTable = completeDb.getTable(indexTable);
       missingTableToFind = dbToEvaluate.getTableByName(realTable.getName());

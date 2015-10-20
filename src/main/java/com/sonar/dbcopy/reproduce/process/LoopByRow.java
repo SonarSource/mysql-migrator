@@ -127,7 +127,7 @@ public class LoopByRow {
     }
   }
 
-  private long getIdIfPkButPreserveCopyFromException(ResultSet resultSetSource) {
+  private static long getIdIfPkButPreserveCopyFromException(ResultSet resultSetSource) {
     long idToReturn = 0;
     try {
       idToReturn = resultSetSource.getLong(1);
@@ -137,7 +137,7 @@ public class LoopByRow {
     return idToReturn;
   }
 
-  private void logLinesCopied(String tableName, long lineWritten, int nbRowsInTable) {
+  private static void logLinesCopied(String tableName, long lineWritten, int nbRowsInTable) {
     String space = "                                      ";
     if (tableName.length() < 30) {
       space = space.substring(0, 30 - tableName.length());

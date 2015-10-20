@@ -5,8 +5,18 @@
  */
 package com.sonar.dbcopy.reproduce.process;
 
-import com.sonar.dbcopy.reproduce.reader.*;
-import com.sonar.dbcopy.reproduce.writer.*;
+import com.sonar.dbcopy.reproduce.reader.OracleReader;
+import com.sonar.dbcopy.reproduce.reader.PostgresqlReader;
+import com.sonar.dbcopy.reproduce.reader.ReaderTool;
+import com.sonar.dbcopy.reproduce.reader.SqlServerReader;
+import com.sonar.dbcopy.reproduce.reader.MySqlReader;
+import com.sonar.dbcopy.reproduce.reader.H2Reader;
+import com.sonar.dbcopy.reproduce.writer.PostgresqlWriter;
+import com.sonar.dbcopy.reproduce.writer.SqlServerWriter;
+import com.sonar.dbcopy.reproduce.writer.WriterTool;
+import com.sonar.dbcopy.reproduce.writer.OracleWriter;
+import com.sonar.dbcopy.reproduce.writer.MySqlWriter;
+import com.sonar.dbcopy.reproduce.writer.H2Writer;
 import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
 import com.sonar.dbcopy.utils.toolconfig.SqlDbCopyException;
 
