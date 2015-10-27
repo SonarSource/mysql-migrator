@@ -13,7 +13,7 @@ public class Database {
   private List<Table> tablesList;
 
   public Database() {
-    tablesList = new ArrayList<Table>();
+    tablesList = new ArrayList<>();
   }
 
   public void addToTablesList(String tableName) {

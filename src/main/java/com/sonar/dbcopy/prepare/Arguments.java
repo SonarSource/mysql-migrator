@@ -21,6 +21,7 @@ import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.jar.Manifest;
+import java.io.IOException;
 
 public class Arguments {
 
@@ -156,24 +157,23 @@ public class Arguments {
    */
   public void printVersionString() {
     try {
-      URLClassLoader cl = (URLClassLoader) getClass().getClassLoader();
-      URL url = cl.findResource("META-INF/MANIFEST.MF");
+      URL url = ((URLClassLoader) getClass().getClassLoader()).findResource("META-INF/MANIFEST.MF");
       Manifest manifest = new Manifest(url.openStream());
       String title = manifest.getMainAttributes().getValue("Implementation-Title");
       String version = manifest.getMainAttributes().getValue("Implementation-Version");
 
       System.out.println(String.format("%s %s", title, version));
 
-    } catch (java.io.IOException exception ) {
+    } catch ( IOException exception ) {
       throw new MessageException(exception);
     }
   }
 
   public void printJVMVersion() {
 
-    String printed = new String(String.format("Java %s %s "
+    String printed = String.format("Java %s %s "
             ,System.getProperty("java.version")
-            ,System.getProperty("java.vendor")));
+            ,System.getProperty("java.vendor"));
 
     String bits = System.getProperty("sun.arch.data.model");
     if ("32".equals(bits) || "64".equals(bits)) {
@@ -184,10 +184,10 @@ public class Arguments {
 
   public void printOSVersion() {
 
-    String printed = new String(String.format("%s %s %s "
+    String printed = String.format("%s %s %s "
             ,System.getProperty("os.name")
             ,System.getProperty("os.version")
-            ,System.getProperty("os.arch")));
+            ,System.getProperty("os.arch"));
     System.out.println(printed);
   }
 
@@ -218,7 +218,7 @@ public class Arguments {
 
   public void allocatedEmptyOptionContent() {
 
-    optionContent = new HashMap<String, String>(OptionNames.values().length);
+    optionContent = new HashMap<>(OptionNames.values().length);
     for (OptionNames oneOption : OptionNames.values()) {
       optionContent.put(oneOption.toString(), null);
     }

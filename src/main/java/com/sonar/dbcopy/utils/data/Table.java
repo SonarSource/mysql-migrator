@@ -19,8 +19,8 @@ public class Table {
   public Table(String tableName) {
     this.tableName = tableName;
     this.nbRows = 0;
-    columns = new ArrayList<String>();
-    types = new ArrayList<Integer>();
+    columns = new ArrayList<>();
+    types = new ArrayList<>();
   }
 
   public int getNbColumns() {
