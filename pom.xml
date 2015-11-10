@@ -8,7 +8,7 @@
     </parent>
     <groupId>com.sonarsource.dbcopy</groupId>
     <artifactId>sonar-db-copy</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1</version>
     <name>SonarQube Database Copy</name>
     <inceptionYear>2013</inceptionYear>
 
@@ -21,7 +21,7 @@
         <connection>scm:git:git@github.com:SonarSource/sonar-db-copy.git</connection>
         <developerConnection>scm:git:git@github.com:SonarSource/sonar-db-copy.git</developerConnection>
         <url>https://github.com/SonarSource/sonar-db-copy</url>
-      <tag>HEAD</tag>
+      <tag>1.1</tag>
   </scm>
 
     <licenses>
