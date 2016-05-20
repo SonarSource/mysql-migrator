@@ -16,6 +16,8 @@
   <description>Carbon-copy SonarQube database</description>
   <properties>
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
+    <!-- used for deployment to SonarSource Artifactory -->
+    <gitRepositoryName>sonar-db-copy</gitRepositoryName>
   </properties>
 
   <scm>
