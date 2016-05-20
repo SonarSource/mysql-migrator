@@ -22,10 +22,6 @@ if [ "${TRAVIS_BRANCH}" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; 
   # this commit is master must be built and analyzed (with upload of report)
   mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent verify -Pcoverage-per-test -B -e -V
 
-  # Switch to java 8 as the Dory HTTPS certificate is not supported by Java 7
-  export JAVA_HOME=/usr/lib/jvm/java-8-oracle
-  export PATH=$JAVA_HOME/bin:$PATH
-
   export MAVEN_OPTS="-Xmx1G -Xms128m"
   mvn sonar:sonar -B -e -V \
      -Dsonar.host.url=$SONAR_HOST_URL \
@@ -42,10 +38,6 @@ elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "$SONAR_GITHUB_OAUTH" ]; then
   strongEcho 'Build and analyze pull request'
   # this pull request must be built and analyzed (without upload of report)
   mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent verify -Pcoverage-per-test -B -e -V
-
-  # Switch to java 8 as the Dory HTTPS certificate is not supported by Java 7
-  export JAVA_HOME=/usr/lib/jvm/java-8-oracle
-  export PATH=$JAVA_HOME/bin:$PATH
 
   mvn sonar:sonar -B -e -V \
       -Dsonar.analysis.mode=issues \
