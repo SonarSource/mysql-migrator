@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.sonarsource.parent</groupId>
     <artifactId>parent</artifactId>
-    <version>30</version>
+    <version>33</version>
   </parent>
   <groupId>com.sonarsource.dbcopy</groupId>
   <artifactId>sonar-db-copy</artifactId>
@@ -16,6 +16,8 @@
   <description>Carbon-copy SonarQube database</description>
   <properties>
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
+    <!-- used for deployment to SonarSource Artifactory -->
+    <gitRepositoryName>sonar-db-copy</gitRepositoryName>
   </properties>
 
   <scm>
