@@ -10,6 +10,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
+import java.util.Locale;
 
 public class CharacteristicsRelatedToEditor {
 
@@ -23,7 +24,7 @@ public class CharacteristicsRelatedToEditor {
       schema = "public";
     } else if (isOracle(metaData)) {
       // UPPERCASE USER NAME WITH ORACLE , AND
-      schema = metaData.getUserName().toUpperCase();
+      schema = metaData.getUserName().toUpperCase(Locale.ENGLISH);
     } else if (isSqlServer(metaData)) {
       // lowercase "dbo" FOR mssql
       schema = "dbo";
@@ -40,15 +41,15 @@ public class CharacteristicsRelatedToEditor {
     // USED FOR metadata.getColumns WHICH NEED UPPERCASE WITH ORACLE
     String tableNameToReturn;
     if (isOracle(metaData) || isH2(metaData)) {
-      tableNameToReturn = tableNameToChangeCase.toUpperCase();
+      tableNameToReturn = tableNameToChangeCase.toUpperCase(Locale.ENGLISH);
     } else {
-      tableNameToReturn = tableNameToChangeCase.toLowerCase();
+      tableNameToReturn = tableNameToChangeCase.toLowerCase(Locale.ENGLISH);
     }
     return tableNameToReturn;
   }
 
   public String makeDropSequenceRequest(String tableName) {
-    return "DROP SEQUENCE " + tableName.toUpperCase() + "_SEQ";
+    return "DROP SEQUENCE " + tableName.toUpperCase(Locale.ENGLISH) + "_SEQ";
   }
 
   public String makeAlterSequencesRequest(DatabaseMetaData metadata, String tableName, long idMaxPlusOne) throws SQLException {
@@ -56,7 +57,7 @@ public class CharacteristicsRelatedToEditor {
     if (isSqlServer(metadata)) {
       sqlRequest = "dbcc checkident(" + tableName + ",reseed," + idMaxPlusOne + ");";
     } else if (isOracle(metadata)) {
-      sqlRequest = "CREATE SEQUENCE " + tableName.toUpperCase() + "_SEQ INCREMENT BY 1 MINVALUE 1 START WITH " + idMaxPlusOne;
+      sqlRequest = "CREATE SEQUENCE " + tableName.toUpperCase(Locale.ENGLISH) + "_SEQ INCREMENT BY 1 MINVALUE 1 START WITH " + idMaxPlusOne;
     } else if (isPostgresql(metadata)) {
       sqlRequest = "ALTER SEQUENCE " + tableName + "_id_seq RESTART WITH " + idMaxPlusOne + ";";
     } else if (isMySql(metadata)) {

@@ -18,6 +18,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
+import java.util.Locale;
 
 public class MetadataGetter {
 
@@ -76,7 +77,7 @@ public class MetadataGetter {
       throw new MessageException("Can not find tables in database source.");
     } else {
       while (resultSetTables.next()) {
-        String tableName = resultSetTables.getString("TABLE_NAME").toLowerCase();
+        String tableName = resultSetTables.getString("TABLE_NAME").toLowerCase(Locale.ENGLISH);
         database.addToTablesList(tableName);
       }
     }
@@ -88,9 +89,9 @@ public class MetadataGetter {
     } else {
       while (resultSetTables.next()) {
         boolean tablehasBeenrequired = false;
-        String tableNameFoundInDb = resultSetTables.getString("TABLE_NAME").toLowerCase();
-        for (int indexTablesRequired = 0; indexTablesRequired < tablesToCopy.length; indexTablesRequired++) {
-          if (tablesToCopy[indexTablesRequired].equals(tableNameFoundInDb)) {
+        String tableNameFoundInDb = resultSetTables.getString("TABLE_NAME").toLowerCase(Locale.ENGLISH);
+        for (String aTablesToCopy : tablesToCopy) {
+          if (aTablesToCopy.equals(tableNameFoundInDb)) {
             tablehasBeenrequired = true;
           }
         }
@@ -100,8 +101,8 @@ public class MetadataGetter {
       }
       if (database.getNbTables() != tablesToCopy.length) {
         StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < tablesToCopy.length; ++i) {
-          stringBuilder.append(tablesToCopy[i] + " ");
+        for (String aTablesToCopy : tablesToCopy) {
+          stringBuilder.append(aTablesToCopy).append(" ");
         }
         String allTablesRequired = stringBuilder.toString();
         throw new MessageException("It seems that some table(s) you required in ( " + allTablesRequired + ") do not exist. Verify the name in the database.");
@@ -122,7 +123,7 @@ public class MetadataGetter {
         String schema = chRelToEd.getSchema(metaData);
         resultSetCol = metaData.getColumns(null, schema, tableNameWithAdaptedCase, "%");
         while (resultSetCol.next()) {
-          String columnNameToInsert = resultSetCol.getString("COLUMN_NAME").toLowerCase();
+          String columnNameToInsert = resultSetCol.getString("COLUMN_NAME").toLowerCase(Locale.ENGLISH);
           int columnType = resultSetCol.getInt("DATA_TYPE");
           database.getTable(indexTable).addColumn(indexColumn, columnNameToInsert, columnType);
           indexColumn++;
