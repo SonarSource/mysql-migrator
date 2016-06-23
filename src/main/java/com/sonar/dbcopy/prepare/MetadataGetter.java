@@ -20,7 +20,11 @@ import java.sql.Statement;
 import java.sql.SQLException;
 import java.util.Locale;
 
+import org.slf4j.LoggerFactory;
+
 public class MetadataGetter {
+
+  private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
 
   private Database database;
   private ConnecterData cd;
@@ -48,8 +52,11 @@ public class MetadataGetter {
       chRelToEd = new CharacteristicsRelatedToEditor();
       String schema = chRelToEd.getSchema(metaData);
 
+      LOGGER.info("Catalog: {}", connectionSource.getCatalog());
+      LOGGER.info("Schema: {}", schema);
+
       /* GET TABLES FROM SCHEMA AND ADD TO DATABASE */
-      resultSetTables = metaData.getTables(connectionSource.getCatalog(), schema, "%", new String[]{"TABLE"});
+      resultSetTables = metaData.getTables(connectionSource.getCatalog(), schema, "%", new String[] {"TABLE"});
       if (tablesToCopy == null) {
         this.fillTablesListFromDb(resultSetTables);
       } else {
@@ -78,6 +85,7 @@ public class MetadataGetter {
     } else {
       while (resultSetTables.next()) {
         String tableName = resultSetTables.getString("TABLE_NAME").toLowerCase(Locale.ENGLISH);
+        LOGGER.info("Table to migrate: {}", tableName);
         database.addToTablesList(tableName);
       }
     }
@@ -119,7 +127,7 @@ public class MetadataGetter {
         indexColumn = 0;
         String tableNameWithAdaptedCase = chRelToEd.transfromCaseOfTableName(metaData, database.getTableName(indexTable));
 
-        //ORACLE NEEDS UPERCASE TO EXECUTE getColumns()
+        // ORACLE NEEDS UPERCASE TO EXECUTE getColumns()
         String schema = chRelToEd.getSchema(metaData);
         resultSetCol = metaData.getColumns(null, schema, tableNameWithAdaptedCase, "%");
         while (resultSetCol.next()) {
