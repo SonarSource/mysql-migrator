@@ -52,7 +52,7 @@ public class LoopByRow {
 
       // LOG EACH 50 000 LINES WRITTEN
       lineWritten++;
-      if (lineWritten % 50000 == 0) {
+      if (lineWritten % 50_000 == 0) {
         logLinesCopied("", lineWritten, nbRowsInTable);
       }
 

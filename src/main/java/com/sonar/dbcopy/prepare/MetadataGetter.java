@@ -18,6 +18,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Locale;
 
 import org.slf4j.LoggerFactory;
@@ -96,13 +97,8 @@ public class MetadataGetter {
       throw new MessageException("Can not find any table in database.");
     } else {
       while (resultSetTables.next()) {
-        boolean tablehasBeenrequired = false;
         String tableNameFoundInDb = resultSetTables.getString("TABLE_NAME").toLowerCase(Locale.ENGLISH);
-        for (String aTablesToCopy : tablesToCopy) {
-          if (aTablesToCopy.equals(tableNameFoundInDb)) {
-            tablehasBeenrequired = true;
-          }
-        }
+        boolean tablehasBeenrequired = Arrays.asList(tablesToCopy).contains(tableNameFoundInDb );
         if (tablehasBeenrequired) {
           database.addToTablesList(tableNameFoundInDb);
         }
