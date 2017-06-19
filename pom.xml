@@ -11,14 +11,20 @@
   <artifactId>sonar-db-copy</artifactId>
   <version>1.2-SNAPSHOT</version>
   <name>SonarQube Database Copy</name>
+  <description>Carbon-copy SonarQube database</description>
+
   <inceptionYear>2013</inceptionYear>
 
-  <description>Carbon-copy SonarQube database</description>
-  <properties>
-    <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
-    <!-- used for deployment to SonarSource Artifactory -->
-    <gitRepositoryName>sonar-db-copy</gitRepositoryName>
-  </properties>
+  <organization>
+    <name>SonarSource</name>
+    <url>http://www.sonarsource.com</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>SonarSource</name>
+    </license>
+  </licenses>
 
   <scm>
     <connection>scm:git:git@github.com:SonarSource/sonar-db-copy.git</connection>
@@ -27,17 +33,6 @@
     <tag>HEAD</tag>
   </scm>
 
-  <licenses>
-    <license>
-      <name>SonarSource</name>
-    </license>
-  </licenses>
-
-  <organization>
-    <name>SonarSource</name>
-    <url>http://www.sonarsource.com</url>
-  </organization>
-
   <issueManagement>
     <system>jira</system>
     <url>http://jira.sonarsource.com/browse/SDBC</url>
@@ -45,8 +40,14 @@
 
   <ciManagement>
     <system>jenkins</system>
-    <url>http://jenkins.internal.sonarsource.com/job/ci-cs-db-copy</url>
+    <url>https://travis-ci.com/SonarSource/sonar-db-copy</url>
   </ciManagement>
+
+  <properties>
+    <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
+    <!-- used for deployment to SonarSource Artifactory -->
+    <gitRepositoryName>sonar-db-copy</gitRepositoryName>
+  </properties>
 
   <dependencies>
     <dependency>
