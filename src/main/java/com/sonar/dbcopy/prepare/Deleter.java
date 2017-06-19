@@ -46,10 +46,10 @@ public class Deleter {
           statementToDelete.execute(String.format("TRUNCATE TABLE %s", tableNameSource));
           nbTablesDeleted++;
         } else {
-          LOGGER.warn("Can't DELETE  TABLE :" + tableNameSource + " because it doesn't exist in destination database. ");
+          LOGGER.warn("Can't DELETE  TABLE :{} because it doesn't exist in destination database. ", tableNameSource);
         }
       }
-      LOGGER.info("  " + nbTablesDeleted + " TABLES DELETED IN DESTINATION.");
+      LOGGER.info("  {} TABLES DELETED IN DESTINATION.", nbTablesDeleted);
       closer.closeStatement(statementToDelete);
 
     } catch (SQLException e) {

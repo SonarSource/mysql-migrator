@@ -115,9 +115,9 @@ public class StartApp {
       dbComparer.displayMissingTableInDb(databaseDest, databaseSource, "SOURCE");
       dbComparer.displayDiffNumberRows(databaseSource, databaseDest);
 
-      LOGGER.info(starLine + starLine + starLine);
+      LOGGER.info("{}{}{}", starLine, starLine, starLine);
       LOGGER.info("** THE COPY HAS FINISHED SUCCESSFULLY **");
-      LOGGER.info(starLine + starLine + starLine);
+      LOGGER.info("{}{}{}", starLine, starLine, starLine);
     } else {
       throw new MessageException("Some required parameters are missing. Type '-help' to know which parameters are required.\n" + arguments.giveArgumentsDebugString());
     }
