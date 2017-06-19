@@ -19,7 +19,8 @@ import java.sql.DatabaseMetaData;
 
 public class SequenceReseter {
 
-  private String sqlRequestToReset, tableName;
+  private String sqlRequestToReset;
+  private String tableName;
   private ConnecterData cdDest;
 
   public SequenceReseter(String tableName, ConnecterData cdDest) {

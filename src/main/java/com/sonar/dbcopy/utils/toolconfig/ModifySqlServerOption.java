@@ -25,7 +25,7 @@ public class ModifySqlServerOption {
         closer.closeResultSet(resultSet);
 
         statement = connection.createStatement();
-        String request = "SET IDENTITY_INSERT " + tableName + " " + onOroff + " ;";
+        String request = String.format("SET IDENTITY_INSERT %s %s ;", tableName, onOroff);
         statement.execute(request);
         closer.closeStatement(statement);
       }

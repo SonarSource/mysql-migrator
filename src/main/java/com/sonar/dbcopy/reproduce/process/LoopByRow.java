@@ -18,8 +18,12 @@ import java.sql.Types;
 public class LoopByRow {
 
   private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-  private String logRowsForExecuteBatch, logCurrentRowForAddBatch, tableContentSource, tableContentDest;
-  private Table sourceTable, destTable;
+  private String logRowsForExecuteBatch;
+  private String logCurrentRowForAddBatch;
+  private String tableContentSource;
+  private String tableContentDest;
+  private Table sourceTable;
+  private Table destTable;
   private ReaderTool readerTool;
   private WriterTool writerTool;
   private PreparedStatement preparedStatementDest;
@@ -36,7 +40,8 @@ public class LoopByRow {
     this.readerTool = readerTool;
     this.writerTool = writerTool;
     this.preparedStatementDest = preparedStatementDest;
-    long lineWritten = 0, lastIDOfPreviousBlock = 0;
+    long lineWritten = 0;
+    long lastIDOfPreviousBlock = 0;
     lastID = 0;
     String tableName = sourceTable.getName();
     int nbRowsInTable = sourceTable.getNbRows();

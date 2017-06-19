@@ -61,10 +61,10 @@ public class StartApp {
     /* VERIFY CONNECTION */
       ConnectionVerifier connectionVerifier = new ConnectionVerifier();
       connectionVerifier.databaseIsReached(connecterDataSource);
-      LOGGER.info(starLine + " CONFIGURATION VERIFICATIONS " + starLine);
-      LOGGER.info("Database SOURCE  has been reached at :         " + connecterDataSource.getUrl());
+      LOGGER.info("{} CONFIGURATION VERIFICATIONS {}", starLine, starLine);
+      LOGGER.info("Database SOURCE  has been reached at :         {}", connecterDataSource.getUrl());
       connectionVerifier.databaseIsReached(connecterDataDest);
-      LOGGER.info("Database DESTINATION has been reached at :     " + connecterDataDest.getUrl());
+      LOGGER.info("Database DESTINATION has been reached at :     {}", connecterDataDest.getUrl());
 
     /* VERIFY VERSIONS OF SONARQUBE */
       VersionVerifier vvSource = new VersionVerifier();
@@ -76,41 +76,41 @@ public class StartApp {
       } else if (maxVersionIdDestination == 0) {
         LOGGER.warn("The versions of SonarQube schema migration source is (" + maxVersionIdSource + ") when destination is (" + maxVersionIdDestination + ").");
       } else {
-        LOGGER.info("The versions of SonarQube schema migration are the same between source (" + maxVersionIdSource + ") and destination (" + maxVersionIdDestination + ").");
+        LOGGER.info("The versions of SonarQube schema migration are the same between source ({}) and destination ({}).", maxVersionIdSource, maxVersionIdDestination);
       }
 
     /* GET METADATA FROM SOURCE AND FROM DESTINATION */
-      LOGGER.info(starLine + " SEARCH TABLES " + starLine);
+      LOGGER.info("{} SEARCH TABLES {}", starLine, starLine);
       tablesToCopy = arguments.getTablesToCopy();
 
       LOGGER.info("START GETTING METADATA IN SOURCE...");
       MetadataGetter metadataGetterSource = new MetadataGetter(connecterDataSource, databaseSource);
       metadataGetterSource.execute(tablesToCopy);
-      LOGGER.info("   " + databaseSource.getNbTables() + " TABLES GETTED.");
+      LOGGER.info("   {} TABLES GETTED.", databaseSource.getNbTables());
       LOGGER.info("START GETTING METADATA IN DESTINATION...");
       MetadataGetter metadataGetterDest = new MetadataGetter(connecterDataDest, databaseDest);
       metadataGetterDest.execute(tablesToCopy);
-      LOGGER.info("   " + databaseDest.getNbTables() + " TABLES GETTED.");
+      LOGGER.info("   {} TABLES GETTED.", databaseDest.getNbTables());
 
 
     /* DISPLAY TABLES FOUND */
-      LOGGER.info(starLine + " FOUND TABLES " + starLine);
+      LOGGER.info("{} FOUND TABLES {}", starLine, starLine);
       DatabaseComparer dbComparer = new DatabaseComparer();
       dbComparer.displayAllTablesFoundIfExists(databaseSource, databaseDest);
 
 
     /* DELETE TABLE CONTENT OF DATABASE DESTINATION */
-      LOGGER.info(starLine + " DELETE TABLES FROM DESTINATION " + starLine);
+      LOGGER.info("{} DELETE TABLES FROM DESTINATION {}", starLine, starLine);
       Deleter deleter = new Deleter(connecterDataDest, databaseSource);
       deleter.execute(databaseDest);
 
     /* COPY DATA FROM SOURCE TO DESTINATION */
-      LOGGER.info(starLine + " COPY DATA " + starLine);
+      LOGGER.info("{} COPY DATA {}", starLine, starLine);
       LoopByTable loopByTable = new LoopByTable(connecterDataSource, connecterDataDest, databaseSource, databaseDest);
       loopByTable.execute();
 
     /* FIND AND DISPLAY TABLES PRESENT IN DESTINATION BUT NOT IN SOURCE */
-      LOGGER.info(starLine + " SEARCH FOR MISTAKES " + starLine);
+      LOGGER.info("{} SEARCH FOR MISTAKES {}", starLine, starLine);
       dbComparer.displayMissingTableInDb(databaseSource, databaseDest, "DESTINATION");
       dbComparer.displayMissingTableInDb(databaseDest, databaseSource, "SOURCE");
       dbComparer.displayDiffNumberRows(databaseSource, databaseDest);

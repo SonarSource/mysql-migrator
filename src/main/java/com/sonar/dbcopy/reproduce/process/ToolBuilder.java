@@ -27,7 +27,8 @@ import java.sql.SQLException;
 
 public class ToolBuilder {
 
-  private Connection connectionSource, connectionDestination;
+  private Connection connectionSource;
+  private Connection connectionDestination;
   private CharacteristicsRelatedToEditor chRelToEd;
 
   public ToolBuilder(Connection connectionSource, Connection connectionDestination) {

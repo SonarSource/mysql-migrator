@@ -21,14 +21,14 @@ public class DatabaseComparer {
       Table tableSource = dbSource.getTable(indexTable);
       String tableSourceName = tableSource.getName();
       LOGGER.info("");
-      LOGGER.info("FOUND TABLE : " + tableSourceName);
+      LOGGER.info("FOUND TABLE : {}", tableSourceName);
       LOGGER.info("   SOURCE:");
       displayTableContent(tableSource);
       // DISPLAY DESTINATION TABLE IF EXISTS
       Table tableDestToFind = dbDestination.getTableByName(tableSourceName);
       LOGGER.info("   DESTINATION:");
       if (tableDestToFind == null) {
-        LOGGER.warn("TABLE " + dbSource.getTableName(indexTable) + " is not present in the DESTINATION database.");
+        LOGGER.warn("TABLE {} is not present in the DESTINATION database.", dbSource.getTableName(indexTable));
         nbMissingTableInDest++;
       } else {
         displayTableContent(tableDestToFind);
@@ -44,8 +44,8 @@ public class DatabaseComparer {
         Table tableSourceToFind = dbSource.getTableByName(dbDestination.getTableName(indexTable));
         if (tableSourceToFind == null) {
           LOGGER.info("");
-          LOGGER.info("FOUND TABLE : " + dbDestination.getTableName(indexTable));
-          LOGGER.warn("TABLE " + dbDestination.getTableName(indexTable) + " is not present in the SOURCE database.");
+          LOGGER.info("FOUND TABLE : {}", dbDestination.getTableName(indexTable));
+          LOGGER.warn("TABLE {} is not present in the SOURCE database.", dbDestination.getTableName(indexTable));
           LOGGER.info("   DESTINATION:");
           displayTableContent(dbDestination.getTable(indexTable));
         }
@@ -54,8 +54,8 @@ public class DatabaseComparer {
   }
 
   private static void displayTableContent(Table tableToDisplay) {
-    LOGGER.info("         COLUMNS : (" + tableToDisplay.getColumnNamesAsString() + ")");
-    LOGGER.info("           TYPES : (" + tableToDisplay.getTypesAsString() + ")");
+    LOGGER.info("         COLUMNS : ({})", tableToDisplay.getColumnNamesAsString());
+    LOGGER.info("           TYPES : ({})", tableToDisplay.getTypesAsString());
   }
 
   public void displayMissingTableInDb(Database completeDb, Database dbToEvaluate, String sourceOrDestination) {
@@ -65,7 +65,7 @@ public class DatabaseComparer {
       realTable = completeDb.getTable(indexTable);
       missingTableToFind = dbToEvaluate.getTableByName(realTable.getName());
       if (missingTableToFind == null) {
-        LOGGER.warn("TABLE " + completeDb.getTableName(indexTable) + " is not present in the " + sourceOrDestination + " database and have not been copied.");
+        LOGGER.warn("TABLE {} is not present in the {} database and have not been copied.", completeDb.getTableName(indexTable), sourceOrDestination);
       }
     }
   }

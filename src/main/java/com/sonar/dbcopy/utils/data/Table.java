@@ -14,7 +14,9 @@ public class Table {
   private int nbRows;
   private List<String> columns;
   private List<Integer> types;
-  private String typesAsString, questionMarksAsString, columnNamesAsString;
+  private String typesAsString;
+  private String questionMarksAsString;
+  private String columnNamesAsString;
 
   public Table(String tableName) {
     this.tableName = tableName;

@@ -26,8 +26,10 @@ import org.slf4j.LoggerFactory;
 public class LoopByTable {
 
   private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-  private ConnecterData cdSource, cdDest;
-  private Database databaseSource, databaseDest;
+  private ConnecterData cdSource;
+  private ConnecterData cdDest;
+  private Database databaseSource;
+  private Database databaseDest;
   private CharacteristicsRelatedToEditor chRelToEditor;
 
   public LoopByTable(ConnecterData cdSource, ConnecterData cdDest, Database databaseSource, Database databaseDest) {
@@ -71,7 +73,7 @@ public class LoopByTable {
 
         // VERIFY IF TABLE EXISTS IN DESTINATION
         if (tableDest == null) {
-          LOGGER.warn("Can't WRITE in TABLE :" + tableSourceName + " because it doesn't exist in destination database. ");
+          LOGGER.warn("Can't WRITE in TABLE :{} because it doesn't exist in destination database. ", tableSourceName);
         } else {
 
           //SQL SERVER DESTINATION OPTION :  PUT IDENTITY_INSERT AT on FOR THE CURRENT TABLE

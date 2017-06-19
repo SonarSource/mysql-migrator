@@ -43,7 +43,7 @@ public class Deleter {
       for (int indexTable = 0; indexTable < this.databaseSource.getNbTables(); indexTable++) {
         tableNameSource = this.databaseSource.getTableName(indexTable);
         if (databaseDest.getTableByName(tableNameSource) != null) {
-          statementToDelete.execute("TRUNCATE TABLE " + tableNameSource);
+          statementToDelete.execute(String.format("TRUNCATE TABLE %s", tableNameSource));
           nbTablesDeleted++;
         } else {
           LOGGER.warn("Can't DELETE  TABLE :" + tableNameSource + " because it doesn't exist in destination database. ");

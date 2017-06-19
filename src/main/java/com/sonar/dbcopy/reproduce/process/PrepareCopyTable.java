@@ -21,7 +21,8 @@ import java.sql.PreparedStatement;
 public class PrepareCopyTable {
 
 
-  private Table tableSource, tableDestination;
+  private Table tableSource;
+  private Table tableDestination;
 
   public PrepareCopyTable(Table tableSource, Table tableDestination) {
     this.tableSource = tableSource;
