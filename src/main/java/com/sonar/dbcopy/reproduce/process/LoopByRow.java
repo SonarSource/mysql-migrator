@@ -147,7 +147,7 @@ public class LoopByRow {
     if (tableName.length() < 30) {
       space = space.substring(0, 30 - tableName.length());
     }
-    LOGGER.info(tableName + space + lineWritten + " / " + nbRowsInTable);
+    LOGGER.info("{}{} {}/{}", tableName, space, String.valueOf(lineWritten), String.valueOf(nbRowsInTable));
   }
 
   private void displayContextLog(SQLException e, String logRow, String kindOfError) {

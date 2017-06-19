@@ -75,7 +75,7 @@ public class DatabaseComparer {
       Table tableSource = dbSource.getTable(indexTable);
       Table tableDest = dbDest.getTableByName(tableSource.getName());
       if (tableDest != null && tableDest.getNbRows() != tableSource.getNbRows()) {
-        LOGGER.warn("TABLE " + tableSource.getName() + " has " + tableSource.getNbRows() + " ROWS in SOURCE while " + tableDest.getNbRows() + " in DESTINATION");
+        LOGGER.warn("TABLE {} has {} ROWS in SOURCE while {} in DESTINATION", tableSource.getName(), tableSource.getNbRows(), tableDest.getNbRows() );
       }
     }
   }
