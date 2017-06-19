@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 public class DatabaseComparer {
 
-  private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+  private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
 
   public void displayAllTablesFoundIfExists(Database dbSource, Database dbDestination) {
     int nbMissingTableInDest = 0;

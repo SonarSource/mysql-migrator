@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 public class LoopByTable {
 
-  private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+  private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
   private ConnecterData cdSource;
   private ConnecterData cdDest;
   private Database databaseSource;

@@ -17,7 +17,7 @@ import java.sql.Types;
 
 public class LoopByRow {
 
-  private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+  private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
   private String logRowsForExecuteBatch;
   private String logCurrentRowForAddBatch;
   private String tableContentSource;

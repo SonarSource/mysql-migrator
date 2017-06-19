@@ -19,7 +19,7 @@ import java.sql.Statement;
 
 public class Deleter {
 
-  private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+  private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
   private ConnecterData cdDest;
   private Database databaseSource;
 
