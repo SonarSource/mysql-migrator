@@ -7,7 +7,10 @@ package com.sonar.dbcopy.utils.data;
 
 public class ConnecterData {
 
-  private String driver, url, user, pwd;
+  private String driver;
+  private String url;
+  private String user;
+  private String pwd;
 
   public ConnecterData(String driver, String url, String user, String pwd) {
     this.driver = driver;
