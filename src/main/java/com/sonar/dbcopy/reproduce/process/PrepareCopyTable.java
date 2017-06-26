@@ -23,10 +23,12 @@ public class PrepareCopyTable {
 
   private Table tableSource;
   private Table tableDestination;
+  private int commitSize;
 
-  public PrepareCopyTable(Table tableSource, Table tableDestination) {
+  public PrepareCopyTable(Table tableSource, Table tableDestination, int commitSize) {
     this.tableSource = tableSource;
     this.tableDestination = tableDestination;
+    this.commitSize = commitSize;
   }
 
   public void makeToolsAndStartCopy(Connection connectionSource, Connection connectionDest) {
@@ -59,7 +61,7 @@ public class PrepareCopyTable {
       // BUILD WRITER TOOL
       WriterTool writerTool = toolBuilder.buildWriterTool(preparedStatementDest);
 
-      LoopByRow loopByRow = new LoopByRow(tableSource, tableDestination);
+      LoopByRow loopByRow = new LoopByRow(tableSource, tableDestination, commitSize);
       loopByRow.executeCopy(resultSetSource, preparedStatementDest, readerTool, writerTool);
 
     } catch (SQLException e) {

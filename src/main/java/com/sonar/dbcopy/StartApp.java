@@ -57,6 +57,12 @@ public class StartApp {
               arguments.getOptionContent(Arguments.OptionNames.pwdDest)
       );
 
+      int commitSize;
+      try {
+        commitSize = Integer.parseInt(arguments.getOptionContent(Arguments.OptionNames.commitSize));
+      } catch(IllegalArgumentException notAnInteger) {
+        throw new MessageException("commitSize must be a valid integer");
+      }
 
     /* VERIFY CONNECTION */
       ConnectionVerifier connectionVerifier = new ConnectionVerifier();
@@ -106,7 +112,8 @@ public class StartApp {
 
     /* COPY DATA FROM SOURCE TO DESTINATION */
       LOGGER.info("{} COPY DATA {}", starLine, starLine);
-      LoopByTable loopByTable = new LoopByTable(connecterDataSource, connecterDataDest, databaseSource, databaseDest);
+      LoopByTable loopByTable = new LoopByTable(connecterDataSource, connecterDataDest, databaseSource, databaseDest,
+        commitSize);
       loopByTable.execute();
 
     /* FIND AND DISPLAY TABLES PRESENT IN DESTINATION BUT NOT IN SOURCE */

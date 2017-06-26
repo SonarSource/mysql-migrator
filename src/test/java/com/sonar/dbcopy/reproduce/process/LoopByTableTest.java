@@ -26,6 +26,7 @@ public class LoopByTableTest {
   private ConnecterData cdSource, cdDest;
   private Database databaseSource, databaseDest;
   private Closer closer;
+  private int commitSize;
 
   @Before
   public void setUp() throws Exception {
@@ -46,11 +47,12 @@ public class LoopByTableTest {
     cdSource = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:LoopByTableTestSourceDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     cdDest = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:LoopByTableTestDestinationDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
 
+    commitSize = 10;
   }
 
   @Test
   public void testLoopByTable() {
-    LoopByTable loopByTable = new LoopByTable(cdSource, cdDest, databaseSource, databaseDest);
+    LoopByTable loopByTable = new LoopByTable(cdSource, cdDest, databaseSource, databaseDest, commitSize);
     loopByTable.execute();
 
     Statement statementSource = null, statementDest = null;

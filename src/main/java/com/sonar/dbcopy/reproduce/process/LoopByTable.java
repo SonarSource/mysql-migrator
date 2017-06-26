@@ -31,13 +31,16 @@ public class LoopByTable {
   private Database databaseSource;
   private Database databaseDest;
   private CharacteristicsRelatedToEditor chRelToEditor;
+  private int commitSize;
 
-  public LoopByTable(ConnecterData cdSource, ConnecterData cdDest, Database databaseSource, Database databaseDest) {
+  public LoopByTable(ConnecterData cdSource, ConnecterData cdDest, Database databaseSource, Database databaseDest,
+                     int commitSize) {
     this.cdSource = cdSource;
     this.cdDest = cdDest;
     this.databaseSource = databaseSource;
     this.databaseDest = databaseDest;
     this.chRelToEditor = new CharacteristicsRelatedToEditor();
+    this.commitSize = commitSize;
   }
 
   public void execute() {
@@ -82,7 +85,7 @@ public class LoopByTable {
           }
 
           // READ AND WRITE
-          PrepareCopyTable prepareCopyTable = new PrepareCopyTable(tableSource, tableDest);
+          PrepareCopyTable prepareCopyTable = new PrepareCopyTable(tableSource, tableDest, commitSize);
           prepareCopyTable.makeToolsAndStartCopy(connectionSource, connectionDestination);
 
           // RESET SEQUENCE
