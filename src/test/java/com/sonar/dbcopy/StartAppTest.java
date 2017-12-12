@@ -176,6 +176,23 @@ public class StartAppTest {
     fail();
   }
 
+  @Test
+  public void testBadCommitSize() throws Exception {
+    thrown.expect(MessageException.class);
+
+    String[] badArgument = {
+      "-urlSrc", "jdbc:h2:mem:StartAppTest_Source_Version_2_DB;DB_CLOSE_ON_EXIT=-1;",
+      "-userSrc", "sonar",
+      "-pwdSrc", "sonar",
+      "-urlDest", "jdbc:h2:mem:StartAppTest_Destination_Version_3_DB;DB_CLOSE_ON_EXIT=-1;",
+      "-userDest", "sonar",
+      "-pwdDest", "sonar",
+      "-commitSize", "notAnInteger"
+    };
+    StartApp.main(badArgument);
+    fail();
+  }
+
   @After
   public void tearDown() {
     Closer closer = new Closer("startAppTesttearDown");

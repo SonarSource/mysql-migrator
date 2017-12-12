@@ -25,6 +25,8 @@ import java.io.IOException;
 
 public class Arguments {
 
+  static final String DEFAULT_COMMIT_SIZE = "5000";
+
   public enum OptionNames {
 
     driverSrc("driverSrc", "OPTIONAL:  driver for database source", "jdbc driver"),
@@ -34,7 +36,9 @@ public class Arguments {
     urlDest("urlDest", "REQUIRED:  url for database destination", "url"),
     driverDest("driverDest", "OPTIONAL:  driver for database destination", "jdbc driver"),
     userDest("userDest", "REQUIRED:  user name for database destination", "login"),
-    pwdDest("pwdDest", "REQUIRED:  password for database destination", "password");
+    pwdDest("pwdDest", "REQUIRED:  password for database destination", "password"),
+    commitSize("commitSize",
+      String.format("OPTIONAL:  number of rows to commit (default: %s)", DEFAULT_COMMIT_SIZE), "commit size");
     // note that the help option, -T and -version are processed apart
 
     private String name;
@@ -122,6 +126,9 @@ public class Arguments {
     if (!commandLine.hasOption("driverDest") && commandLine.hasOption("urlDest")) {
       optionContent.put(OptionNames.driverDest.toString()
               , CharacteristicsRelatedToEditor.giveDriverWithUrlFromUser(commandLine.getOptionValue("urlDest")));
+    }
+    if (!commandLine.hasOption("commitSize")) {
+      optionContent.put(OptionNames.commitSize.toString(), DEFAULT_COMMIT_SIZE);
     }
 
     // GET OPTION -T  IF EXISTS

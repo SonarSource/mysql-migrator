@@ -24,14 +24,16 @@ public class LoopByRow {
   private String tableContentDest;
   private Table sourceTable;
   private Table destTable;
+  private int commitSize;
   private ReaderTool readerTool;
   private WriterTool writerTool;
   private PreparedStatement preparedStatementDest;
   private long lastID;
 
-  public LoopByRow(Table sourceTable, Table destTable) {
+  public LoopByRow(Table sourceTable, Table destTable, int commitSize) {
     this.sourceTable = sourceTable;
     this.destTable = destTable;
+    this.commitSize = commitSize;
     tableContentSource = "SOURCE COLUMNS      ( " + sourceTable.getColumnNamesAsString() + " ) with TYPES (" + sourceTable.getTypesAsString() + " ).";
     tableContentDest = "DESTINATION COLUMNS ( " + destTable.getColumnNamesAsString() + " ) with TYPES (" + destTable.getTypesAsString() + " ).";
   }
@@ -66,8 +68,8 @@ public class LoopByRow {
       // ADD BATCH
       addBatchButPreserveCopyFromException();
 
-      // COMMIT EACH 10 ROWS
-      if (lineWritten % 10 == 0) {
+      // COMMIT EACH <COMMIT SIZE> ROWS
+      if (lineWritten % commitSize == 0) {
         executeBatchButPreserveCopyFromException();
         commitButPreserveCopyFromException();
         lastIDOfPreviousBlock = lastID;
