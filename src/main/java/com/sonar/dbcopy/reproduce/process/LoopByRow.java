@@ -28,7 +28,7 @@ public class LoopByRow {
   private ReaderTool readerTool;
   private WriterTool writerTool;
   private PreparedStatement preparedStatementDest;
-  private long lastID;
+  private Object lastID;
 
   public LoopByRow(Table sourceTable, Table destTable, int commitSize) {
     this.sourceTable = sourceTable;
@@ -43,8 +43,8 @@ public class LoopByRow {
     this.writerTool = writerTool;
     this.preparedStatementDest = preparedStatementDest;
     long lineWritten = 0;
-    long lastIDOfPreviousBlock = 0;
-    lastID = 0;
+    Object lastIDOfPreviousBlock = "Initial";
+    lastID = "initial";
     String tableName = sourceTable.getName();
     int nbRowsInTable = sourceTable.getNbRows();
 
@@ -134,14 +134,17 @@ public class LoopByRow {
     }
   }
 
-  private static long getIdIfPkButPreserveCopyFromException(ResultSet resultSetSource) {
-    long idToReturn = 0;
+  private static Object getIdIfPkButPreserveCopyFromException(ResultSet resultSetSource) {
     try {
-      idToReturn = resultSetSource.getLong(1);
-    } catch (SQLException e) {
-      LOGGER.info("First column is not a Long.", e);
+      return resultSetSource.getLong(1);
+    } catch (SQLException notLong) {
+      try {
+        return resultSetSource.getString(1);
+      } catch(SQLException notStringEither) {
+        LOGGER.info("First column is neither Long nor String.", notStringEither);
+        return null;
+      }
     }
-    return idToReturn;
   }
 
   private static void logLinesCopied(String tableName, long lineWritten, int nbRowsInTable) {

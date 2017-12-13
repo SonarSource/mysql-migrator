@@ -111,6 +111,15 @@ public class Utils {
       preparedStatement.setObject(7, null);
       preparedStatement.executeUpdate();
 
+      if (trueToInsertAdditionalTables) {
+        preparedStatement.close();
+        preparedStatement = connection.prepareStatement("INSERT INTO table_without_id (uuid, colstring, coltimestamp) VALUES (?, ?, ?)");
+        preparedStatement.setString(1, "polop");
+        preparedStatement.setString(2, "palap");
+        preparedStatement.setTimestamp(3, timestampObj);
+        preparedStatement.executeUpdate();
+      }
+
       return connection;
 
     } catch (SQLException e) {
