@@ -26,11 +26,11 @@ public class SequenceReseterTest {
   @Before
   public void setUp() {
     Utils utils = new Utils();
-    connection = utils.makeFilledH2("SequenceReseterTestDB",false);
+    connection = utils.makeFilledH2("SequenceReseterTestDB",true);
   }
 
   @Test
-  public void testExecuteWithoutJdbcDriver() throws Exception {
+  public void shouldFailOnMissingJdbcDriver() throws Exception {
     ConnecterData connecterData = new ConnecterData("Not a Driver", "jdbc:h2:mem:SequenceReseterTestDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     SequenceReseter sequenceReseter = new SequenceReseter("table_for_test", connecterData);
     try {
@@ -42,10 +42,16 @@ public class SequenceReseterTest {
   }
 
   @Test
-  public void testExecute() throws Exception {
-    // ONLY VERIFY THERE IS NO EXCEPTION BUT DON'T KNOW IF IT WORKS BECAUSE IT NEEDS ORACLE CONNECTION
+  public void shouldSucceedOnLegacyTableWithId() throws Exception {
     ConnecterData connecterData = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:SequenceReseterTestDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     SequenceReseter sequenceReseter = new SequenceReseter("table_for_test", connecterData);
+    sequenceReseter.execute();
+  }
+
+  @Test
+  public void shouldSucceedOnNewTableWithoutId() throws Exception {
+    ConnecterData connecterData = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:SequenceReseterTestDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
+    SequenceReseter sequenceReseter = new SequenceReseter("table_without_id", connecterData);
     sequenceReseter.execute();
   }
 

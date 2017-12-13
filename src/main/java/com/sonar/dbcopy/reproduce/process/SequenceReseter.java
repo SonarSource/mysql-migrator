@@ -47,7 +47,7 @@ public class SequenceReseter {
       resultSetDest = metaDest.getPrimaryKeys(null, null, tableNameWithGoodCase);
 
       // IF REULTSET IS NOT "beforeFirst" THAT MEANS THERE IS A PRIMARY KEY
-      if (resultSetDest.isBeforeFirst()) {
+      if (resultSetDest.isBeforeFirst() && hasIdColumn(resultSetDest)) {
         closer.closeResultSet(resultSetDest);
         long idMaxPlusOne = relToEditor.getIdMaxPlusOne(connectionDest, tableName);
         sqlRequestToReset = relToEditor.makeAlterSequencesRequest(metaDest, tableName, idMaxPlusOne);
@@ -65,6 +65,15 @@ public class SequenceReseter {
       closer.closeResultSet(resultSetDest);
       closer.closeStatement(statementDest);
       closer.closeConnection(connectionDest);
+    }
+  }
+
+  private static boolean hasIdColumn(ResultSet resultSetDest) {
+    try {
+      resultSetDest.findColumn("id");
+      return true;
+    } catch(SQLException noSuchColumn) {
+      return false;
     }
   }
 }

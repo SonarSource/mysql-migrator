@@ -30,7 +30,7 @@ public class Utils {
     return connection;
   }
 
-  private Connection makeH2WithTables(String dataBaseName, boolean trueToInsertThirdTable) throws SQLException, ClassNotFoundException {
+  private Connection makeH2WithTables(String dataBaseName, boolean trueToInsertAdditionalTables) throws SQLException, ClassNotFoundException {
     Connection connection = makeH2(dataBaseName);
     PreparedStatement preparedStatement = null;
 
@@ -40,6 +40,8 @@ public class Utils {
       preparedStatement.executeUpdate();
       preparedStatement = connection.prepareStatement("DROP TABLE IF EXISTS empty_table_for_test");
       preparedStatement.executeUpdate();
+      preparedStatement = connection.prepareStatement("DROP TABLE IF EXISTS table_without_id");
+      preparedStatement.executeUpdate();
       preparedStatement = connection.prepareStatement("DROP TABLE IF EXISTS schema_migrations");
       preparedStatement.executeUpdate();
       preparedStatement = connection.prepareStatement("CREATE TABLE table_for_test (id integer NOT NULL PRIMARY KEY AUTO_INCREMENT, columnstring varchar(50), columntimestamp timestamp, columnblob blob, columnclob clob, columnboolean boolean , columntobenull varchar(5))");
@@ -47,7 +49,9 @@ public class Utils {
       preparedStatement = connection.prepareStatement("CREATE TABLE empty_table_for_test (id integer PRIMARY KEY AUTO_INCREMENT, colstring varchar(50), coltimestamp timestamp)");
       preparedStatement.executeUpdate();
 
-      if (trueToInsertThirdTable) {
+      if (trueToInsertAdditionalTables) {
+        preparedStatement = connection.prepareStatement("CREATE TABLE table_without_id (uuid VARCHAR(40) PRIMARY KEY, colstring varchar(50), coltimestamp timestamp)");
+        preparedStatement.executeUpdate();
         preparedStatement = connection.prepareStatement("CREATE TABLE schema_migrations (version integer)");
         preparedStatement.executeUpdate();
       }
@@ -59,11 +63,11 @@ public class Utils {
     }
   }
 
-  public Connection makeFilledH2(String databaseName, boolean trueToInsertThirdTable) {
+  public Connection makeFilledH2(String databaseName, boolean trueToInsertAdditionalTables) {
 
     PreparedStatement preparedStatement = null;
     try {
-      Connection connection = this.makeH2WithTables(databaseName, trueToInsertThirdTable);
+      Connection connection = this.makeH2WithTables(databaseName, trueToInsertAdditionalTables);
 
       /* PREPARE STATEMENT TO INSERT DATAS */
       String stringToInsert = "INSERT INTO table_for_test (id , columnstring , columntimestamp, columnBlob , columnClob , columnBoolean  , columnTobeNull ) VALUES (?,?,?,?,?,?,?)";
