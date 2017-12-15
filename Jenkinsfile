@@ -11,30 +11,30 @@ pipeline {
         string(name: 'GITHUB_BRANCH', defaultValue: 'master', description: 'Git branch (provided by travisci hook job)')
         string(name: 'GITHUB_REPOSITORY_OWNER', defaultValue: 'SonarSource', description: 'Github repository owner(provided by travisci hook job)')
     }
-    environment { 
+    environment {
         SONARSOURCE_QA = 'true'
         MAVEN_TOOL = 'Maven 3.3.x'
     }
-    stages {    
+    stages {
         stage('NotifyBurgr') {
-            steps {                
-                burgrNotifyQaStarted()    
+            steps {
+                burgrNotifyQaStarted()
                 githubNotifyQaPending()
             }
         }
-        stage('QA') {            
-            parallel {            
+        stage('QA') {
+            parallel {
                 stage('LTS') {
                     agent {
                         label 'linux'
                     }
-                    steps {                          
+                    steps {
                         withMaven(maven: MAVEN_TOOL) {
                             mavenSetBuildVersion()
                             dir('it') {
-                                sh 'mvn -Dsonar.runtimeVersion="LTS" -Dmaven.test.redirectTestOutputToFile=false clean verify -e -V'
+                                sh 'ORCHESTRATOR_PROPERTIES_SOURCE=... ORCHESTRATOR_PROPERTIES_DESTINATION=... mvn -Dsonar.runtimeVersion="LTS" -Dmaven.test.redirectTestOutputToFile=false clean verify -e -V'
                             }
-                        }                        
+                        }
                     }
                 }
                 stage('DEV') {
@@ -45,14 +45,14 @@ pipeline {
                         withMaven(maven: MAVEN_TOOL) {
                             mavenSetBuildVersion()
                             dir('it') {
-                                sh 'mvn -Dsonar.runtimeVersion="DEV" -Dmaven.test.redirectTestOutputToFile=false clean verify -e -V'
+                                sh 'ORCHESTRATOR_PROPERTIES_SOURCE=... ORCHESTRATOR_PROPERTIES_DESTINATION=... mvn -Dsonar.runtimeVersion="DEV" -Dmaven.test.redirectTestOutputToFile=false clean verify -e -V'
                             }
                         }
                     }
                 }
-            }                
+            }
             post {
-                success {                
+                success {
                     burgrNotifyQaPassed()
                     githubNotifyQaSuccess()
                 }
