@@ -57,7 +57,7 @@ public class MetadataGetter {
       LOGGER.info("Schema: {}", schema);
 
       /* GET TABLES FROM SCHEMA AND ADD TO DATABASE */
-      resultSetTables = metaData.getTables(connectionSource.getCatalog(), schema, "%", new String[] {"TABLE"});
+      resultSetTables = metaData.getTables(null, null, "%", new String[] {"TABLE"});
       if (tablesToCopy == null) {
         this.fillTablesListFromDb(resultSetTables);
       } else {

@@ -101,8 +101,9 @@ public class CharacteristicsRelatedToEditor {
       driverAsString = "org.h2.Driver";
     } else if ("jdbc:po".equals(urlBeginning)) {
       driverAsString = "org.postgresql.Driver";
-    } else if ("jdbc:jt".equals(urlBeginning)) {
-      driverAsString = "net.sourceforge.jtds.jdbc.Driver";
+    } else if ("jdbc:sq".equals(urlBeginning)) {
+      // reference: https://docs.microsoft.com/en-us/sql/connect/jdbc/using-the-jdbc-driver
+      driverAsString = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
     } else {
       throw new MessageException("Url " + url + " does not correspond to a correct format to get the good jdbc driver.");
     }
@@ -110,12 +111,12 @@ public class CharacteristicsRelatedToEditor {
   }
 
   public boolean isSqlServer(DatabaseMetaData metaData) throws SQLException {
-    boolean isSqlServer = false;
-    String vendorUrl = metaData.getURL().substring(0, 7);
-    if ("jdbc:jt".equals(vendorUrl)) {
-      isSqlServer = true;
+    String vendorUrl = metaData.getURL();
+    if (vendorUrl == null) {
+      throw new IllegalStateException("can't get database url");
+    } else {
+      return vendorUrl.startsWith("jdbc:sqlserver");
     }
-    return isSqlServer;
   }
 
   public boolean isOracle(DatabaseMetaData metaData) throws SQLException {
