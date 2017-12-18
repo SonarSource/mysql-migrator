@@ -9,5 +9,5 @@ function installTravisTools {
 }
 
 installTravisTools
-
+. installMaven35
 regular_mvn_build_deploy_analyze
