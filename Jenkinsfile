@@ -11,27 +11,28 @@ stage('build'){
   node('linux'){
     def scmVars = checkout scm
     sendAllNotificationQaStarted()
-
-    for(dbSrc in dbs) {
-        for(dbTarget in dbs) {
-            echo "building task ${dbSrc}/${dbTarget}"
-            tasks["${dbSrc}/${dbTarget}"] = {
-                node('linux'){
-                    stage('checkout') {
-                        checkout scm
-                    }
-                    stage('Maven'){
-                        echo "Building with Maven... ${dbSrc}/${dbTarget}"               
-                        //sh "${tool MAVEN_TOOL}/bin/mvn package"  
-                    }
-                }
-            }
-        }
-    }
     
     try{
-      parallel tasks, 
-      failFast: true
+      for(dbSrc in dbs) {
+        for(dbTarget in dbs) {
+          def src=dbSrc
+          def target=dbTarget
+          echo "building task ${dbSrc}/${dbTarget}"
+          tasks["${dbSrc}/${dbTarget}"] = {
+            node('linux'){
+              stage('checkout') {
+                checkout scm
+              }
+              stage('Maven'){
+                echo "building ${src}/${target}"
+                //sh "${tool MAVEN_TOOL}/bin/mvn package"  
+              }
+            }              
+          }
+        }
+      }
+      tasks["failFast"]= true
+      parallel tasks
       sendAllNotificationQaResult()
     }catch (e) {
       sendAllNotificationQaResult()
