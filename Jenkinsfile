@@ -14,6 +14,7 @@ stage('build'){
 
     for(dbSrc in dbs) {
         for(dbTarget in dbs) {
+            echo "building task ${dbSrc}/${dbTarget}"
             tasks["${dbSrc}/${dbTarget}"] = {
                 node('linux'){
                     stage('checkout') {
