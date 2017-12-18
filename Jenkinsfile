@@ -1,90 +1,41 @@
-@Library('SonarSource@github') _
+#!/usr/bin/env groovy
 
-pipeline {
-    agent { 
-        label 'linux' 
-    }
-    parameters {
-        string(name: 'GIT_SHA1', description: 'Git SHA1 (provided by travisci hook job)')
-        string(name: 'CI_BUILD_NAME', defaultValue: 'sonar-license', description: 'Build Name (provided by travisci hook job)')	
-        string(name: 'CI_BUILD_NUMBER', description: 'Build Number (provided by travisci hook job)')
-        string(name: 'GITHUB_BRANCH', defaultValue: 'master', description: 'Git branch (provided by travisci hook job)')
-        string(name: 'GITHUB_REPOSITORY_OWNER', defaultValue: 'SonarSource', description: 'Github repository owner(provided by travisci hook job)')
-    }
-    environment {
-        SONARSOURCE_QA = 'true'
-        MAVEN_TOOL = 'Maven 3.3.x'
-    }
-    stages {
-        stage('NotifyBurgr') {
-            steps {
-                burgrNotifyQaStarted()
-                githubNotifyQaPending()
-            }
+@Library('SonarSource@1.2') _
+
+def MAVEN_TOOL='Maven 3.3.9'
+
+def dbs = ["oracle12c","mssql2016"]
+def tasks = [:]
+
+stage('build'){
+  node('linux'){
+    def scmVars = checkout scm
+    sendAllNotificationQaStarted()
+    
+    try{
+      for(dbSrc in dbs) {
+        for(dbTarget in dbs) {
+          def src=dbSrc
+          def target=dbTarget
+          echo "building task ${dbSrc}/${dbTarget}"
+          tasks["${dbSrc}/${dbTarget}"] = {
+            node('linux'){
+              stage('checkout') {
+                checkout scm
+              }
+              stage('Maven'){
+                echo "building ${src}/${target}"
+                //sh "${tool MAVEN_TOOL}/bin/mvn package"  
+              }
+            }              
+          }
         }
-        stage('QA') {
-            parallel {
-                stage('LTS') {
-                    agent {
-                        label 'linux'
-                    }
-                    steps {
-                        withMaven(maven: MAVEN_TOOL) {
-                            mavenSetBuildVersion()
-                            dir('it') {
-                                sh 'ORCHESTRATOR_PROPERTIES_SOURCE=... ORCHESTRATOR_PROPERTIES_DESTINATION=... mvn -Dsonar.runtimeVersion="LTS" -Dmaven.test.redirectTestOutputToFile=false clean verify -e -V'
-                            }
-                        }
-                    }
-                }
-                stage('DEV') {
-                    agent {
-                        label 'linux'
-                    }
-                    steps {
-                        withMaven(maven: MAVEN_TOOL) {
-                            mavenSetBuildVersion()
-                            dir('it') {
-                                sh 'ORCHESTRATOR_PROPERTIES_SOURCE=... ORCHESTRATOR_PROPERTIES_DESTINATION=... mvn -Dsonar.runtimeVersion="DEV" -Dmaven.test.redirectTestOutputToFile=false clean verify -e -V'
-                            }
-                        }
-                    }
-                }
-            }
-            post {
-                success {
-                    burgrNotifyQaPassed()
-                    githubNotifyQaSuccess()
-                }
-                failure {
-                    burgrNotifyQaFailed()
-                    githubNotifyQaFailed()
-                }
-                unstable {
-                    burgrNotifyQaFailed()
-                    githubNotifyQaFailed()
-                }
-                aborted {
-                    burgrNotifyQaAborted()
-                    githubNotifyQaError()
-                }
-            }
-            
-        }
-        stage('Promote') {
-            steps {
-                repoxPromoteBuild()
-            }
-            post {
-                success {
-                    burgrNotifyPromotePassed()
-                    githubNotifyPromoteSuccess()
-                }
-                failure {
-                    burgrNotifyPromoteFailed()
-                    githubNotifyPromoteFailed()
-                }
-            }
-        }
+      }
+      tasks["failFast"]= true
+      parallel tasks
+      sendAllNotificationQaResult()
+    }catch (e) {
+      sendAllNotificationQaResult()
     }
+  }
 }
