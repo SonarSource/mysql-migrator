@@ -17,9 +17,10 @@ public class DestinationStatementBuilder {
 
   public PreparedStatement getDestinationStatement(Connection connectionDestination, Table tableSource) {
     PreparedStatement preparedStatementDest;
-    CharacteristicsRelatedToEditor chRelToEd = new CharacteristicsRelatedToEditor();
     try {
-      String tableSourceName = chRelToEd.transfromCaseOfTableName(connectionDestination.getMetaData(), tableSource.getName());
+      String tableSourceName = CharacteristicsRelatedToEditor.transfromCaseOfTableName(
+          connectionDestination.getMetaData()
+          , tableSource.getName());
 
       String sqlInsertRequest = "INSERT INTO " + tableSourceName + " (" + tableSource.getColumnNamesAsString() + ") VALUES(" + tableSource.getQuestionMarksAsString() + ")";
 

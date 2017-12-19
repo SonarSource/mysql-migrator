@@ -29,7 +29,6 @@ public class CharacteristicsRelatedToEditorTest {
     Utils utils = new Utils();
     connection = utils.makeFilledH2("CharacteristicsRelatedToEditorTestDB", false);
     metaData = connection.getMetaData();
-    chRelToEd = new CharacteristicsRelatedToEditor();
   }
 
   @After
@@ -40,18 +39,19 @@ public class CharacteristicsRelatedToEditorTest {
 
   @Test
   public void testMakeDropSequenceRequest() throws SQLException {
-    assertEquals("DROP SEQUENCE FOO_SEQ", chRelToEd.makeDropSequenceRequest("Foo"));
+    assertEquals("DROP SEQUENCE FOO_SEQ"
+        , CharacteristicsRelatedToEditor.makeDropSequenceRequest("Foo"));
   }
 
   @Test
   public void testGetSchema() throws SQLException {
-    assertEquals("PUBLIC", chRelToEd.getSchema(metaData));
+    assertEquals("PUBLIC", CharacteristicsRelatedToEditor.getSchema(metaData));
   }
 
 
   @Test
   public void testGiveTableNameRelatedToVendor() throws SQLException {
-    assertEquals("TABLE", chRelToEd.transfromCaseOfTableName(metaData, "table"));
+    assertEquals("TABLE", CharacteristicsRelatedToEditor.transfromCaseOfTableName(metaData, "table"));
   }
 
   @Test
