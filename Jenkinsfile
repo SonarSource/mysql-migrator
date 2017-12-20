@@ -2,7 +2,7 @@
 
 @Library('SonarSource@1.2') _
 
-def MAVEN_TOOL='Maven 3.3.9'
+def MAVEN_TOOL='Maven 3.3.x'
 
 // TODO Un-restrict DB engines
 def dbs = ["postgresql93", "mysql56"] // , "mssql2014", "mssql2016", "oracle11g", "oracle12c"]
