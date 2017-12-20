@@ -10,4 +10,4 @@ function installTravisTools {
 
 installTravisTools
 
-regular_mvn_build_deploy_analyze
+regular_mvn_build_deploy_analyze -Dsonar.organization=sonarsource
