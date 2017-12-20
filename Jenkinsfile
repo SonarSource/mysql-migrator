@@ -35,15 +35,17 @@ stage('build'){
                 stage('Maven') {
                   dir('it') {
                     echo "building ${sqVersion}/${src}/${target}"
-                    // Set version number according to build number
-                    mavenSetBuildVersion()
-                    // Get specific version number
-                    buildVersion = mavenGetProjectVersion()
-                    "${tool MAVEN_TOOL}/bin/mvn -f it/pom.xml verify " +
-                            "-Dsonar.dbCopyVersion=${buildVersion} " +
-                            "-Dsonar.runtimeVersion=${sqVersion} " +
-                            "-Dorchestrator.configUrl.source=http://infra.internal.sonarsource.com/jenkins/orch-${dbSrc}.properties " +
-                            "-Dorchestrator.configUrl.destination=http://infra.internal.sonarsource.com/jenkins/orch-${dbTarget}.properties"
+                    withMaven(maven: MAVEN_TOOL) {
+                      // Set version number according to build number
+                      mavenSetBuildVersion()
+                      // Get specific version number
+                      buildVersion = mavenGetProjectVersion()
+                      sh "mvn -f it/pom.xml verify " +
+                              "-Dsonar.dbCopyVersion=${buildVersion} " +
+                              "-Dsonar.runtimeVersion=${sqVersion} " +
+                              "-Dorchestrator.configUrl.source=http://infra.internal.sonarsource.com/jenkins/orch-${dbSrc}.properties " +
+                              "-Dorchestrator.configUrl.destination=http://infra.internal.sonarsource.com/jenkins/orch-${dbTarget}.properties"
+                    }
                   }
                 }
               }
