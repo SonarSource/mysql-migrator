@@ -4,8 +4,7 @@
 
 def MAVEN_TOOL='Maven 3.3.x'
 
-// TODO Un-restrict DB engines
-def dbs = ["postgresql93", "mysql56"] // , "mssql2014", "mssql2016", "oracle11g", "oracle12c"]
+def dbs = ["postgresql93", "mysql56", "mssql2014", "mssql2016", "oracle11g", "oracle12c"]
 // TODO Un-restrict SQ versions
 def sqVersions = ["LTS"] // , "DEV"]
 
