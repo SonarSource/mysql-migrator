@@ -6,7 +6,6 @@
 package com.sonar.dbcopy.its;
 
 import com.sonar.orchestrator.Orchestrator;
-import com.sonar.orchestrator.config.Configuration;
 import org.apache.commons.lang.StringUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -30,20 +29,12 @@ public class DbCopyIntegrationTest {
 
     dbCopyVersion = getSystemPropertyOrFail(DB_COPY_VERSION_PROPERTY);
 
-    sourceOrchestrator = Orchestrator.builder(
-      Configuration.builder()
-        .addSystemProperties()
-        .setProperty("orchestrator.configUrl", getSystemPropertyOrFail(ORCHESTRATOR_PROPERTIES_SOURCE))
-        .addEnvVariables()
-        .build()
-    ).build();
-    destinationOrchestrator = Orchestrator.builder(
-      Configuration.builder()
-        .addSystemProperties()
-        .setProperty("orchestrator.configUrl", getSystemPropertyOrFail(ORCHESTRATOR_PROPERTIES_DESTINATION))
-        .addEnvVariables()
-        .build()
-    ).build();
+    sourceOrchestrator = Orchestrator.builderEnv()
+        .setOrchestratorProperty("orchestrator.configUrl", getSystemPropertyOrFail(ORCHESTRATOR_PROPERTIES_SOURCE))
+        .build();
+    destinationOrchestrator = Orchestrator.builderEnv()
+        .setOrchestratorProperty("orchestrator.configUrl", getSystemPropertyOrFail(ORCHESTRATOR_PROPERTIES_DESTINATION))
+        .build();
   }
 
   @After
@@ -84,15 +75,11 @@ public class DbCopyIntegrationTest {
     assertThat(dbCopyExecutionResult).isZero();
 
     // Re-start destination SQ
-    destinationOrchestrator = Orchestrator.builder(
-      Configuration.builder()
-        .addSystemProperties()
-        .setProperty("orchestrator.configUrl", System.getProperty(ORCHESTRATOR_PROPERTIES_DESTINATION))
+    destinationOrchestrator = Orchestrator.builderEnv()
+        .setOrchestratorProperty("orchestrator.configUrl", System.getProperty(ORCHESTRATOR_PROPERTIES_DESTINATION))
         // Prevent DB reset
-        .setProperty("orchestrator.keepDatabase", "true")
-        .addEnvVariables()
-        .build()
-      ).build();
+        .setOrchestratorProperty("orchestrator.keepDatabase", "true")
+        .build();
     destinationOrchestrator.start();
     // TODO Check data has been copied
     // destinationOrchestrator.getServer().newHttpCall("").execute();
