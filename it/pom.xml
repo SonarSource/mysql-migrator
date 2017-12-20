@@ -128,7 +128,7 @@
                       <artifactId>sonar-db-copy</artifactId>
                       <version>${project.version}</version>
                       <type>jar</type>
-                      <qualifier>jar-with-dependencies</qualifier>
+                      <classifier>jar-with-dependencies</classifier>
                       <overWrite>true</overWrite>
                     </artifactItem>
                   </artifactItems>
