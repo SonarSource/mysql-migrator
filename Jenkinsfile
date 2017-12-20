@@ -60,7 +60,6 @@ stage('build'){
       parallel tasks
       sendAllNotificationQaResult()
     } catch (ignored) {
-      currentBuild.currentResult='FAILURE'
       sendAllNotificationQaResult()
     }
   }
