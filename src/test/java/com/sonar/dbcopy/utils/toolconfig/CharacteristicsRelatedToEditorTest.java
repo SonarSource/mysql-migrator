@@ -29,7 +29,6 @@ public class CharacteristicsRelatedToEditorTest {
     Utils utils = new Utils();
     connection = utils.makeFilledH2("CharacteristicsRelatedToEditorTestDB", false);
     metaData = connection.getMetaData();
-    chRelToEd = new CharacteristicsRelatedToEditor();
   }
 
   @After
@@ -40,18 +39,19 @@ public class CharacteristicsRelatedToEditorTest {
 
   @Test
   public void testMakeDropSequenceRequest() throws SQLException {
-    assertEquals("DROP SEQUENCE FOO_SEQ", chRelToEd.makeDropSequenceRequest("Foo"));
+    assertEquals("DROP SEQUENCE FOO_SEQ"
+        , CharacteristicsRelatedToEditor.makeDropSequenceRequest("Foo"));
   }
 
   @Test
   public void testGetSchema() throws SQLException {
-    assertEquals("PUBLIC", chRelToEd.getSchema(metaData));
+    assertEquals("PUBLIC", CharacteristicsRelatedToEditor.getSchema(metaData));
   }
 
 
   @Test
   public void testGiveTableNameRelatedToVendor() throws SQLException {
-    assertEquals("TABLE", chRelToEd.transfromCaseOfTableName(metaData, "table"));
+    assertEquals("TABLE", CharacteristicsRelatedToEditor.transfromCaseOfTableName(metaData, "table"));
   }
 
   @Test
@@ -60,7 +60,7 @@ public class CharacteristicsRelatedToEditorTest {
     assertEquals("oracle.jdbc.OracleDriver", CharacteristicsRelatedToEditor.giveDriverWithUrlFromUser("jdbc:or"));
     assertEquals("org.h2.Driver",         CharacteristicsRelatedToEditor.giveDriverWithUrlFromUser("jdbc:h2"));
     assertEquals("org.postgresql.Driver", CharacteristicsRelatedToEditor.giveDriverWithUrlFromUser("jdbc:po"));
-    assertEquals("net.sourceforge.jtds.jdbc.Driver", CharacteristicsRelatedToEditor.giveDriverWithUrlFromUser("jdbc:jt"));
+    assertEquals("com.microsoft.sqlserver.jdbc.SQLServerDriver", CharacteristicsRelatedToEditor.giveDriverWithUrlFromUser("jdbc:sq"));
 
     try {
       CharacteristicsRelatedToEditor.giveDriverWithUrlFromUser("wrongUrl");

@@ -14,9 +14,11 @@ import java.util.Locale;
 
 public class CharacteristicsRelatedToEditor {
 
-  // TODO this class has no member, all its methods can be moved to static
+  private CharacteristicsRelatedToEditor() {
+    // no op
+  }
 
-  public String getSchema(DatabaseMetaData metaData) throws SQLException {
+  public static String getSchema(DatabaseMetaData metaData) throws SQLException {
     // USED FOR metadata.getTables or getColumns
     String schema;
     if (isPostgresql(metaData)) {
@@ -26,8 +28,8 @@ public class CharacteristicsRelatedToEditor {
       // UPPERCASE USER NAME WITH ORACLE , AND
       schema = metaData.getUserName().toUpperCase(Locale.ENGLISH);
     } else if (isSqlServer(metaData)) {
-      // lowercase "dbo" FOR mssql
-      schema = "dbo";
+      // use user login as a schema
+      schema = metaData.getUserName();
     } else if (isH2(metaData)) {
       // UPPERCASE "PUBLIC" FOR H2
       schema = "PUBLIC";
@@ -37,7 +39,7 @@ public class CharacteristicsRelatedToEditor {
     return schema;
   }
 
-  public String transfromCaseOfTableName(DatabaseMetaData metaData, String tableNameToChangeCase) throws SQLException {
+  public static String transfromCaseOfTableName(DatabaseMetaData metaData, String tableNameToChangeCase) throws SQLException {
     // USED FOR metadata.getColumns WHICH NEED UPPERCASE WITH ORACLE
     String tableNameToReturn;
     if (isOracle(metaData) || isH2(metaData)) {
@@ -48,11 +50,11 @@ public class CharacteristicsRelatedToEditor {
     return tableNameToReturn;
   }
 
-  public String makeDropSequenceRequest(String tableName) {
+  public static String makeDropSequenceRequest(String tableName) {
     return "DROP SEQUENCE " + tableName.toUpperCase(Locale.ENGLISH) + "_SEQ";
   }
 
-  public String makeAlterSequencesRequest(DatabaseMetaData metadata, String tableName, long idMaxPlusOne) throws SQLException {
+  public static String makeAlterSequencesRequest(DatabaseMetaData metadata, String tableName, long idMaxPlusOne) throws SQLException {
     String sqlRequest;
     if (isSqlServer(metadata)) {
       sqlRequest = "dbcc checkident(" + tableName + ",reseed," + idMaxPlusOne + ");";
@@ -70,7 +72,7 @@ public class CharacteristicsRelatedToEditor {
     return sqlRequest;
   }
 
-  public long getIdMaxPlusOne(Connection connectionDest, String tableName) {
+  public static long getIdMaxPlusOne(Connection connectionDest, String tableName) {
     Closer closer = new Closer("getIdMax");
     Statement statement = null;
     ResultSet resultSet = null;
@@ -101,24 +103,25 @@ public class CharacteristicsRelatedToEditor {
       driverAsString = "org.h2.Driver";
     } else if ("jdbc:po".equals(urlBeginning)) {
       driverAsString = "org.postgresql.Driver";
-    } else if ("jdbc:jt".equals(urlBeginning)) {
-      driverAsString = "net.sourceforge.jtds.jdbc.Driver";
+    } else if ("jdbc:sq".equals(urlBeginning)) {
+      // reference: https://docs.microsoft.com/en-us/sql/connect/jdbc/using-the-jdbc-driver
+      driverAsString = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
     } else {
       throw new MessageException("Url " + url + " does not correspond to a correct format to get the good jdbc driver.");
     }
     return driverAsString;
   }
 
-  public boolean isSqlServer(DatabaseMetaData metaData) throws SQLException {
-    boolean isSqlServer = false;
-    String vendorUrl = metaData.getURL().substring(0, 7);
-    if ("jdbc:jt".equals(vendorUrl)) {
-      isSqlServer = true;
+  public static boolean isSqlServer(DatabaseMetaData metaData) throws SQLException {
+    String vendorUrl = metaData.getURL();
+    if (vendorUrl == null) {
+      throw new IllegalStateException("can't get database url");
+    } else {
+      return vendorUrl.startsWith("jdbc:sqlserver");
     }
-    return isSqlServer;
   }
 
-  public boolean isOracle(DatabaseMetaData metaData) throws SQLException {
+  public static boolean isOracle(DatabaseMetaData metaData) throws SQLException {
     boolean isOracle = false;
     String vendorUrl = metaData.getURL().substring(0, 7);
     if ("jdbc:or".equals(vendorUrl)) {
@@ -127,7 +130,7 @@ public class CharacteristicsRelatedToEditor {
     return isOracle;
   }
 
-  public boolean isPostgresql(DatabaseMetaData metaData) throws SQLException {
+  public static boolean isPostgresql(DatabaseMetaData metaData) throws SQLException {
     boolean isPostgresql = false;
     String vendorUrl = metaData.getURL().substring(0, 7);
     if ("jdbc:po".equals(vendorUrl)) {
@@ -136,7 +139,7 @@ public class CharacteristicsRelatedToEditor {
     return isPostgresql;
   }
 
-  public boolean isMySql(DatabaseMetaData metaData) throws SQLException {
+  public static boolean isMySql(DatabaseMetaData metaData) throws SQLException {
     boolean isMySql = false;
     String vendorUrl = metaData.getURL().substring(0, 7);
     if ("jdbc:my".equals(vendorUrl)) {
@@ -145,7 +148,7 @@ public class CharacteristicsRelatedToEditor {
     return isMySql;
   }
 
-  public boolean isH2(DatabaseMetaData metaData) throws SQLException {
+  public static boolean isH2(DatabaseMetaData metaData) throws SQLException {
     boolean isH2 = false;
     String vendorUrl = metaData.getURL().substring(0, 7);
     if ("jdbc:h2".equals(vendorUrl)) {

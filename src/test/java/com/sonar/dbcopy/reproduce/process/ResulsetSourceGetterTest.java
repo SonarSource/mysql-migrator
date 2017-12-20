@@ -54,11 +54,11 @@ public class ResulsetSourceGetterTest {
     Assert.assertEquals(2, resultSet.getInt(1));
     resultSet.next();
     try {
-      // BECARFULL TO utils.makeFilledH2()  : THERE MUST BE ONLY 2 TABLES TO PASS THE TEST
+      // BE CAREFUL TO utils.makeFilledH2()  : THERE MUST BE ONLY 2 TABLES TO PASS THE TEST
       resultSet.getInt(1);
       fail();
     } catch (Exception e) {
-      assertThat(e).isInstanceOf(SQLException.class).hasMessage("No data is available [2000-172]");
+      assertThat(e).isInstanceOf(SQLException.class).hasMessage("No data is available [2000-176]");
     }
   }
 }

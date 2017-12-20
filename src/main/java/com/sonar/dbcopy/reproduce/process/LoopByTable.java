@@ -30,7 +30,6 @@ public class LoopByTable {
   private ConnecterData cdDest;
   private Database databaseSource;
   private Database databaseDest;
-  private CharacteristicsRelatedToEditor chRelToEditor;
   private int commitSize;
 
   public LoopByTable(ConnecterData cdSource, ConnecterData cdDest, Database databaseSource, Database databaseDest,
@@ -39,7 +38,6 @@ public class LoopByTable {
     this.cdDest = cdDest;
     this.databaseSource = databaseSource;
     this.databaseDest = databaseDest;
-    this.chRelToEditor = new CharacteristicsRelatedToEditor();
     this.commitSize = commitSize;
   }
 
@@ -59,7 +57,7 @@ public class LoopByTable {
         connectionSource = new Connecter().doConnection(cdSource);
         connectionDestination = new Connecter().doConnection(cdDest);
         DatabaseMetaData metaDest = connectionDestination.getMetaData();
-        boolean destinationIsSqlServer = chRelToEditor.isSqlServer(metaDest);
+        boolean destinationIsSqlServer = CharacteristicsRelatedToEditor.isSqlServer(metaDest);
 
         connectionSource.setAutoCommit(false);
         connectionDestination.setAutoCommit(false);

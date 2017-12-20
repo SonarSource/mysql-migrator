@@ -31,7 +31,6 @@ public class MetadataGetter {
   private ConnecterData cd;
   private Closer closer;
   private DatabaseMetaData metaData;
-  private CharacteristicsRelatedToEditor chRelToEd;
 
   public MetadataGetter(ConnecterData cd, Database db) {
     this.cd = cd;
@@ -50,8 +49,7 @@ public class MetadataGetter {
       /* WARNING !! TO GET TABLES FROM METADATA IT DEPENDS ON THE VALUE OF SCHEMA EDITOR */
       metaData = connectionSource.getMetaData();
 
-      chRelToEd = new CharacteristicsRelatedToEditor();
-      String schema = chRelToEd.getSchema(metaData);
+      String schema = CharacteristicsRelatedToEditor.getSchema(metaData);
 
       LOGGER.info("Catalog: {}", connectionSource.getCatalog());
       LOGGER.info("Schema: {}", schema);
@@ -121,10 +119,11 @@ public class MetadataGetter {
     try {
       for (indexTable = 0; indexTable < database.getNbTables(); indexTable++) {
         indexColumn = 0;
-        String tableNameWithAdaptedCase = chRelToEd.transfromCaseOfTableName(metaData, database.getTableName(indexTable));
+        String tableNameWithAdaptedCase = CharacteristicsRelatedToEditor.transfromCaseOfTableName(metaData
+            , database.getTableName(indexTable));
 
         // ORACLE NEEDS UPERCASE TO EXECUTE getColumns()
-        String schema = chRelToEd.getSchema(metaData);
+        String schema = CharacteristicsRelatedToEditor.getSchema(metaData);
         resultSetCol = metaData.getColumns(null, schema, tableNameWithAdaptedCase, "%");
         while (resultSetCol.next()) {
           String columnNameToInsert = resultSetCol.getString("COLUMN_NAME").toLowerCase(Locale.ENGLISH);

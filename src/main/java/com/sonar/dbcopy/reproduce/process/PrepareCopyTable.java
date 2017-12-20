@@ -46,8 +46,7 @@ public class PrepareCopyTable {
       ResulsetSourceGetter resulsetSourceGetter = new ResulsetSourceGetter(tableSource.getName());
       statementSource = resulsetSourceGetter.createAndReturnStatementSource(connectionSource);
       // SET FETCH SIZE OF MYSQL SOURCE STATEMENT
-      CharacteristicsRelatedToEditor chRTEd = new CharacteristicsRelatedToEditor();
-      if (chRTEd.isMySql(connectionSource.getMetaData())) {
+      if (CharacteristicsRelatedToEditor.isMySql(connectionSource.getMetaData())) {
         statementSource.setFetchSize(Integer.MIN_VALUE);
       } else {
         statementSource.setFetchSize(10);

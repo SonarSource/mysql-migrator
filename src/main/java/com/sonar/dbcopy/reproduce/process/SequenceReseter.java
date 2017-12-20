@@ -34,28 +34,27 @@ public class SequenceReseter {
     Connection connectionDest = null;
     Statement statementDest = null;
     ResultSet resultSetDest = null;
-    CharacteristicsRelatedToEditor relToEditor = new CharacteristicsRelatedToEditor();
     Connecter connecter = new Connecter();
 
     try {
       connectionDest = connecter.doConnection(cdDest);
       DatabaseMetaData metaDest = connectionDest.getMetaData();
 
-      String tableNameWithGoodCase = relToEditor.transfromCaseOfTableName(metaDest, tableName);
-      boolean destinationIsOracle = relToEditor.isOracle(metaDest);
+      String tableNameWithGoodCase = CharacteristicsRelatedToEditor.transfromCaseOfTableName(metaDest, tableName);
+      boolean destinationIsOracle = CharacteristicsRelatedToEditor.isOracle(metaDest);
 
       resultSetDest = metaDest.getPrimaryKeys(null, null, tableNameWithGoodCase);
 
       // IF REULTSET IS NOT "beforeFirst" THAT MEANS THERE IS A PRIMARY KEY
       if (resultSetDest.isBeforeFirst() && hasIdColumn(resultSetDest)) {
         closer.closeResultSet(resultSetDest);
-        long idMaxPlusOne = relToEditor.getIdMaxPlusOne(connectionDest, tableName);
-        sqlRequestToReset = relToEditor.makeAlterSequencesRequest(metaDest, tableName, idMaxPlusOne);
+        long idMaxPlusOne = CharacteristicsRelatedToEditor.getIdMaxPlusOne(connectionDest, tableName);
+        sqlRequestToReset = CharacteristicsRelatedToEditor.makeAlterSequencesRequest(metaDest, tableName, idMaxPlusOne);
 
         // THEN RESET SEQUENCE REQUEST IS EXECUTED
         statementDest = connectionDest.createStatement();
         if (destinationIsOracle) {
-          statementDest.execute(relToEditor.makeDropSequenceRequest(tableName));
+          statementDest.execute(CharacteristicsRelatedToEditor.makeDropSequenceRequest(tableName));
         }
         statementDest.execute(sqlRequestToReset);
       }

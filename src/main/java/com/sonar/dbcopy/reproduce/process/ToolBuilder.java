@@ -29,23 +29,21 @@ public class ToolBuilder {
 
   private Connection connectionSource;
   private Connection connectionDestination;
-  private CharacteristicsRelatedToEditor chRelToEd;
 
   public ToolBuilder(Connection connectionSource, Connection connectionDestination) {
     this.connectionSource = connectionSource;
     this.connectionDestination = connectionDestination;
-    chRelToEd = new CharacteristicsRelatedToEditor();
   }
 
   public ReaderTool buildReaderTool() {
     ReaderTool readerTool = null;
     try {
       DatabaseMetaData metaSource = connectionSource.getMetaData();
-      boolean sourceIsOracle = chRelToEd.isOracle(metaSource);
-      boolean sourceIsSqlServer = chRelToEd.isSqlServer(metaSource);
-      boolean sourceIsPostgresql = chRelToEd.isPostgresql(metaSource);
-      boolean sourecIsMySql = chRelToEd.isMySql(metaSource);
-      boolean sourceIsH2 = chRelToEd.isH2(metaSource);
+      boolean sourceIsOracle = CharacteristicsRelatedToEditor.isOracle(metaSource);
+      boolean sourceIsSqlServer = CharacteristicsRelatedToEditor.isSqlServer(metaSource);
+      boolean sourceIsPostgresql = CharacteristicsRelatedToEditor.isPostgresql(metaSource);
+      boolean sourecIsMySql = CharacteristicsRelatedToEditor.isMySql(metaSource);
+      boolean sourceIsH2 = CharacteristicsRelatedToEditor.isH2(metaSource);
 
       if (sourceIsOracle) {
         readerTool = new OracleReader();
@@ -68,11 +66,11 @@ public class ToolBuilder {
     WriterTool writerTool = null;
     try {
       DatabaseMetaData metaDest = connectionDestination.getMetaData();
-      boolean destinationIsPostgresql = chRelToEd.isPostgresql(metaDest);
-      boolean destinationIsOracle = chRelToEd.isOracle(metaDest);
-      boolean destinationIsSqlServer = chRelToEd.isSqlServer(metaDest);
-      boolean destinationIsMySql = chRelToEd.isMySql(metaDest);
-      boolean destinationIsH2 = chRelToEd.isH2(metaDest);
+      boolean destinationIsPostgresql = CharacteristicsRelatedToEditor.isPostgresql(metaDest);
+      boolean destinationIsOracle = CharacteristicsRelatedToEditor.isOracle(metaDest);
+      boolean destinationIsSqlServer = CharacteristicsRelatedToEditor.isSqlServer(metaDest);
+      boolean destinationIsMySql = CharacteristicsRelatedToEditor.isMySql(metaDest);
+      boolean destinationIsH2 = CharacteristicsRelatedToEditor.isH2(metaDest);
 
       if (destinationIsOracle) {
         writerTool = new OracleWriter(destinationStatement);
