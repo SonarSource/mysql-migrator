@@ -127,7 +127,7 @@
                       <groupId>${project.groupId}</groupId>
                       <artifactId>sonar-db-copy</artifactId>
                       <version>${project.version}</version>
-                      <type>jar-with-dependencies</type>
+                      <type>jar-with-dependencies-jar</type>
                       <overWrite>true</overWrite>
                     </artifactItem>
                   </artifactItems>
