@@ -11,10 +11,13 @@ def sqVersions = ["LTS"] // , "DEV"]
 
 def tasks = [:]
 
-stage('build'){
+stage('Notify') {
+  sendAllNotificationQaStarted()
+}
+
+stage('QA'){
   node('linux'){
     def scmVars = checkout scm
-    sendAllNotificationQaStarted()
 
     try{
       for(sqVersion in sqVersions) {
@@ -58,9 +61,16 @@ stage('build'){
         }
       }
       parallel tasks
-      sendAllNotificationQaResult()
-    } catch (ignored) {
+    } finally {
       sendAllNotificationQaResult()
     }
+  }
+}
+
+stage('Promote') {
+  try {
+    repoxPromoteBuild()
+  } finally {
+    sendAllNotificationPromote()
   }
 }
