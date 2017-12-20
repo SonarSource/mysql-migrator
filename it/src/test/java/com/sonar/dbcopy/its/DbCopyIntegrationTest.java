@@ -11,6 +11,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fest.assertions.Fail.fail;
 
@@ -59,7 +62,7 @@ public class DbCopyIntegrationTest {
     destinationOrchestrator.stop();
 
     // Execute copy
-    int dbCopyExecutionResult = new ProcessBuilder().command(
+    Process dbCopyProcess = new ProcessBuilder().command(
       "java",
       "-jar", String.format("../target/sonar-db-copy-%s-jar-with-dependencies.jar", dbCopyVersion),
       "-urlSrc", sourceOrchestrator.getConfiguration().getString("sonar.jdbc.url"),
@@ -68,11 +71,18 @@ public class DbCopyIntegrationTest {
       "-urlDest", destinationOrchestrator.getConfiguration().getString("sonar.jdbc.url"),
       "-userDest", destinationOrchestrator.getConfiguration().getString("sonar.jdbc.username"),
       "-pwdDest", destinationOrchestrator.getConfiguration().getString("sonar.jdbc.password"))
-      .inheritIO()
-      .start()
-      .waitFor();
+      .start();
 
-    assertThat(dbCopyExecutionResult).isZero();
+    BufferedReader stdOut = new BufferedReader(new InputStreamReader(tr.getInputStream()));
+    StringBuilder output = new StringBuilder();
+    String nextLine;
+    do {
+      nextLine = stdOut.readLine();
+      output.append(nextLine);
+    } while(nextLine !=null);
+
+    assertThat(dbCopyProcess.exitValue()).isZero();
+    assertThat(output.toString()).contains("THE COPY HAS FINISHED SUCCESSFULLY");
 
     // Re-start destination SQ
     destinationOrchestrator = Orchestrator.builderEnv()
