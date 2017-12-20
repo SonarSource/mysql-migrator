@@ -57,7 +57,6 @@ stage('build'){
           }
         }
       }
-      tasks["failFast"] = true
       parallel tasks
       sendAllNotificationQaResult()
     } catch (ignored) {
