@@ -40,7 +40,7 @@ stage('build'){
                       mavenSetBuildVersion()
                       // Get specific version number
                       buildVersion = mavenGetProjectVersion()
-                      sh "mvn -f it/pom.xml verify " +
+                      sh "mvn verify " +
                               "-Dsonar.dbCopyVersion=${buildVersion} " +
                               "-Dsonar.runtimeVersion=${sqVersion} " +
                               "-Dorchestrator.configUrl.source=http://infra.internal.sonarsource.com/jenkins/orch-${dbSrc}.properties " +
