@@ -12,7 +12,9 @@ def sqVersions = ["LTS"] // , "DEV"]
 def tasks = [:]
 
 stage('Notify') {
-  sendAllNotificationQaStarted()
+  node('linux') {
+    sendAllNotificationQaStarted()
+  }
 }
 
 stage('QA'){
@@ -68,9 +70,11 @@ stage('QA'){
 }
 
 stage('Promote') {
-  try {
-    repoxPromoteBuild()
-  } finally {
-    sendAllNotificationPromote()
+  node('linux') {
+    try {
+      repoxPromoteBuild()
+    } finally {
+      sendAllNotificationPromote()
+    }
   }
 }
