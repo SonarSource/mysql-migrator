@@ -44,8 +44,8 @@ stage('build'){
                         sh "mvn " +
                           "-Dsonar.dbCopyVersion=${buildVersion} " +
                           "-Dsonar.runtimeVersion=${sqVersion} " +
-                          "-Dorchestrator.configUrl.source=http://infra.internal.sonarsource.com/jenkins/orch-${dbSrc}.properties " +
-                          "-Dorchestrator.configUrl.destination=http://infra.internal.sonarsource.com/jenkins/orch-${dbTarget}.properties " +
+                          "-Dorchestrator.configUrl.source=http://infra.internal.sonarsource.com/jenkins/orch-${src}.properties " +
+                          "-Dorchestrator.configUrl.destination=http://infra.internal.sonarsource.com/jenkins/orch-${target}.properties " +
                           "-Dmaven.test.redirectTestOutputToFile=false " +
                           "clean verify -e -V "
                       }
