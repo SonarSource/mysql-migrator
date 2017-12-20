@@ -131,7 +131,7 @@
                       <overWrite>true</overWrite>
                     </artifactItem>
                   </artifactItems>
-                  <outputDirectory>../sonar-db-copy/target</outputDirectory>
+                  <outputDirectory>../target</outputDirectory>
                   <overWriteReleases>true</overWriteReleases>
                   <overWriteSnapshots>true</overWriteSnapshots>
                 </configuration>
