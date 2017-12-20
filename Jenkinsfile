@@ -28,9 +28,6 @@ stage('build'){
             def target = dbTarget
             echo "building task ${sqVersion}/${src}/${target}"
             tasks["${sqVersion}/${src}/${target}"] = {
-              environment {
-                SONARSOURCE_QA='true'
-              }
               node('linux') {
                 stage('checkout') {
                   checkout scm
@@ -43,13 +40,15 @@ stage('build'){
                       mavenSetBuildVersion()
                       // Get specific version number
                       buildVersion = mavenGetProjectVersion()
-                      sh "mvn " +
-                        "-Dsonar.dbCopyVersion=${buildVersion} " +
-                        "-Dsonar.runtimeVersion=${sqVersion} " +
-                        "-Dorchestrator.configUrl.source=http://infra.internal.sonarsource.com/jenkins/orch-${dbSrc}.properties " +
-                        "-Dorchestrator.configUrl.destination=http://infra.internal.sonarsource.com/jenkins/orch-${dbTarget}.properties " +
-                        "-Dmaven.test.redirectTestOutputToFile=false " +
-                        "clean verify -e -V "
+                      withEnv(['SONARSOURCE_QA=true']) {
+                        sh "mvn " +
+                          "-Dsonar.dbCopyVersion=${buildVersion} " +
+                          "-Dsonar.runtimeVersion=${sqVersion} " +
+                          "-Dorchestrator.configUrl.source=http://infra.internal.sonarsource.com/jenkins/orch-${dbSrc}.properties " +
+                          "-Dorchestrator.configUrl.destination=http://infra.internal.sonarsource.com/jenkins/orch-${dbTarget}.properties " +
+                          "-Dmaven.test.redirectTestOutputToFile=false " +
+                          "clean verify -e -V "
+                      }
                     }
                   }
                 }
@@ -58,7 +57,7 @@ stage('build'){
           }
         }
       }
-      tasks["failFast"]= true
+      tasks["failFast"] = true
       parallel tasks
       sendAllNotificationQaResult()
     } catch (ignored) {
