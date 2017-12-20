@@ -34,12 +34,14 @@ public class DbCopyIntegrationTest {
       Configuration.builder()
         .addSystemProperties()
         .setProperty("orchestrator.configUrl", getSystemPropertyOrFail(ORCHESTRATOR_PROPERTIES_SOURCE))
+        .addEnvVariables()
         .build()
     ).build();
     destinationOrchestrator = Orchestrator.builder(
       Configuration.builder()
         .addSystemProperties()
         .setProperty("orchestrator.configUrl", getSystemPropertyOrFail(ORCHESTRATOR_PROPERTIES_DESTINATION))
+        .addEnvVariables()
         .build()
     ).build();
   }
@@ -88,6 +90,7 @@ public class DbCopyIntegrationTest {
         .setProperty("orchestrator.configUrl", System.getProperty(ORCHESTRATOR_PROPERTIES_DESTINATION))
         // Prevent DB reset
         .setProperty("orchestrator.keepDatabase", "true")
+        .addEnvVariables()
         .build()
       ).build();
     destinationOrchestrator.start();

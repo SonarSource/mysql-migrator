@@ -40,11 +40,13 @@ stage('build'){
                       mavenSetBuildVersion()
                       // Get specific version number
                       buildVersion = mavenGetProjectVersion()
-                      sh "mvn verify " +
-                              "-Dsonar.dbCopyVersion=${buildVersion} " +
-                              "-Dsonar.runtimeVersion=${sqVersion} " +
-                              "-Dorchestrator.configUrl.source=http://infra.internal.sonarsource.com/jenkins/orch-${dbSrc}.properties " +
-                              "-Dorchestrator.configUrl.destination=http://infra.internal.sonarsource.com/jenkins/orch-${dbTarget}.properties"
+                      sh "mvn " +
+                        "-Dsonar.dbCopyVersion=${buildVersion} " +
+                        "-Dsonar.runtimeVersion=${sqVersion} " +
+                        "-Dorchestrator.configUrl.source=http://infra.internal.sonarsource.com/jenkins/orch-${dbSrc}.properties " +
+                        "-Dorchestrator.configUrl.destination=http://infra.internal.sonarsource.com/jenkins/orch-${dbTarget}.properties " +
+                        "-Dmaven.test.redirectTestOutputToFile=false " +
+                        "clean verify -e -V "
                     }
                   }
                 }
