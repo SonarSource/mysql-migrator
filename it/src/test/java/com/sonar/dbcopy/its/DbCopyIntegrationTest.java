@@ -6,6 +6,7 @@
 package com.sonar.dbcopy.its;
 
 import com.sonar.orchestrator.Orchestrator;
+import com.sonar.orchestrator.config.Configuration;
 import org.apache.commons.lang.StringUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -32,12 +33,20 @@ public class DbCopyIntegrationTest {
 
     dbCopyVersion = getSystemPropertyOrFail(DB_COPY_VERSION_PROPERTY);
 
-    sourceOrchestrator = Orchestrator.builderEnv()
-        .setOrchestratorProperty("orchestrator.configUrl", getSystemPropertyOrFail(ORCHESTRATOR_PROPERTIES_SOURCE))
-        .build();
-    destinationOrchestrator = Orchestrator.builderEnv()
-        .setOrchestratorProperty("orchestrator.configUrl", getSystemPropertyOrFail(ORCHESTRATOR_PROPERTIES_DESTINATION))
-        .build();
+    sourceOrchestrator = Orchestrator.builder(
+      Configuration.builder()
+        .addSystemProperties()
+        .setProperty("orchestrator.configUrl", getSystemPropertyOrFail(ORCHESTRATOR_PROPERTIES_SOURCE))
+        .addEnvVariables()
+        .build()
+    ).build();
+    destinationOrchestrator = Orchestrator.builder(
+      Configuration.builder()
+        .addSystemProperties()
+        .setProperty("orchestrator.configUrl", getSystemPropertyOrFail(ORCHESTRATOR_PROPERTIES_DESTINATION))
+        .addEnvVariables()
+        .build()
+    ).build();
   }
 
   @After
@@ -71,25 +80,26 @@ public class DbCopyIntegrationTest {
       "-urlDest", destinationOrchestrator.getConfiguration().getString("sonar.jdbc.url"),
       "-userDest", destinationOrchestrator.getConfiguration().getString("sonar.jdbc.username"),
       "-pwdDest", destinationOrchestrator.getConfiguration().getString("sonar.jdbc.password"))
+      .inheritIO()
       .start();
 
-    BufferedReader stdOut = new BufferedReader(new InputStreamReader(tr.getInputStream()));
-    StringBuilder output = new StringBuilder();
-    String nextLine;
+    BufferedReader stdOut = new BufferedReader(new InputStreamReader(dbCopyProcess.getInputStream()));
     do {
-      nextLine = stdOut.readLine();
-      output.append(nextLine);
-    } while(nextLine !=null);
+      stdOut.readLine();
+    } while(dbCopyProcess.isAlive());
 
-    assertThat(dbCopyProcess.exitValue()).isZero();
-    assertThat(output.toString()).contains("THE COPY HAS FINISHED SUCCESSFULLY");
+    assertThat(dbCopyProcess.waitFor()).isZero();
 
     // Re-start destination SQ
-    destinationOrchestrator = Orchestrator.builderEnv()
-        .setOrchestratorProperty("orchestrator.configUrl", System.getProperty(ORCHESTRATOR_PROPERTIES_DESTINATION))
+    destinationOrchestrator = Orchestrator.builder(
+      Configuration.builder()
+        .addSystemProperties()
+        .setProperty("orchestrator.configUrl", getSystemPropertyOrFail(ORCHESTRATOR_PROPERTIES_DESTINATION))
         // Prevent DB reset
-        .setOrchestratorProperty("orchestrator.keepDatabase", "true")
-        .build();
+        .setProperty("orchestrator.keepDatabase", "true")
+        .addEnvVariables()
+        .build()
+    ).build();
     destinationOrchestrator.start();
     // TODO Check data has been copied
     // destinationOrchestrator.getServer().newHttpCall("").execute();
