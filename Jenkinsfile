@@ -49,6 +49,7 @@ stage('QA'){
                         sh "mvn " +
                           "-Dsonar.dbCopyVersion=${buildVersion} " +
                           "-Dsonar.runtimeVersion=${sqVersion} " +
+                          "-DjavaVersion=LATEST_RELEASE " +
                           "-Dorchestrator.configUrl.source=http://infra.internal.sonarsource.com/jenkins/orch-${src}.properties " +
                           "-Dorchestrator.configUrl.destination=http://infra.internal.sonarsource.com/jenkins/orch-${target}.properties " +
                           "-Dmaven.test.redirectTestOutputToFile=false " +
