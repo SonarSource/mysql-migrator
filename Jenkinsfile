@@ -19,8 +19,8 @@ def ignoredTuples = [
         ["mssql2014"   , "mssql2016"],
         ["mssql2016"   , "mssql2014"]
 ]
-// TODO Un-restrict SQ versions
-def sqVersions = ["LTS"] // , "DEV"]
+
+def sqVersions = ["LTS", "DEV"]
 
 def tasks = [:]
 
