@@ -49,6 +49,7 @@
     <!-- used for deployment to SonarSource Artifactory -->
     <gitRepositoryName>sonar-db-copy</gitRepositoryName>
 
+    <ojdbc6.version>11.2.0.3.0</ojdbc6.version>
     <ojdbc8.version>12.2.0.1.0</ojdbc8.version>
     <mysql-connector-java.version>5.1.42</mysql-connector-java.version>
     <postgresql.version>42.1.1</postgresql.version>
@@ -98,12 +99,6 @@
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
       <version>${mysql-connector-java.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.oracle.jdbc</groupId>
-      <artifactId>ojdbc8</artifactId>
-      <version>${ojdbc8.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -168,6 +163,40 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>with-ojdbc8</id>
+      <activation>
+        <property>
+          <name>withOjdbc</name>
+          <value>8</value>
+        </property>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>com.oracle.jdbc</groupId>
+          <artifactId>ojdbc8</artifactId>
+          <version>${ojdbc8.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>with-ojdbc6</id>
+      <activation>
+        <property>
+          <name>withOjdbc</name>
+          <value>6</value>
+        </property>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>com.oracle</groupId>
+          <artifactId>ojdbc6</artifactId>
+          <version>${ojdbc6.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
     </profile>
   </profiles>
 </project>
