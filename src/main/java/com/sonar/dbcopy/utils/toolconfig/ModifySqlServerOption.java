@@ -13,7 +13,7 @@ import java.sql.SQLException;
 
 public class ModifySqlServerOption {
 
-  public void modifyIdentityInsert(Connection connection, String tableName, String onOroff) {
+  public void modifyIdentityInsert(Connection connection, String tableName, String onOroff) throws SQLException {
     Closer closer = new Closer("ModifySqlServerOption");
     ResultSet resultSet = null;
     Statement statement = null;
@@ -29,8 +29,6 @@ public class ModifySqlServerOption {
         statement.execute(request);
         closer.closeStatement(statement);
       }
-    } catch (SQLException e) {
-      throw new SqlDbCopyException("Problem to SET IDENTITY_INSERT at " + onOroff + " in database Sqlserver for TABLE : " + tableName, e);
     } finally {
       closer.closeResultSet(resultSet);
       closer.closeStatement(statement);

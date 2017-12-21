@@ -31,7 +31,7 @@ public class ModifySqlServerOptionTest {
   }
 
   @Test
-  public void testModifyIdentityInsert() {
+  public void testModifyIdentityInsert() throws Exception {
     modifySqlServerOption.modifyIdentityInsert(connection, "not_a_table", "ON");
   }
 }

@@ -78,9 +78,7 @@ public class LoopByTable {
         } else {
 
           //SQL SERVER DESTINATION OPTION :  PUT IDENTITY_INSERT AT on FOR THE CURRENT TABLE
-          if (destinationIsSqlServer) {
-            modifySqlServerOption.modifyIdentityInsert(connectionDestination, tableSourceName, "ON");
-          }
+          putIdentityInsertOnSqlServerIfNeeded(modifySqlServerOption, connectionDestination, destinationIsSqlServer, tableSourceName, "ON");
 
           // READ AND WRITE
           PrepareCopyTable prepareCopyTable = new PrepareCopyTable(tableSource, tableDest, commitSize);
@@ -91,9 +89,7 @@ public class LoopByTable {
           sequenceReseter.execute();
 
           //SQL SERVER DESTINATION OPTION : PUT IDENTITY_INSERT AT off FOR THE CURRENT TABLE
-          if (destinationIsSqlServer) {
-            modifySqlServerOption.modifyIdentityInsert(connectionDestination, tableSourceName, "OFF");
-          }
+          putIdentityInsertOnSqlServerIfNeeded(modifySqlServerOption, connectionDestination, destinationIsSqlServer, tableSourceName, "OFF");
         }
         // COUNT COLUMNS IN TABLE DESTINATION TO COMPARE IT TO
         if (tableDest != null) {
@@ -118,6 +114,16 @@ public class LoopByTable {
       closer.closeStatement(statementCountDest);
       closer.closeConnection(connectionSource);
       closer.closeConnection(connectionDestination);
+    }
+  }
+
+  private void putIdentityInsertOnSqlServerIfNeeded(ModifySqlServerOption modifySqlServerOption, Connection connectionDestination, boolean destinationIsSqlServer, String tableSourceName, String onOrOff) {
+    if (destinationIsSqlServer) {
+      try {
+        modifySqlServerOption.modifyIdentityInsert(connectionDestination, tableSourceName, onOrOff);
+      } catch (SQLException noIdentityOnTable) {
+        LOGGER.warn("No identity on table, skipping PUT IDENTITY_INSERT");
+      }
     }
   }
 }
