@@ -93,7 +93,10 @@ public class LoopByRow {
           writerTool.writeWhenNull(indexColumn);
         } else if (sourceTable.getType(indexColumn) == Types.TIMESTAMP) {
           writerTool.writeTimestamp(readerTool.readTimestamp(resultSetSource, indexColumn), indexColumn);
-        } else if (sourceTable.getType(indexColumn) == Types.DECIMAL && destTable.getType(indexColumn) == Types.BIT) {
+        } else if (
+          (sourceTable.getType(indexColumn) == Types.DECIMAL
+            || sourceTable.getType(indexColumn) == Types.NUMERIC
+          ) && destTable.getType(indexColumn) == Types.BIT) {
           writerTool.writeBoolean(readerTool.readBoolean(resultSetSource, indexColumn), indexColumn);
         } else if (sourceTable.getType(indexColumn) == Types.BLOB) {
           writerTool.writeBlob(readerTool.readBlob(resultSetSource, indexColumn), indexColumn);
