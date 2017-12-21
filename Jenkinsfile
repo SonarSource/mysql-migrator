@@ -4,7 +4,7 @@
 
 def MAVEN_TOOL='Maven 3.3.x'
 
-def dbs = ["postgresql93", "mysql56", "mssql2014", "mssql2016", "oracle11g", "oracle12c"]
+def dbs = ["postgresql93", "mysql56", "mssql2014", "mssql2016", "oracle12c"]
 def ignoredTuples = [
     //  [ Source       , Destination]
 
@@ -13,14 +13,11 @@ def ignoredTuples = [
         ["mysql56"     , "mysql56"],
         ["mssql2014"   , "mssql2014"],
         ["mssql2016"   , "mssql2016"],
-        ["oracle11g"   , "oracle11g"],
         ["oracle12c"   , "oracle12c"],
 
     //  Not testing DB engine upgrades/downgrades
         ["mssql2014"   , "mssql2016"],
-        ["mssql2016"   , "mssql2014"],
-        ["oracle11g"   , "oracle12c"],
-        ["oracle12c"   , "oracle11g"]
+        ["mssql2016"   , "mssql2014"]
 ]
 // TODO Un-restrict SQ versions
 def sqVersions = ["LTS"] // , "DEV"]
@@ -48,8 +45,7 @@ stage('QA'){
             def src = dbSrc
             def target = dbTarget
             def sqVer = sqVersion
-            def withOjdbc = [src, target].contains("oracle11g") ? "-DwithOjdbc=6 " :
-                    [src, target].contains("oracle12c") ? "-DwithOjdbc=8 " :
+            def withOjdbc = [src, target].contains("oracle12c") ? "-DwithOjdbc=8 " :
                     " "
             echo "building task ${sqVersion}/${src}/${target}"
             tasks["${sqVer}/${src}/${target}"] = {
