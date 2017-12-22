@@ -59,7 +59,7 @@
     <gitRepositoryName>sonar-db-copy</gitRepositoryName>
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
     <!-- enable download from Burgr -->
-    <artifactsToDownload>${project.groupId}:${project.artifactId}:jar-with-dependencies:jar</artifactsToDownload>
+    <artifactsToDownload>${project.groupId}:${project.artifactId}:jar:jar-with-dependencies</artifactsToDownload>
   </properties>
 
   <dependencies>
