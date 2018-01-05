@@ -60,6 +60,8 @@
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
     <!-- enable download from Burgr -->
     <artifactsToDownload>${project.groupId}:${project.artifactId}:jar:jar-with-dependencies</artifactsToDownload>
+    <!-- analyze this project on SonarCloud -->
+    <sonar.organization>sonarsource</sonar.organization>
   </properties>
 
   <dependencies>
