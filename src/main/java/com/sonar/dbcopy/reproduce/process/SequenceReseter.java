@@ -74,9 +74,12 @@ public class SequenceReseter {
 
   private static boolean hasIdColumn(ResultSet resultSetDest) {
     try {
-      resultSetDest.findColumn("id");
-      System.out.println("Found id column");
-      return true;
+      while(resultSetDest.next()) {
+        if ("id".equalsIgnoreCase(resultSetDest.getString("COLUMN_NAME"))) {
+          return true;
+        }
+      }
+      return false;
     } catch(SQLException noSuchColumn) {
       noSuchColumn.printStackTrace(System.err);
       System.out.println("No id column");
