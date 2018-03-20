@@ -52,7 +52,7 @@ public class SequenceReseter {
         closer.closeResultSet(resultSetDest);
         long idMaxPlusOne = CharacteristicsRelatedToEditor.getIdMaxPlusOne(connectionDest, tableName);
         System.out.println("Got ID max +1 = " + idMaxPlusOne);
-        sqlRequestToReset = CharacteristicsRelatedToEditor.makeAlterSequencesRequest(metaDest, tableName, idMaxPlusOne);
+        sqlRequestToReset = CharacteristicsRelatedToEditor.makeAlterSequencesRequest(connectionDest, metaDest, tableName, idMaxPlusOne);
 
         // THEN RESET SEQUENCE REQUEST IS EXECUTED
         statementDest = connectionDest.createStatement();
