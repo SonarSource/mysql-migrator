@@ -165,13 +165,28 @@ public class DbCopyIntegrationTest {
       HttpConnector.newBuilder()
         .url(destinationOrchestrator.getServer().getUrl())
         .build());
-    long destinationFinalTotal = destinationWsClient
+    long destinationInitialTotal = destinationWsClient
       .issues()
       .search(new SearchWsRequest())
       .getTotal();
 
     // Check that issues exist
-    assertThat(destinationFinalTotal).isEqualTo(sourceFinalTotal);
+    assertThat(destinationInitialTotal).isEqualTo(sourceFinalTotal);
+
+    // Perform an analysis on the destination to check DB state
+    // Second analysis, should close one additional issue
+    destinationOrchestrator.executeBuildQuietly(
+      MavenBuild.create()
+        .setPom(new File("projects/java-sample/3/pom.xml"))
+        .setCleanPackageSonarGoals());
+
+    long destinationFinalTotal = destinationWsClient
+      .issues()
+      .search(new SearchWsRequest())
+      .getTotal();
+
+    // Check that issues have been created
+    assertThat(destinationFinalTotal).isGreaterThan(destinationInitialTotal);
   }
 
   private static String getSystemPropertyOrFail(String orchestratorPropertiesSource) {

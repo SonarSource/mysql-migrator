@@ -10,6 +10,8 @@ import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
 import com.sonar.dbcopy.utils.toolconfig.Connecter;
 import com.sonar.dbcopy.utils.toolconfig.SqlDbCopyException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,6 +20,8 @@ import java.sql.Statement;
 import java.sql.DatabaseMetaData;
 
 public class SequenceReseter {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(SequenceReseter.class);
 
   private String sqlRequestToReset;
   private String tableName;
@@ -45,22 +49,17 @@ public class SequenceReseter {
 
       resultSetDest = metaDest.getPrimaryKeys(null, null, tableNameWithGoodCase);
 
-      System.out.println("Resetting sequences for table " + tableNameWithGoodCase);
-
       // IF REULTSET IS NOT "beforeFirst" THAT MEANS THERE IS A PRIMARY KEY
       if (resultSetDest.isBeforeFirst() && hasIdColumn(resultSetDest)) {
         closer.closeResultSet(resultSetDest);
         long idMaxPlusOne = CharacteristicsRelatedToEditor.getIdMaxPlusOne(connectionDest, tableName);
-        System.out.println("Got ID max +1 = " + idMaxPlusOne);
         sqlRequestToReset = CharacteristicsRelatedToEditor.makeAlterSequencesRequest(connectionDest, metaDest, tableName, idMaxPlusOne);
 
         // THEN RESET SEQUENCE REQUEST IS EXECUTED
         statementDest = connectionDest.createStatement();
         if (destinationIsOracle) {
-          System.out.println("Dropping sequence on Oracle");
           statementDest.execute(CharacteristicsRelatedToEditor.makeDropSequenceRequest(tableName));
         }
-        System.out.println("Will execute " + sqlRequestToReset);
         statementDest.execute(sqlRequestToReset);
       }
     } catch (SQLException e) {
@@ -81,8 +80,7 @@ public class SequenceReseter {
       }
       return false;
     } catch(SQLException noSuchColumn) {
-      noSuchColumn.printStackTrace(System.err);
-      System.out.println("No id column");
+      LOGGER.error("Problem checking presence of ID column", noSuchColumn);
       return false;
     }
   }
