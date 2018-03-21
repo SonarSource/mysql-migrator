@@ -7,6 +7,7 @@ package com.sonar.dbcopy.utils.toolconfig;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
@@ -54,14 +55,15 @@ public class CharacteristicsRelatedToEditor {
     return "DROP SEQUENCE " + tableName.toUpperCase(Locale.ENGLISH) + "_SEQ";
   }
 
-  public static String makeAlterSequencesRequest(DatabaseMetaData metadata, String tableName, long idMaxPlusOne) throws SQLException {
+  public static String makeAlterSequencesRequest(Connection connection, DatabaseMetaData metadata, String tableName, long idMaxPlusOne) throws SQLException {
     String sqlRequest;
     if (isSqlServer(metadata)) {
       sqlRequest = "dbcc checkident(" + tableName + ",reseed," + idMaxPlusOne + ");";
     } else if (isOracle(metadata)) {
       sqlRequest = "CREATE SEQUENCE " + tableName.toUpperCase(Locale.ENGLISH) + "_SEQ INCREMENT BY 1 MINVALUE 1 START WITH " + idMaxPlusOne;
     } else if (isPostgresql(metadata)) {
-      sqlRequest = "ALTER SEQUENCE " + tableName + "_id_seq RESTART WITH " + idMaxPlusOne + ";";
+      String sequenceName = selectPostgresIdSequenceForTable(connection, tableName);
+      sqlRequest = "ALTER SEQUENCE " + sequenceName + " RESTART WITH " + idMaxPlusOne + ";";
     } else if (isMySql(metadata)) {
       sqlRequest = "ALTER TABLE " + tableName + " AUTO_INCREMENT = " + idMaxPlusOne + ";";
     } else if (isH2(metadata)) {
@@ -70,6 +72,17 @@ public class CharacteristicsRelatedToEditor {
       throw new MessageException("Url " + metadata.getURL() + " does not correspond to a correct format to reset auto increment.");
     }
     return sqlRequest;
+  }
+
+  private static String selectPostgresIdSequenceForTable(Connection connection, String tableName) throws SQLException {
+    try (PreparedStatement pst = connection.prepareStatement("SELECT pg_get_serial_sequence('" + tableName + "', 'id')");
+      ResultSet rs = pst.executeQuery()) {
+      if (rs.next()) {
+        return rs.getString(1);
+      } else {
+        throw new IllegalStateException("Could not find ID generation sequence for table " + tableName);
+      }
+    }
   }
 
   public static long getIdMaxPlusOne(Connection connectionDest, String tableName) {

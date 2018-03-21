@@ -10,6 +10,8 @@ import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
 import com.sonar.dbcopy.utils.toolconfig.Connecter;
 import com.sonar.dbcopy.utils.toolconfig.SqlDbCopyException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,6 +20,8 @@ import java.sql.Statement;
 import java.sql.DatabaseMetaData;
 
 public class SequenceReseter {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(SequenceReseter.class);
 
   private String sqlRequestToReset;
   private String tableName;
@@ -49,7 +53,7 @@ public class SequenceReseter {
       if (resultSetDest.isBeforeFirst() && hasIdColumn(resultSetDest)) {
         closer.closeResultSet(resultSetDest);
         long idMaxPlusOne = CharacteristicsRelatedToEditor.getIdMaxPlusOne(connectionDest, tableName);
-        sqlRequestToReset = CharacteristicsRelatedToEditor.makeAlterSequencesRequest(metaDest, tableName, idMaxPlusOne);
+        sqlRequestToReset = CharacteristicsRelatedToEditor.makeAlterSequencesRequest(connectionDest, metaDest, tableName, idMaxPlusOne);
 
         // THEN RESET SEQUENCE REQUEST IS EXECUTED
         statementDest = connectionDest.createStatement();
@@ -69,9 +73,14 @@ public class SequenceReseter {
 
   private static boolean hasIdColumn(ResultSet resultSetDest) {
     try {
-      resultSetDest.findColumn("id");
-      return true;
+      while(resultSetDest.next()) {
+        if ("id".equalsIgnoreCase(resultSetDest.getString("COLUMN_NAME"))) {
+          return true;
+        }
+      }
+      return false;
     } catch(SQLException noSuchColumn) {
+      LOGGER.error("Problem checking presence of ID column", noSuchColumn);
       return false;
     }
   }
