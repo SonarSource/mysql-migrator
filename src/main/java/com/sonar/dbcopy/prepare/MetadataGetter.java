@@ -21,11 +21,12 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Locale;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MetadataGetter {
 
-  private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+  private static final Logger LOGGER = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
 
   private Database database;
   private ConnecterData cd;

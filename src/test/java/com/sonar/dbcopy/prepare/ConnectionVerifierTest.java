@@ -27,7 +27,7 @@ public class ConnectionVerifierTest {
   }
 
   @Test
-  public void testDatabaseIsReached() throws Exception {
+  public void testDatabaseIsReached() {
     ConnecterData availableCd = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:ConnectionVerifierTestDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     ConnectionVerifier connectionVerifier = new ConnectionVerifier();
     connectionVerifier.databaseIsReached(availableCd);

@@ -35,7 +35,7 @@ public class MetadataGetterTest {
   }
 
   @Test
-  public void testFilledDatabase() throws Exception {
+  public void testFilledDatabase() {
     ConnecterData cdSource = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:MetadataGetterTestFilledDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     Database database = new Database();
 
@@ -66,7 +66,7 @@ public class MetadataGetterTest {
   }
 
   @Test
-  public void testWithoutTablesDataBase() throws Exception {
+  public void testWithoutTablesDataBase() {
     ConnecterData cdSource = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:MetadataGetterTestwithoutTablesDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     Database database = new Database();
 
@@ -80,7 +80,7 @@ public class MetadataGetterTest {
   }
 
   @Test
-  public void testFilledDatabaseWithOnlyOneTable() throws Exception {
+  public void testFilledDatabaseWithOnlyOneTable() {
     ConnecterData cdSource = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:MetadataGetterTestFilledDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     Database database = new Database();
     String[] tablesRequiredAsStringTab = {"table_for_test"};
@@ -109,7 +109,7 @@ public class MetadataGetterTest {
   }
 
   @Test
-  public void testFilledDatabaseWithAWrongTable() throws Exception {
+  public void testFilledDatabaseWithAWrongTable() {
     ConnecterData cdSource = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:MetadataGetterTestFilledDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     Database database = new Database();
     String[] tablesRequiredAsStringTab = {"non_existent_table"};

@@ -30,7 +30,7 @@ public class SequenceReseterTest {
   }
 
   @Test
-  public void shouldFailOnMissingJdbcDriver() throws Exception {
+  public void shouldFailOnMissingJdbcDriver() {
     ConnecterData connecterData = new ConnecterData("Not a Driver", "jdbc:h2:mem:SequenceReseterTestDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     SequenceReseter sequenceReseter = new SequenceReseter("table_for_test", connecterData);
     try {
@@ -42,14 +42,14 @@ public class SequenceReseterTest {
   }
 
   @Test
-  public void shouldSucceedOnLegacyTableWithId() throws Exception {
+  public void shouldSucceedOnLegacyTableWithId() {
     ConnecterData connecterData = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:SequenceReseterTestDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     SequenceReseter sequenceReseter = new SequenceReseter("table_for_test", connecterData);
     sequenceReseter.execute();
   }
 
   @Test
-  public void shouldSucceedOnNewTableWithoutId() throws Exception {
+  public void shouldSucceedOnNewTableWithoutId() {
     ConnecterData connecterData = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:SequenceReseterTestDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     SequenceReseter sequenceReseter = new SequenceReseter("table_without_id", connecterData);
     sequenceReseter.execute();

@@ -16,27 +16,27 @@ public class ConnecterDataTest {
   private ConnecterData connecterData;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     connecterData = new ConnecterData("driver", "url", "user", "pwd");
   }
 
   @Test
-  public void testGetUrlSource() throws Exception {
+  public void testGetUrlSource() {
     assertEquals("url", connecterData.getUrl());
   }
 
   @Test
-  public void testGetDriverSource() throws Exception {
+  public void testGetDriverSource() {
     assertEquals("driver", connecterData.getDriver());
   }
 
   @Test
-  public void testGetUserSource() throws Exception {
+  public void testGetUserSource() {
     assertEquals("user", connecterData.getUser());
   }
 
   @Test
-  public void testGetPwdSource() throws Exception {
+  public void testGetPwdSource() {
     assertEquals("pwd", connecterData.getPwd());
   }
 

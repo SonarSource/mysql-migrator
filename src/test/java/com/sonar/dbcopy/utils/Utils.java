@@ -22,7 +22,7 @@ public class Utils {
   }
 
   /* H2 */
-  public Connection makeH2(String dataBaseName) throws SQLException, ClassNotFoundException {
+  public Connection makeH2(String dataBaseName) throws SQLException {
 
     String connectionPoolParameters = "jdbc:h2:mem:" + dataBaseName + ";DB_CLOSE_ON_EXIT=-1;";
     JdbcConnectionPool jdbcConnectionPool = JdbcConnectionPool.create(connectionPoolParameters, "sonar", "sonar");
