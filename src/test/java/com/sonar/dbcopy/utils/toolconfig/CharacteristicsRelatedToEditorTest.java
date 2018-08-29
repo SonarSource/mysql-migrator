@@ -45,7 +45,7 @@ public class CharacteristicsRelatedToEditorTest {
 
   @Test
   public void testGetSchema() throws SQLException {
-    assertEquals("PUBLIC", CharacteristicsRelatedToEditor.getSchema(metaData));
+    assertEquals("PUBLIC", connection.getSchema());
   }
 
 

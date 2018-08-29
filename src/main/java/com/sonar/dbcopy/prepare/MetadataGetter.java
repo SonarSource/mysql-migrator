@@ -32,6 +32,7 @@ public class MetadataGetter {
   private ConnecterData cd;
   private Closer closer;
   private DatabaseMetaData metaData;
+  private Connection connectionSource;
 
   public MetadataGetter(ConnecterData cd, Database db) {
     this.cd = cd;
@@ -41,7 +42,7 @@ public class MetadataGetter {
   public void execute(String[] tablesToCopy) {
     closer = new Closer("MetadataGetter");
 
-    Connection connectionSource = new Connecter().doConnection(this.cd);
+    connectionSource = new Connecter().doConnection(this.cd);
     Statement statementSource = null;
     ResultSet resultSetTables = null;
     try {
@@ -50,7 +51,7 @@ public class MetadataGetter {
       /* WARNING !! TO GET TABLES FROM METADATA IT DEPENDS ON THE VALUE OF SCHEMA EDITOR */
       metaData = connectionSource.getMetaData();
 
-      String schema = CharacteristicsRelatedToEditor.getSchema(metaData);
+      String schema = connectionSource.getSchema();
 
       LOGGER.info("Catalog: {}", connectionSource.getCatalog());
       LOGGER.info("Schema: {}", schema);
@@ -124,7 +125,7 @@ public class MetadataGetter {
             , database.getTableName(indexTable));
 
         // ORACLE NEEDS UPERCASE TO EXECUTE getColumns()
-        String schema = CharacteristicsRelatedToEditor.getSchema(metaData);
+        String schema = connectionSource.getSchema();
         resultSetCol = metaData.getColumns(null, schema, tableNameWithAdaptedCase, "%");
         while (resultSetCol.next()) {
           String columnNameToInsert = resultSetCol.getString("COLUMN_NAME").toLowerCase(Locale.ENGLISH);
