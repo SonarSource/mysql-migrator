@@ -68,7 +68,7 @@ public class StartApp {
       ConnectionVerifier connectionVerifier = new ConnectionVerifier();
       connectionVerifier.databaseIsReached(connecterDataSource);
       LOGGER.info("{} CONFIGURATION VERIFICATIONS {}", starLine, starLine);
-      LOGGER.info("Database SOURCE  has been reached at :         {}", connecterDataSource.getUrl());
+      LOGGER.info("Database SOURCE has been reached at :          {}", connecterDataSource.getUrl());
       connectionVerifier.databaseIsReached(connecterDataDest);
       LOGGER.info("Database DESTINATION has been reached at :     {}", connecterDataDest.getUrl());
 
