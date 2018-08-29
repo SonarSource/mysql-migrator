@@ -9,6 +9,9 @@ import com.sonar.orchestrator.Orchestrator;
 import com.sonar.orchestrator.locator.MavenLocation;
 import com.sonar.orchestrator.build.MavenBuild;
 import com.sonar.orchestrator.config.Configuration;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
 import org.apache.commons.lang.StringUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -17,10 +20,6 @@ import org.sonarqube.ws.client.HttpConnector;
 import org.sonarqube.ws.client.WsClient;
 import org.sonarqube.ws.client.WsClientFactories;
 import org.sonarqube.ws.client.issue.SearchWsRequest;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fest.assertions.Fail.fail;
@@ -62,7 +61,6 @@ public class DbCopyIntegrationTest {
 
   @Test
   public void shouldCopyDatabase() throws Exception {
-
     // Start source SQ
     sourceOrchestrator.start();
 
