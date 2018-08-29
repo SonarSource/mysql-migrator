@@ -58,7 +58,7 @@ public class ResulsetSourceGetterTest {
       resultSet.getInt(1);
       fail();
     } catch (Exception e) {
-      assertThat(e).isInstanceOf(SQLException.class).hasMessage("No data is available [2000-176]");
+      assertThat(e).isInstanceOf(SQLException.class).hasMessage("No data is available [2000-197]");
     }
   }
 }

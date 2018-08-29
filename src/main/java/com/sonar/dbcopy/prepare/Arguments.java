@@ -15,16 +15,15 @@ import java.util.Map;
 import java.util.jar.Manifest;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 public class Arguments {
 
-  static final String DEFAULT_COMMIT_SIZE = "5000";
+  private static final String DEFAULT_COMMIT_SIZE = "5000";
 
   public enum OptionNames {
 
@@ -62,7 +61,6 @@ public class Arguments {
     public String getHelperString() {
       return helperString;
     }
-
   }
 
   private CommandLine commandLine;
@@ -82,26 +80,23 @@ public class Arguments {
     this.allocatedEmptyOptionContent();
 
     for (OptionNames oneOption : OptionNames.values()) {
-      OptionBuilder.withValueSeparator(' ');
-      OptionBuilder.withDescription(oneOption.getDescription());
-      Option option = OptionBuilder.create(oneOption.toString());
-
+      Option option = new Option(oneOption.toString(), true, oneOption.getDescription());
+      option.setValueSeparator(' ');
       option.setArgs(1);
       option.setArgName(oneOption.getHelperString());
       options.addOption(option);
     }
 
-    OptionBuilder.withValueSeparator(' ');
-    OptionBuilder.withValueSeparator(',');
-    OptionBuilder.withDescription("OPTIONAL:  table to copy separated by space or , (others will not be deleted)");
-    Option option = OptionBuilder.create("T");
+    Option option = new Option("T", true, "OPTIONAL:  table to copy separated by space or , (others will not be deleted)");
     option.setArgs(Integer.MAX_VALUE);
     option.setArgName("table1Name,table2Name ...");
+    option.setValueSeparator(',');
+    option.setOptionalArg(true);
     options.addOption(option);
   }
 
   public void doParsing(String[] args) {
-    CommandLineParser commandLineParser = new GnuParser();
+    CommandLineParser commandLineParser = new DefaultParser();
 
     try {
       commandLine = commandLineParser.parse(options, args);

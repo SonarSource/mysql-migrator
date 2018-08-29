@@ -24,7 +24,7 @@ public class Utils {
   /* H2 */
   public Connection makeH2(String dataBaseName) throws SQLException {
 
-    String connectionPoolParameters = "jdbc:h2:mem:" + dataBaseName + ";DB_CLOSE_ON_EXIT=-1;";
+    String connectionPoolParameters = "jdbc:h2:mem:" + dataBaseName + ";DB_CLOSE_ON_EXIT=FALSE;";
     JdbcConnectionPool jdbcConnectionPool = JdbcConnectionPool.create(connectionPoolParameters, "sonar", "sonar");
     Connection connection = jdbcConnectionPool.getConnection();
     return connection;
@@ -87,7 +87,7 @@ public class Utils {
       preparedStatement.setObject(3, timestampObj);
       preparedStatement.setObject(4, blobObj);
       preparedStatement.setBytes(5, bytes);
-      preparedStatement.setObject(6, booleanObj);
+      preparedStatement.setBoolean(6, booleanObj);
       preparedStatement.setObject(7, null);
       preparedStatement.executeUpdate();
 
@@ -107,7 +107,7 @@ public class Utils {
       preparedStatement.setObject(3, timestampObj);
       preparedStatement.setObject(4, blobObj);
       preparedStatement.setBytes(5, bytes);
-      preparedStatement.setObject(6, booleanObj);
+      preparedStatement.setBoolean(6, booleanObj);
       preparedStatement.setObject(7, null);
       preparedStatement.executeUpdate();
 

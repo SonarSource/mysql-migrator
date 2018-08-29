@@ -95,7 +95,7 @@ public class DeleterTest {
       resultSetTables.getString(3);
       fail();
     } catch (Exception e) {
-      assertThat(e).isInstanceOf(SQLException.class).hasMessage("No data is available [2000-176]");
+      assertThat(e).isInstanceOf(SQLException.class).hasMessage("No data is available [2000-197]");
     } finally {
       closer.closeResultSet(resultSetTables);
     }
