@@ -29,14 +29,14 @@ public class ResulsetSourceGetterTest {
 
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     Utils utils = new Utils();
     connection = utils.makeFilledH2("ResulsetSourceGetterTestDB", false);
     resulsetSourceGetter = new ResulsetSourceGetter("table_for_test");
   }
 
   @After
-  public void tearDown() throws Exception {
+  public void tearDown() {
     Closer closer = new Closer("ResulsetSourceGetterTest");
     closer.closeResultSet(resultSet);
     closer.closeStatement(statement);
@@ -58,7 +58,7 @@ public class ResulsetSourceGetterTest {
       resultSet.getInt(1);
       fail();
     } catch (Exception e) {
-      assertThat(e).isInstanceOf(SQLException.class).hasMessage("No data is available [2000-176]");
+      assertThat(e).isInstanceOf(SQLException.class).hasMessage("No data is available [2000-197]");
     }
   }
 }

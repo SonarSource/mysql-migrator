@@ -29,7 +29,7 @@ public class LoopByTableTest {
   private int commitSize;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     boolean threeTablesInSource = true;
     boolean threeTablesInDestination = false;
 
@@ -88,7 +88,7 @@ public class LoopByTableTest {
   }
 
   @After
-  public void tearDown() throws Exception {
+  public void tearDown() {
     closer.closeConnection(connectionSource);
     closer.closeConnection(connectionDest);
   }

@@ -53,10 +53,9 @@
 
     <ojdbc6.version>11.2.0.3.0</ojdbc6.version>
     <ojdbc8.version>12.2.0.1.0</ojdbc8.version>
-    <mysql-connector-java.version>5.1.42</mysql-connector-java.version>
-    <postgresql.version>42.1.1</postgresql.version>
-    <mssql-jdbc.version>6.2.2.jre8</mssql-jdbc.version>
-
+    <mysql-connector-java.version>5.1.47</mysql-connector-java.version>
+    <postgresql.version>42.2.5</postgresql.version>
+    <mssql-jdbc.version>7.0.0.jre8</mssql-jdbc.version>
   </properties>
 
   <dependencies>
@@ -109,7 +108,6 @@
       <version>${mssql-jdbc.version}</version>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
 
   <build>

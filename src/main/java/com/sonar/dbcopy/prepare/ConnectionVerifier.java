@@ -9,7 +9,6 @@ import com.sonar.dbcopy.utils.data.ConnecterData;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
 import com.sonar.dbcopy.utils.toolconfig.MessageException;
 import com.sonar.dbcopy.utils.toolconfig.SqlDbCopyException;
-
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;

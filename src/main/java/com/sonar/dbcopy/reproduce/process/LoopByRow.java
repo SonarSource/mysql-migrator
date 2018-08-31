@@ -159,13 +159,13 @@ public class LoopByRow {
   }
 
   private void displayContextLog(SQLException e, String logRow, String kindOfError) {
-    LOGGER.error("IN TABLE: " + sourceTable.getName() + " when " + kindOfError + ".");
+    LOGGER.error("IN TABLE: {} when {}.", sourceTable.getName(), kindOfError);
     LOGGER.error(tableContentSource);
     LOGGER.error(tableContentDest);
-    LOGGER.error("LINES NOT COPIED " + logRow);
+    LOGGER.error("LINES NOT COPIED {}", logRow);
     LOGGER.error(e.getMessage());
     if (e.getNextException() != null) {
-      LOGGER.error("NEXT EXCEPTION: " + e.getNextException());
+      LOGGER.error("NEXT EXCEPTION: {}", e.getNextException().getMessage());
     }
   }
 }

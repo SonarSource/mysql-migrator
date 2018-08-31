@@ -9,12 +9,10 @@ import com.sonar.dbcopy.reproduce.reader.ReaderTool;
 import com.sonar.dbcopy.reproduce.writer.WriterTool;
 import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
+import java.sql.Connection;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.sql.Connection;
-import java.sql.SQLException;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.junit.Assert.fail;
@@ -24,14 +22,14 @@ public class ToolBuilderTest {
   private Connection connectionSource, connectionDest;
 
   @Before
-  public void setUp() throws SQLException {
+  public void setUp() {
     Utils utils = new Utils();
     connectionSource = utils.makeFilledH2("ToolBuilderTestSourceDB", false);
     connectionDest = utils.makeEmptyH2("ToolBuilderTestDestinationDB", false);
   }
 
   @Test
-  public void testBuildReaderTool() throws Exception {
+  public void testBuildReaderTool() {
     ToolBuilder toolBuilder = new ToolBuilder(null, null);
     try {
       toolBuilder.buildReaderTool();
@@ -44,7 +42,7 @@ public class ToolBuilderTest {
   }
 
   @Test
-  public void testBuildWriterTool() throws Exception {
+  public void testBuildWriterTool() {
     ToolBuilder toolBuilder = new ToolBuilder(null, null);
     try {
       toolBuilder.buildWriterTool(null);

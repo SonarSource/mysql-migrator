@@ -45,30 +45,30 @@ public class StartApp {
       Database databaseDest = new Database();
 
       ConnecterData connecterDataSource = new ConnecterData(
-              arguments.getOptionContent(Arguments.OptionNames.driverSrc),
-              arguments.getOptionContent(Arguments.OptionNames.urlSrc),
-              arguments.getOptionContent(Arguments.OptionNames.userSrc),
-              arguments.getOptionContent(Arguments.OptionNames.pwdSrc)
+              arguments.getOptionContent(Arguments.OptionNames.DRIVER_SRC),
+              arguments.getOptionContent(Arguments.OptionNames.URL_SRC),
+              arguments.getOptionContent(Arguments.OptionNames.USER_SRC),
+              arguments.getOptionContent(Arguments.OptionNames.PWD_SRC)
       );
       ConnecterData connecterDataDest = new ConnecterData(
-              arguments.getOptionContent(Arguments.OptionNames.driverDest),
-              arguments.getOptionContent(Arguments.OptionNames.urlDest),
-              arguments.getOptionContent(Arguments.OptionNames.userDest),
-              arguments.getOptionContent(Arguments.OptionNames.pwdDest)
+              arguments.getOptionContent(Arguments.OptionNames.DRIVER_DEST),
+              arguments.getOptionContent(Arguments.OptionNames.URL_DEST),
+              arguments.getOptionContent(Arguments.OptionNames.USER_DEST),
+              arguments.getOptionContent(Arguments.OptionNames.PWD_DEST)
       );
 
       int commitSize;
       try {
-        commitSize = Integer.parseInt(arguments.getOptionContent(Arguments.OptionNames.commitSize));
+        commitSize = Integer.parseInt(arguments.getOptionContent(Arguments.OptionNames.COMMIT_SIZE));
       } catch(IllegalArgumentException notAnInteger) {
-        throw new MessageException("commitSize must be a valid integer");
+        throw new MessageException("COMMIT_SIZE must be a valid integer");
       }
 
     /* VERIFY CONNECTION */
       ConnectionVerifier connectionVerifier = new ConnectionVerifier();
       connectionVerifier.databaseIsReached(connecterDataSource);
       LOGGER.info("{} CONFIGURATION VERIFICATIONS {}", starLine, starLine);
-      LOGGER.info("Database SOURCE  has been reached at :         {}", connecterDataSource.getUrl());
+      LOGGER.info("Database SOURCE has been reached at :          {}", connecterDataSource.getUrl());
       connectionVerifier.databaseIsReached(connecterDataDest);
       LOGGER.info("Database DESTINATION has been reached at :     {}", connecterDataDest.getUrl());
 
@@ -80,7 +80,7 @@ public class StartApp {
       if (maxVersionIdSource != maxVersionIdDestination && maxVersionIdDestination != 0 && maxVersionIdSource != 0) {
         throw new MessageException("Version of schema migration are not the same between source (" + maxVersionIdSource + ") and destination (" + maxVersionIdDestination + ").");
       } else if (maxVersionIdDestination == 0) {
-        LOGGER.warn("The versions of SonarQube schema migration source is (" + maxVersionIdSource + ") when destination is (" + maxVersionIdDestination + ").");
+        LOGGER.warn("The versions of SonarQube schema migration source is ({}) when destination is ({}).", maxVersionIdSource, maxVersionIdDestination);
       } else {
         LOGGER.info("The versions of SonarQube schema migration are the same between source ({}) and destination ({}).", maxVersionIdSource, maxVersionIdDestination);
       }

@@ -28,24 +28,21 @@ public class DatabaseComparer {
       Table tableDestToFind = dbDestination.getTableByName(tableSourceName);
       LOGGER.info("   DESTINATION:");
       if (tableDestToFind == null) {
-        LOGGER.warn("TABLE " + dbSource.getTableName(indexTable) + " is not present in the DESTINATION database.");
+        LOGGER.warn("TABLE {} is not present in the DESTINATION database.", dbSource.getTableName(indexTable));
         nbMissingTableInDest++;
       } else {
         displayTableContent(tableDestToFind);
       }
     }
 
-    // FIND TABLE IN DESTINATION THAT DOES NOT EXIST IN SOURCE AND DISPLAY IT
-    if (dbSource.getNbTables() == dbDestination.getNbTables() && nbMissingTableInDest == 0) {
-      // DO NOTHING IN THE CASE OF DATABASES ARE IDENTICAL (SAME NB OF TABLES AND NO MISSING TABLE)
-    } else {
+    if (dbSource.getNbTables() != dbDestination.getNbTables() || nbMissingTableInDest != 0) {
       // DISPLAY TABLE THAT EXISTS IN DESTINATION BUT NOT IN SOURCE
       for (int indexTable = 0; indexTable < dbDestination.getNbTables(); indexTable++) {
         Table tableSourceToFind = dbSource.getTableByName(dbDestination.getTableName(indexTable));
         if (tableSourceToFind == null) {
           LOGGER.info("");
-          LOGGER.info("FOUND TABLE : " + dbDestination.getTableName(indexTable));
-          LOGGER.warn("TABLE " + dbDestination.getTableName(indexTable) + " is not present in the SOURCE database.");
+          LOGGER.info("FOUND TABLE : {}", dbDestination.getTableName(indexTable));
+          LOGGER.warn("TABLE {} is not present in the SOURCE database.", dbDestination.getTableName(indexTable));
           LOGGER.info("   DESTINATION:");
           displayTableContent(dbDestination.getTable(indexTable));
         }

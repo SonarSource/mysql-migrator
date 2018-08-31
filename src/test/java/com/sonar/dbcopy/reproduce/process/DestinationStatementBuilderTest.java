@@ -29,7 +29,7 @@ public class DestinationStatementBuilderTest {
   private Database database;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     Utils utils = new Utils();
     connection = utils.makeEmptyH2("DestinationStatementBuilderTestDB", false);
     database = utils.makeDatabase(false);
@@ -37,13 +37,13 @@ public class DestinationStatementBuilderTest {
   }
 
   @After
-  public void tearDown() throws Exception {
+  public void tearDown() {
     Closer closer = new Closer("DestinationStatementBuilderTest");
     closer.closeConnection(connection);
   }
 
   @Test
-  public void testGetDestinationStatement() throws Exception {
+  public void testGetDestinationStatement() {
     DestinationStatementBuilder destinationStatementBuilder = new DestinationStatementBuilder();
 
     PreparedStatement preparedStatement = destinationStatementBuilder.getDestinationStatement(connection, database.getTable(0));

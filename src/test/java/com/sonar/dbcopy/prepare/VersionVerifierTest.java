@@ -42,7 +42,7 @@ public class VersionVerifierTest {
   }
 
   @Test
-  public void testLastVersionId() throws Exception {
+  public void testLastVersionId() {
     ConnecterData cdSource = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:VersionVerifierTestSourceDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     ConnecterData cdDest = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:VersionVerifierTestDestinationDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
 
@@ -54,7 +54,7 @@ public class VersionVerifierTest {
   }
 
   @Test
-  public void testLastVersionIdExceptions() throws Exception {
+  public void testLastVersionIdExceptions() {
     ConnecterData cdWithWrongUrl = new ConnecterData("org.h2.Driver", "jdbc:h2:mem:wrongDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     ConnecterData cdWithWrongDriver = new ConnecterData("not_a_driver", "jdbc:h2:mem:VersionVerifierTestDestinationDB;DB_CLOSE_ON_EXIT=-1;", "sonar", "sonar");
     VersionVerifier versionVerifier = new VersionVerifier();

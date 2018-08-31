@@ -40,7 +40,7 @@ public class ReaderToolTest {
   }
 
   @After
-  public void tearDown() throws Exception {
+  public void tearDown() {
     Closer closer = new Closer("ReaderTootTest");
     closer.closeResultSet(resultSet);
     closer.closeStatement(statement);

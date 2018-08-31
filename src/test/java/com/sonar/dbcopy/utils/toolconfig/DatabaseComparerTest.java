@@ -25,17 +25,17 @@ public class DatabaseComparerTest {
   }
 
   @Test
-  public void testDisplayAllTablesFoundIfExists() throws Exception {
+  public void testDisplayAllTablesFoundIfExists() {
     databaseComparer.displayAllTablesFoundIfExists(databaseSource, databaseCorrectDest);
   }
 
   @Test
-  public void testDisplayMissingTableInDb() throws Exception {
+  public void testDisplayMissingTableInDb() {
     databaseComparer.displayMissingTableInDb(databaseSource, databaseUncorrectDest, "UNCORRECT DESTINATION");
   }
 
   @Test
-  public void testDisplayDiffNumberRows() throws Exception {
+  public void testDisplayDiffNumberRows() {
     databaseComparer.displayDiffNumberRows(databaseSource, databaseUncorrectDest);
   }
 }

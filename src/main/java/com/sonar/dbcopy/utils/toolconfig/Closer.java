@@ -24,7 +24,7 @@ public class Closer {
         r.close();
       }
     } catch (SQLException e) {
-      throw new SqlDbCopyException("Resultset from " + callerClass + " had problem to be closed.", e);
+      throwSqlDbCopyException(e);
     }
   }
 
@@ -34,7 +34,7 @@ public class Closer {
         s.close();
       }
     } catch (SQLException e) {
-      throw new SqlDbCopyException("Statement from " + callerClass + " had problem to be closed.", e);
+      throwSqlDbCopyException(e);
     }
   }
 
@@ -44,7 +44,11 @@ public class Closer {
         c.close();
       }
     } catch (SQLException e) {
-      throw new SqlDbCopyException("Connection from " + callerClass + " had problem to be closed.", e);
+      throwSqlDbCopyException(e);
     }
+  }
+
+  private void throwSqlDbCopyException(Exception e) {
+    throw new SqlDbCopyException("Connection from " + callerClass + " had problem to be closed.", e);
   }
 }

@@ -17,7 +17,7 @@ public class TableTest {
   private Table table;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     table = new Table("table1");
     table.setNbRows(12);
     table.addColumn(0, "col0", Types.VARCHAR);
@@ -29,12 +29,12 @@ public class TableTest {
   }
 
   @Test
-  public void testGetNbColumns() throws Exception {
+  public void testGetNbColumns() {
     assertEquals(5, table.getNbColumns());
   }
 
   @Test
-  public void testAddAndGetColumn() throws Exception {
+  public void testAddAndGetColumn() {
     assertEquals("col0", table.getColumnName(0));
     assertEquals("col1", table.getColumnName(1));
     assertEquals("col2", table.getColumnName(2));
@@ -43,12 +43,12 @@ public class TableTest {
   }
 
   @Test
-  public void testGetName() throws Exception {
+  public void testGetName() {
     assertEquals("table1", table.getName());
   }
 
   @Test
-  public void testSetAndGetNbRows() throws Exception {
+  public void testSetAndGetNbRows() {
     assertEquals(12, table.getNbRows());
   }
 
@@ -63,12 +63,12 @@ public class TableTest {
   }
 
   @Test
-  public void testMakeColumnString() throws Exception {
+  public void testMakeColumnString() {
     assertEquals("col0,col1,col2,col3,null", table.getColumnNamesAsString());
   }
 
   @Test
-  public void testMakeQuestionMarkString() throws Exception {
+  public void testMakeQuestionMarkString() {
     assertEquals("?,?,?,?,?", table.getQuestionMarksAsString());
   }
 

@@ -32,7 +32,7 @@ public class StartAppTest {
   private Connection connectionSourceV1, connectionSourceV2, connectionDestV1, connectiondestV3, connectionSourceToption, connectionDestToption;
 
   @Test
-  public void testMain() throws Exception {
+  public void testMain() {
 
     Utils utils = new Utils();
     connectionSourceV1 = utils.makeFilledH2("StartAppTest_Source_Version_1_DB", true);
@@ -105,7 +105,7 @@ public class StartAppTest {
   }
 
   @Test
-  public void testMainWithDifferentVersion() throws Exception {
+  public void testMainWithDifferentVersion() {
     Utils utils = new Utils();
     connectionSourceV2 = utils.makeFilledH2("StartAppTest_Source_Version_2_DB", true);
     utils.addContentInThirdTable(connectionSourceV2, 2);
@@ -136,7 +136,7 @@ public class StartAppTest {
   }
 
   @Test
-  public void testHelp() throws Exception {
+  public void testHelp() {
 
     String[] helpArgument = {"-help"};
     StartApp.main(helpArgument);
@@ -150,7 +150,7 @@ public class StartAppTest {
   }
 
   @Test
-  public void testVersion() throws Exception {
+  public void testVersion() {
 
     String[] versionArgument = {"-version"};
     StartApp.main(versionArgument);
@@ -159,16 +159,16 @@ public class StartAppTest {
   }
 
   @Test
-  public void testMissingArgument() throws Exception {
+  public void testMissingArgument() {
     thrown.expect(MessageException.class);
 
-    String[] aloneArgument = {"-urlSrc"};
+    String[] aloneArgument = {"-URL_SRC"};
     StartApp.main(aloneArgument);
     fail();
   }
 
   @Test
-  public void testBadArgument() throws Exception {
+  public void testBadArgument() {
     thrown.expect(MessageException.class);
 
     String[] badArgument = {"badArgument"};
@@ -177,7 +177,7 @@ public class StartAppTest {
   }
 
   @Test
-  public void testBadCommitSize() throws Exception {
+  public void testBadCommitSize() {
     thrown.expect(MessageException.class);
 
     String[] badArgument = {

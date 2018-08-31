@@ -21,16 +21,18 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Locale;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MetadataGetter {
 
-  private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+  private static final Logger LOGGER = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
 
   private Database database;
   private ConnecterData cd;
   private Closer closer;
   private DatabaseMetaData metaData;
+  private Connection connectionSource;
 
   public MetadataGetter(ConnecterData cd, Database db) {
     this.cd = cd;
@@ -40,7 +42,7 @@ public class MetadataGetter {
   public void execute(String[] tablesToCopy) {
     closer = new Closer("MetadataGetter");
 
-    Connection connectionSource = new Connecter().doConnection(this.cd);
+    connectionSource = new Connecter().doConnection(this.cd);
     Statement statementSource = null;
     ResultSet resultSetTables = null;
     try {
@@ -49,7 +51,7 @@ public class MetadataGetter {
       /* WARNING !! TO GET TABLES FROM METADATA IT DEPENDS ON THE VALUE OF SCHEMA EDITOR */
       metaData = connectionSource.getMetaData();
 
-      String schema = CharacteristicsRelatedToEditor.getSchema(metaData);
+      String schema = connectionSource.getSchema();
 
       LOGGER.info("Catalog: {}", connectionSource.getCatalog());
       LOGGER.info("Schema: {}", schema);
@@ -123,7 +125,7 @@ public class MetadataGetter {
             , database.getTableName(indexTable));
 
         // ORACLE NEEDS UPERCASE TO EXECUTE getColumns()
-        String schema = CharacteristicsRelatedToEditor.getSchema(metaData);
+        String schema = connectionSource.getSchema();
         resultSetCol = metaData.getColumns(null, schema, tableNameWithAdaptedCase, "%");
         while (resultSetCol.next()) {
           String columnNameToInsert = resultSetCol.getString("COLUMN_NAME").toLowerCase(Locale.ENGLISH);

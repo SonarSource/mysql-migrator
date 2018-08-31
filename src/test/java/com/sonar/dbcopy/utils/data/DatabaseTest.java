@@ -16,26 +16,26 @@ public class DatabaseTest {
   private Database database;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     database = new Database();
     database.addToTablesList("table1");
     database.addToTablesList("table2");
   }
 
   @Test
-  public void testAddAndGetTable() throws Exception {
+  public void testAddAndGetTable() {
     assertNotNull(database);
     assertNotNull(database.getTable(0));
     assertNotNull(database.getTable(0));
   }
 
   @Test
-  public void testGetNbTables() throws Exception {
+  public void testGetNbTables() {
     assertEquals(2, database.getNbTables());
   }
 
   @Test
-  public void testGetTableName() throws Exception {
+  public void testGetTableName() {
     assertEquals("table1", database.getTableName(0));
     assertEquals("table2", database.getTableName(1));
   }

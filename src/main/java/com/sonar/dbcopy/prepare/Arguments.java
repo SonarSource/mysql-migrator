@@ -7,37 +7,35 @@ package com.sonar.dbcopy.prepare;
 
 import com.sonar.dbcopy.utils.toolconfig.CharacteristicsRelatedToEditor;
 import com.sonar.dbcopy.utils.toolconfig.MessageException;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.HelpFormatter;
-
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.jar.Manifest;
-import java.io.IOException;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 public class Arguments {
 
-  static final String DEFAULT_COMMIT_SIZE = "5000";
+  private static final String DEFAULT_COMMIT_SIZE = "5000";
 
   public enum OptionNames {
 
-    driverSrc("driverSrc", "OPTIONAL:  driver for database source", "jdbc driver"),
-    urlSrc("urlSrc", "REQUIRED:  url for database source", "url"),
-    userSrc("userSrc", "REQUIRED:  user name for database source", "login"),
-    pwdSrc("pwdSrc", "REQUIRED:  password for database source", "password"),
-    urlDest("urlDest", "REQUIRED:  url for database destination", "url"),
-    driverDest("driverDest", "OPTIONAL:  driver for database destination", "jdbc driver"),
-    userDest("userDest", "REQUIRED:  user name for database destination", "login"),
-    pwdDest("pwdDest", "REQUIRED:  password for database destination", "password"),
-    commitSize("commitSize",
+    DRIVER_SRC("driverSrc", "OPTIONAL:  driver for database source", "jdbc driver"),
+    URL_SRC("urlSrc", "REQUIRED:  url for database source", "url"),
+    USER_SRC("userSrc", "REQUIRED:  user name for database source", "login"),
+    PWD_SRC("pwdSrc", "REQUIRED:  password for database source", "password"),
+    URL_DEST("urlDest", "REQUIRED:  url for database destination", "url"),
+    DRIVER_DEST("driverDest", "OPTIONAL:  driver for database destination", "jdbc driver"),
+    USER_DEST("userDest", "REQUIRED:  user name for database destination", "login"),
+    PWD_DEST("pwdDest", "REQUIRED:  password for database destination", "password"),
+    COMMIT_SIZE("commitSize",
       String.format("OPTIONAL:  number of rows to commit (default: %s)", DEFAULT_COMMIT_SIZE), "commit size");
     // note that the help option, -T and -version are processed apart
 
@@ -63,7 +61,6 @@ public class Arguments {
     public String getHelperString() {
       return helperString;
     }
-
   }
 
   private CommandLine commandLine;
@@ -83,26 +80,23 @@ public class Arguments {
     this.allocatedEmptyOptionContent();
 
     for (OptionNames oneOption : OptionNames.values()) {
-      OptionBuilder.withValueSeparator(' ');
-      OptionBuilder.withDescription(oneOption.getDescription());
-      Option option = OptionBuilder.create(oneOption.toString());
-
+      Option option = new Option(oneOption.toString(), true, oneOption.getDescription());
+      option.setValueSeparator(' ');
       option.setArgs(1);
       option.setArgName(oneOption.getHelperString());
       options.addOption(option);
     }
 
-    OptionBuilder.withValueSeparator(' ');
-    OptionBuilder.withValueSeparator(',');
-    OptionBuilder.withDescription("OPTIONAL:  table to copy separated by space or , (others will not be deleted)");
-    Option option = OptionBuilder.create("T");
+    Option option = new Option("T", true, "OPTIONAL:  table to copy separated by space or , (others will not be deleted)");
     option.setArgs(Integer.MAX_VALUE);
     option.setArgName("table1Name,table2Name ...");
+    option.setValueSeparator(',');
+    option.setOptionalArg(true);
     options.addOption(option);
   }
 
   public void doParsing(String[] args) {
-    CommandLineParser commandLineParser = new GnuParser();
+    CommandLineParser commandLineParser = new DefaultParser();
 
     try {
       commandLine = commandLineParser.parse(options, args);
@@ -119,16 +113,16 @@ public class Arguments {
     }
 
     // process driver option if it is given in URL instead.
-    if (!commandLine.hasOption("driverSrc") && commandLine.hasOption("urlSrc")) {
-      optionContent.put(OptionNames.driverSrc.toString()
-              , CharacteristicsRelatedToEditor.giveDriverWithUrlFromUser(commandLine.getOptionValue("urlSrc")));
+    if (!commandLine.hasOption("driverSrc") && commandLine.hasOption(OptionNames.URL_SRC.name)) {
+      optionContent.put(OptionNames.DRIVER_SRC.toString()
+              , CharacteristicsRelatedToEditor.giveDriverWithUrlFromUser(commandLine.getOptionValue(OptionNames.URL_SRC.name)));
     }
-    if (!commandLine.hasOption("driverDest") && commandLine.hasOption("urlDest")) {
-      optionContent.put(OptionNames.driverDest.toString()
-              , CharacteristicsRelatedToEditor.giveDriverWithUrlFromUser(commandLine.getOptionValue("urlDest")));
+    if (!commandLine.hasOption("driverDest") && commandLine.hasOption(OptionNames.URL_DEST.name)) {
+      optionContent.put(OptionNames.DRIVER_DEST.toString()
+              , CharacteristicsRelatedToEditor.giveDriverWithUrlFromUser(commandLine.getOptionValue(OptionNames.URL_DEST.name)));
     }
     if (!commandLine.hasOption("commitSize")) {
-      optionContent.put(OptionNames.commitSize.toString(), DEFAULT_COMMIT_SIZE);
+      optionContent.put(OptionNames.COMMIT_SIZE.toString(), DEFAULT_COMMIT_SIZE);
     }
 
     // GET OPTION -T  IF EXISTS
@@ -177,24 +171,17 @@ public class Arguments {
   }
 
   public void printJVMVersion() {
-
-    String printed = String.format("Java %s %s "
-            ,System.getProperty("java.version")
-            ,System.getProperty("java.vendor"));
+    String printed = String.format("Java %s %s ", System.getProperty("java.version"), System.getProperty("java.vendor"));
 
     String bits = System.getProperty("sun.arch.data.model");
     if ("32".equals(bits) || "64".equals(bits)) {
-      printed +=String.format(" (%s-bit)", bits);
+      printed += String.format(" (%s-bit)", bits);
     }
     System.out.println(printed);
   }
 
   public void printOSVersion() {
-
-    String printed = String.format("%s %s %s "
-            ,System.getProperty("os.name")
-            ,System.getProperty("os.version")
-            ,System.getProperty("os.arch"));
+    String printed = String.format("%s %s %s ", System.getProperty("os.name"), System.getProperty("os.version"), System.getProperty("os.arch"));
     System.out.println(printed);
   }
 

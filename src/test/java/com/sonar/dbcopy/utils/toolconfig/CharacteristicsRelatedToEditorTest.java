@@ -32,20 +32,20 @@ public class CharacteristicsRelatedToEditorTest {
   }
 
   @After
-  public void tearDown() throws Exception {
+  public void tearDown() {
     Closer closer = new Closer("CharacteristicsRelatedToEditorTest");
     closer.closeConnection(connection);
   }
 
   @Test
-  public void testMakeDropSequenceRequest() throws SQLException {
+  public void testMakeDropSequenceRequest() {
     assertEquals("DROP SEQUENCE FOO_SEQ"
         , CharacteristicsRelatedToEditor.makeDropSequenceRequest("Foo"));
   }
 
   @Test
   public void testGetSchema() throws SQLException {
-    assertEquals("PUBLIC", CharacteristicsRelatedToEditor.getSchema(metaData));
+    assertEquals("PUBLIC", connection.getSchema());
   }
 
 

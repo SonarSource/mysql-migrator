@@ -19,27 +19,6 @@ public class CharacteristicsRelatedToEditor {
     // no op
   }
 
-  public static String getSchema(DatabaseMetaData metaData) throws SQLException {
-    // USED FOR metadata.getTables or getColumns
-    String schema;
-    if (isPostgresql(metaData)) {
-      // WHICH NEED "public" WITH POSTGRESQL
-      schema = "public";
-    } else if (isOracle(metaData)) {
-      // UPPERCASE USER NAME WITH ORACLE , AND
-      schema = metaData.getUserName().toUpperCase(Locale.ENGLISH);
-    } else if (isSqlServer(metaData)) {
-      // use user login as a schema
-      schema = metaData.getUserName();
-    } else if (isH2(metaData)) {
-      // UPPERCASE "PUBLIC" FOR H2
-      schema = "PUBLIC";
-    } else {
-      schema = null;
-    }
-    return schema;
-  }
-
   public static String transfromCaseOfTableName(DatabaseMetaData metaData, String tableNameToChangeCase) throws SQLException {
     // USED FOR metadata.getColumns WHICH NEED UPPERCASE WITH ORACLE
     String tableNameToReturn;
