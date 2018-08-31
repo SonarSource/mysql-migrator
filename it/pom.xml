@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.sonarsource.parent</groupId>
     <artifactId>parent</artifactId>
-    <version>42</version>
+    <version>43</version>
   </parent>
 
   <groupId>com.sonarsource.dbcopy</groupId>
@@ -49,6 +49,8 @@
     <!-- used for deployment to SonarSource Artifactory -->
     <gitRepositoryName>sonar-db-copy</gitRepositoryName>
 
+    <orchestrator.version>3.21.0.1721</orchestrator.version>
+
     <ojdbc6.version>11.2.0.3.0</ojdbc6.version>
     <ojdbc8.version>12.2.0.1.0</ojdbc8.version>
     <mysql-connector-java.version>5.1.42</mysql-connector-java.version>
@@ -79,7 +81,7 @@
     <dependency>
       <groupId>org.sonarsource.orchestrator</groupId>
       <artifactId>sonar-orchestrator</artifactId>
-      <version>3.15.0.1256</version>
+      <version>${orchestrator.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

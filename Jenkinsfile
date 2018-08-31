@@ -20,7 +20,7 @@ def ignoredTuples = [
         ["mssql2016"   , "mssql2014"]
 ]
 
-def sqVersions = ["LTS", "DEV"]
+def sqVersions = ["LATEST_RELEASE[6.7]", "DEV"]
 
 def tasks = [:]
 
@@ -65,7 +65,6 @@ stage('QA'){
                         sh "mvn " +
                           "-Dsonar.dbCopyVersion=${buildVersion} " +
                           "-Dsonar.runtimeVersion=${sqVer} " +
-                          "-DjavaVersion=LATEST_RELEASE " +
                           "-Dorchestrator.configUrl.source=http://infra.internal.sonarsource.com/jenkins/orch-${src}.properties " +
                           "-Dorchestrator.configUrl.destination=http://infra.internal.sonarsource.com/jenkins/orch-${target}.properties " +
                           withOjdbc +
@@ -81,8 +80,11 @@ stage('QA'){
         }
       }
       parallel tasks
-    } finally {
       sendAllNotificationQaResult()
+    } catch (e) {
+      currentBuild.result = "FAILURE"
+      sendAllNotificationQaResult()
+      error "Build failed"
     }
   }
 }

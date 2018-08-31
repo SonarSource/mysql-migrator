@@ -6,6 +6,7 @@
 package com.sonar.dbcopy.its;
 
 import com.sonar.orchestrator.Orchestrator;
+import com.sonar.orchestrator.locator.MavenLocation;
 import com.sonar.orchestrator.build.MavenBuild;
 import com.sonar.orchestrator.config.Configuration;
 import org.apache.commons.lang.StringUtils;
@@ -29,6 +30,7 @@ public class DbCopyIntegrationTest {
   private static final String DB_COPY_VERSION_PROPERTY = "sonar.dbCopyVersion";
   private static final String ORCHESTRATOR_PROPERTIES_SOURCE = "orchestrator.configUrl.source";
   private static final String ORCHESTRATOR_PROPERTIES_DESTINATION = "orchestrator.configUrl.destination";
+  private static final String SONAR_RUNTIME_VERSION = "sonar.runtimeVersion";
 
   private String dbCopyVersion;
   private Orchestrator sourceOrchestrator;
@@ -39,23 +41,16 @@ public class DbCopyIntegrationTest {
 
     dbCopyVersion = getSystemPropertyOrFail(DB_COPY_VERSION_PROPERTY);
 
-    sourceOrchestrator = Orchestrator.builder(
-      Configuration.builder()
-        .addSystemProperties()
-        .setProperty("orchestrator.configUrl", getSystemPropertyOrFail(ORCHESTRATOR_PROPERTIES_SOURCE))
-        .addEnvVariables()
-        .build()
-    )
-      .addPlugin("java")
+    sourceOrchestrator = Orchestrator.builderEnv()
+      .setSonarVersion(getSystemPropertyOrFail(SONAR_RUNTIME_VERSION))
+      .setOrchestratorProperty("orchestrator.configUrl", getSystemPropertyOrFail(ORCHESTRATOR_PROPERTIES_SOURCE))
+      .addPlugin(MavenLocation.of("org.sonarsource.java", "sonar-java-plugin", "LATEST_RELEASE"))
       .build();
-    destinationOrchestrator = Orchestrator.builder(
-      Configuration.builder()
-        .addSystemProperties()
-        .setProperty("orchestrator.configUrl", getSystemPropertyOrFail(ORCHESTRATOR_PROPERTIES_DESTINATION))
-        .addEnvVariables()
-        .build()
-    )
-      .addPlugin("java")
+
+    destinationOrchestrator = Orchestrator.builderEnv()
+      .setSonarVersion(getSystemPropertyOrFail(SONAR_RUNTIME_VERSION))
+      .setOrchestratorProperty("orchestrator.configUrl", getSystemPropertyOrFail(ORCHESTRATOR_PROPERTIES_DESTINATION))
+      .addPlugin(MavenLocation.of("org.sonarsource.java", "sonar-java-plugin", "LATEST_RELEASE"))
       .build();
   }
 
@@ -147,16 +142,11 @@ public class DbCopyIntegrationTest {
     assertThat(dbCopyProcess.waitFor()).isZero();
 
     // Re-start destination SQ
-    destinationOrchestrator = Orchestrator.builder(
-      Configuration.builder()
-        .addSystemProperties()
-        .setProperty("orchestrator.configUrl", getSystemPropertyOrFail(ORCHESTRATOR_PROPERTIES_DESTINATION))
-        // Prevent DB reset
-        .setProperty("orchestrator.keepDatabase", "true")
-        .addEnvVariables()
-        .build()
-    )
-      .addPlugin("java")
+    destinationOrchestrator = Orchestrator.builderEnv()
+      .setSonarVersion(getSystemPropertyOrFail(SONAR_RUNTIME_VERSION))
+      .setOrchestratorProperty("orchestrator.configUrl", getSystemPropertyOrFail(ORCHESTRATOR_PROPERTIES_SOURCE))
+      .setOrchestratorProperty("orchestrator.keepDatabase", "true")
+      .addPlugin(MavenLocation.of("org.sonarsource.java", "sonar-java-plugin", "LATEST_RELEASE"))
       .build();
     destinationOrchestrator.start();
 
