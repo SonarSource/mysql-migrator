@@ -7,26 +7,28 @@ package com.sonar.dbcopy.utils.toolconfig;
 
 import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.data.Database;
-import org.junit.Before;
 import org.junit.Test;
 
 public class DatabaseComparerTest {
 
-  private Database databaseSource, databaseCorrectDest, databaseUncorrectDest;
-  private DatabaseComparer databaseComparer;
+  private Utils utils = new Utils();
+  private Database databaseSource = utils.makeDatabase(true);
+  private Database databaseCorrectDest = utils.makeDatabase(true);
+  private Database databaseUncorrectDest = utils.makeDatabase(false);
+  private DatabaseComparer databaseComparer = new DatabaseComparer();
 
-  @Before
-  public void setUp() {
-    Utils utils = new Utils();
-    databaseSource = utils.makeDatabase(true);
-    databaseCorrectDest = utils.makeDatabase(true);
-    databaseUncorrectDest = utils.makeDatabase(false);
-    databaseComparer = new DatabaseComparer();
-  }
+  // FIXME those tests does not test any output
 
   @Test
   public void testDisplayAllTablesFoundIfExists() {
     databaseComparer.displayAllTablesFoundIfExists(databaseSource, databaseCorrectDest);
+  }
+
+  @Test
+  public void testDisplayAdditionalTables() {
+    Database oneTableDB = new Database();
+    oneTableDB.addToTablesList("new_table");
+    databaseComparer.displayAllTablesFoundIfExists(databaseSource, oneTableDB);
   }
 
   @Test
@@ -38,4 +40,6 @@ public class DatabaseComparerTest {
   public void testDisplayDiffNumberRows() {
     databaseComparer.displayDiffNumberRows(databaseSource, databaseUncorrectDest);
   }
+
+
 }
