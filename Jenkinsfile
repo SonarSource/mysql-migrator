@@ -65,8 +65,8 @@ stage('QA'){
                         sh "mvn " +
                           "-Dsonar.dbCopyVersion=${buildVersion} " +
                           "-Dsonar.runtimeVersion=${sqVer} " +
-                          "-Dorchestrator.configUrl.source=http://infra.internal.sonarsource.com/jenkins/orch-${src}.properties " +
-                          "-Dorchestrator.configUrl.destination=http://infra.internal.sonarsource.com/jenkins/orch-${target}.properties " +
+                          "-Dorchestrator.configUrl.source=https://repox.sonarsource.com/orchestrator.properties/orch-${src}.properties " +
+                          "-Dorchestrator.configUrl.destination=https://repox.sonarsource.com/orchestrator.properties/orch-${target}.properties " +
                           withOjdbc +
                           "-Dmaven.test.redirectTestOutputToFile=false " +
                           "clean verify -e -V "
