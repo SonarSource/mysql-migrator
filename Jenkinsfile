@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-@Library('SonarSource@1.2') _
+@Library('SonarSource@2.1.1') _
 
 def MAVEN_TOOL='Maven 3.3.x'
 
