@@ -8,5 +8,5 @@ Sonarqube database copier, to copy data from one db instance to the other.
 
 ## How to run
 
-To prepare: `mvn install`
-To run: `java -jar ~/.m2/repository/com/sonarsource/dbcopy/sonar-db-copy/${version}/sonar-db-copy-${version}-SNAPSHOT-jar-with-dependencies.jar ${options}`
+    version=1.4-SNAPSHOT
+    java -jar ~/.m2/repository/com/sonarsource/dbcopy/sonar-db-copy/${version}/sonar-db-copy-${version}-jar-with-dependencies.jar -help
