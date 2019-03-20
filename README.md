@@ -1,6 +1,6 @@
-# Sonar DB Copy
+# SonarQube MySQL Database Migrator
 
-Sonarqube database copier, to copy data from one db instance to the other.
+Copy SonarQube database from MySQL to non-MySQL.
 
 ## How to install
 
@@ -9,4 +9,4 @@ Sonarqube database copier, to copy data from one db instance to the other.
 ## How to run
 
     version=1.4-SNAPSHOT
-    java -jar ~/.m2/repository/com/sonarsource/dbcopy/sonar-db-copy/${version}/sonar-db-copy-${version}-jar-with-dependencies.jar -help
+    java -jar ~/.m2/repository/org/sonarsource/mysql-migrator/mysql-migrator/${version}/mysql-migrator-${version}-jar-with-dependencies.jar -help

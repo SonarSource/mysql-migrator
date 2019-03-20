@@ -32,8 +32,6 @@ stage('Notify') {
 
 stage('QA'){
   node('linux'){
-    def scmVars = checkout scm
-
     try{
       for(sqVersion in sqVersions) {
         for (dbSrc in dbs) {

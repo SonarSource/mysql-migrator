@@ -122,7 +122,7 @@ public class DbCopyIntegrationTest {
     // Execute copy
     Process dbCopyProcess = new ProcessBuilder().command(
       "java",
-      "-jar", String.format("../target/sonar-db-copy-%s-jar-with-dependencies.jar", dbCopyVersion),
+      "-jar", String.format("../target/mysql-migrator-%s-jar-with-dependencies.jar", dbCopyVersion),
       "-urlSrc", sourceOrchestrator.getConfiguration().getString("sonar.jdbc.url"),
       "-userSrc", sourceOrchestrator.getConfiguration().getString("sonar.jdbc.username"),
       "-pwdSrc", sourceOrchestrator.getConfiguration().getString("sonar.jdbc.password"),

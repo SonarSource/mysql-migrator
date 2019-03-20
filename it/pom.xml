@@ -2,52 +2,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>com.sonarsource.parent</groupId>
-    <artifactId>parent</artifactId>
-    <version>43</version>
-  </parent>
-
-  <groupId>com.sonarsource.dbcopy</groupId>
-  <artifactId>sonar-dbcopy-it</artifactId>
-  <version>1.4-SNAPSHOT</version>
-  <name>SonarQube Database Copy :: Integration Tests</name>
-  <description>Integration tests for SonarQube Database Copy</description>
+  <groupId>org.sonarsource.mysql-migrator</groupId>
+  <artifactId>mysql-migrator-it</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <name>SonarQube MySQL Database Copy :: Integration Tests</name>
+  <description>Integration tests for SonarQube MySQL Database Copy</description>
 
   <inceptionYear>2017</inceptionYear>
 
-  <organization>
-    <name>SonarSource</name>
-    <url>http://www.sonarsource.com</url>
-  </organization>
-
-  <licenses>
-    <license>
-      <name>SonarSource</name>
-    </license>
-  </licenses>
-
-  <scm>
-    <connection>scm:git:git@github.com:SonarSource/sonar-db-copy.git</connection>
-    <developerConnection>scm:git:git@github.com:SonarSource/sonar-db-copy.git</developerConnection>
-    <url>https://github.com/SonarSource/sonar-db-copy</url>
-    <tag>HEAD</tag>
-  </scm>
-
-  <issueManagement>
-    <system>jira</system>
-    <url>http://jira.sonarsource.com/browse/SDBC</url>
-  </issueManagement>
-
-  <ciManagement>
-    <system>jenkins</system>
-    <url>https://travis-ci.com/SonarSource/sonar-db-copy</url>
-  </ciManagement>
-
   <properties>
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
-    <!-- used for deployment to SonarSource Artifactory -->
-    <gitRepositoryName>sonar-db-copy</gitRepositoryName>
 
     <orchestrator.version>3.21.0.1721</orchestrator.version>
 
@@ -147,7 +111,7 @@
                   <artifactItems>
                     <artifactItem>
                       <groupId>${project.groupId}</groupId>
-                      <artifactId>sonar-db-copy</artifactId>
+                      <artifactId>mysql-migrator</artifactId>
                       <version>${project.version}</version>
                       <type>jar</type>
                       <classifier>jar-with-dependencies</classifier>

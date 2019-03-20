@@ -3,15 +3,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.sonarsource.parent</groupId>
+    <groupId>org.sonarsource.parent</groupId>
     <artifactId>parent</artifactId>
-    <version>43</version>
+    <version>49</version>
   </parent>
-  <groupId>com.sonarsource.dbcopy</groupId>
-  <artifactId>sonar-db-copy</artifactId>
-  <version>1.4-SNAPSHOT</version>
-  <name>SonarQube Database Copy</name>
-  <description>Carbon-copy SonarQube database</description>
+  <groupId>org.sonarsource.mysql-migrator</groupId>
+  <artifactId>mysql-migrator</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <name>SonarQube MySQL Database Migrator</name>
+  <description>Copy SonarQube database from MySQL to non-MySQL</description>
 
   <inceptionYear>2013</inceptionYear>
 
@@ -22,31 +22,33 @@
 
   <licenses>
     <license>
-      <name>SonarSource</name>
+      <name>GNU LGPL 3</name>
+      <url>http://www.gnu.org/licenses/lgpl.txt</url>
+      <distribution>repo</distribution>
     </license>
   </licenses>
 
   <scm>
-    <connection>scm:git:git@github.com:SonarSource/sonar-db-copy.git</connection>
-    <developerConnection>scm:git:git@github.com:SonarSource/sonar-db-copy.git</developerConnection>
-    <url>https://github.com/SonarSource/sonar-db-copy</url>
+    <connection>scm:git:git@github.com:SonarSource/mysql-migrator.git</connection>
+    <developerConnection>scm:git:git@github.com:SonarSource/mysql-migrator.git</developerConnection>
+    <url>https://github.com/SonarSource/mysql-migrator</url>
     <tag>HEAD</tag>
   </scm>
 
   <issueManagement>
     <system>jira</system>
-    <url>http://jira.sonarsource.com/browse/SDBC</url>
+    <url>https://github.com/SonarSource/mysql-migrator/issues</url>
   </issueManagement>
 
   <ciManagement>
     <system>travis</system>
-    <url>https://travis-ci.com/SonarSource/sonar-db-copy</url>
+    <url>https://travis-ci.com/SonarSource/mysql-migrator</url>
   </ciManagement>
 
   <properties>
     <logback-classic.version>1.2.3</logback-classic.version>
     <!-- used for deployment to SonarSource Artifactory -->
-    <gitRepositoryName>sonar-db-copy</gitRepositoryName>
+    <gitRepositoryName>mysql-migrator</gitRepositoryName>
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
     <!-- enable download from Burgr -->
     <artifactsToDownload>${project.groupId}:${project.artifactId}:jar:jar-with-dependencies</artifactsToDownload>
