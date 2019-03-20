@@ -98,7 +98,7 @@ public class CharacteristicsRelatedToEditor {
     }
   }
 
-  public static String giveDriverWithUrlFromUser(String url) {
+  public static String detectDriverNameFromJdbcUrl(String url) {
     String driverAsString;
     String urlBeginning = url.substring(0, 7);
     if ("jdbc:my".equals(urlBeginning)) {

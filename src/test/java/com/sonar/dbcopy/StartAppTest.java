@@ -22,18 +22,15 @@ package com.sonar.dbcopy;
 import com.sonar.dbcopy.utils.Utils;
 import com.sonar.dbcopy.utils.toolconfig.Closer;
 import com.sonar.dbcopy.utils.toolconfig.MessageException;
+import java.sql.Connection;
 import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.SystemErrRule;
 import org.junit.contrib.java.lang.system.SystemOutRule;
 import org.junit.rules.ExpectedException;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-
 import static org.fest.assertions.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class StartAppTest {
@@ -41,13 +38,16 @@ public class StartAppTest {
   @Rule
   public final SystemOutRule systemOutRule = new SystemOutRule().enableLog();
   @Rule
+  public final SystemErrRule systemErrRule = new SystemErrRule().enableLog();
+  @Rule
   public final ExpectedException thrown = ExpectedException.none();
 
-  private Connection connectionSourceV1, connectionSourceV2, connectionDestV1, connectiondestV3, connectionSourceToption, connectionDestToption;
+  private Connection connectionSourceV1, connectionSourceV2, connectionDestV1, connectiondestV3;
+
+  private final StartAppTester app = new StartAppTester();
 
   @Test
   public void testMain() {
-
     Utils utils = new Utils();
     connectionSourceV1 = utils.makeFilledH2("StartAppTest_Source_Version_1_DB", true);
     utils.addContentInThirdTable(connectionSourceV1, 1);
@@ -69,53 +69,10 @@ public class StartAppTest {
       "-userDest", "sonar",
       "-pwdDest", "sonar"
     };
-    StartApp.main(args);
+    app.parseArgsAndRunMigration(args);
 
-    assertThat(systemOutRule.getLog().contains("THE COPY HAS FINISHED SUCCESSFULLY") ).isTrue();
-  }
-
-  @Test
-  public void testMainWithTableOption() throws Exception {
-
-    Utils utils = new Utils();
-    connectionSourceToption = utils.makeFilledH2("StartAppTest_Source_T_option_DB", true);
-    utils.addContentInThirdTable(connectionSourceToption, 1);
-    utils.addContentInThirdTable(connectionSourceToption, 2);
-
-    connectionDestToption = utils.makeEmptyH2("StartAppTest_Destination_T_option_DB", true);
-    utils.addContentInThirdTable(connectionDestToption, 2);
-
-    // no driveSrc to check the computation of the driver from the URL.
-    String[] args = {
-      "-urlSrc", "jdbc:h2:mem:StartAppTest_Source_T_option_DB;DB_CLOSE_ON_EXIT=-1;",
-      "-userSrc", "sonar",
-      "-pwdSrc", "sonar",
-      "-driverDest", "org.h2.Driver",
-      "-urlDest", "jdbc:h2:mem:StartAppTest_Destination_T_option_DB;DB_CLOSE_ON_EXIT=-1;",
-      "-userDest", "sonar",
-      "-pwdDest", "sonar",
-      "-T", "table_for_test"
-    };
-    StartApp.main(args);
-
-    Statement statementDestToption = connectionDestToption.createStatement();
-    ResultSet resultSet = statementDestToption.executeQuery("SELECT * FROM schema_migrations");
-    // THE TEST WORKS IF THE TABLE schema_migrations DON'T HAVE A ROW WITH version=1 WHICH WOULD COME FROM SOURCE
-    while (resultSet.next()) {
-      assertEquals(2, resultSet.getInt(1));
-    }
-
-    // AND THE TABLE  table_for_test MUST BE FULL AND HAVE A RESULTSET WHITH DATA
-    resultSet = statementDestToption.executeQuery("SELECT * FROM table_for_test");
-    assertThat(resultSet).isNotNull();
-    while (resultSet.next()) {
-      assertThat(resultSet.getInt(1)).isNotNull();
-    }
-
-    Closer closer = new Closer("startAppTestMain");
-    closer.closeConnection(connectionSourceToption);
-    closer.closeConnection(connectionDestToption);
-
+    assertThat(systemOutRule.getLog().contains("THE COPY HAS FINISHED SUCCESSFULLY")).isTrue();
+    assertThat(app.status).isEqualTo(0);
   }
 
   @Test
@@ -141,8 +98,9 @@ public class StartAppTest {
       "-userDest", "sonar",
       "-pwdDest", "sonar"
     };
+
     try {
-      StartApp.main(argsBadVersion);
+      app.parseArgsAndRunMigration(argsBadVersion);
       fail();
     } catch (MessageException e) {
       assertThat(e).isInstanceOf(MessageException.class).hasMessage("Version of schema migration are not the same between source (2) and destination (3).");
@@ -151,49 +109,44 @@ public class StartAppTest {
 
   @Test
   public void testHelp() {
-
     String[] helpArgument = {"-help"};
-    StartApp.main(helpArgument);
+    app.parseArgsAndRunMigration(helpArgument);
 
-    assertThat(systemOutRule.getLog().startsWith("usage:") ).isTrue();
+    assertThat(systemOutRule.getLog()).startsWith("usage:");
 
     // test a same line does not contain Src and dest, this would be a mix of options
-    assertThat(systemOutRule.getLog().matches("^ -\\w+Src.*destination$") ).isFalse();
-    assertThat(systemOutRule.getLog().matches("^ -\\w+Dest.*source$") ).isFalse();
+    assertThat(systemOutRule.getLog()).doesNotMatch("^ -\\w+Src.*destination$");
+    assertThat(systemOutRule.getLog()).doesNotMatch("^ -\\w+Dest.*source$");
 
+    assertThat(app.status).isEqualTo(0);
   }
 
   @Test
   public void testVersion() {
-
     String[] versionArgument = {"-version"};
-    StartApp.main(versionArgument);
-
-    assertThat (systemOutRule.getLog().contains("Java ")).isTrue();
+    app.parseArgsAndRunMigration(versionArgument);
+    assertThat(systemOutRule.getLog()).contains("Java ");
+    assertThat(app.status).isEqualTo(0);
   }
 
   @Test
-  public void testMissingArgument() {
-    thrown.expect(MessageException.class);
-
+  public void testUnrecognizedArgument() {
     String[] aloneArgument = {"-URL_SRC"};
-    StartApp.main(aloneArgument);
-    fail();
+    app.parseArgsAndRunMigration(aloneArgument);
+    assertThat(systemErrRule.getLog()).isEqualTo("Unrecognized option: -URL_SRC\n");
+    assertThat(app.status).isEqualTo(1);
   }
 
   @Test
   public void testBadArgument() {
-    thrown.expect(MessageException.class);
-
     String[] badArgument = {"badArgument"};
-    StartApp.main(badArgument);
-    fail();
+    app.parseArgsAndRunMigration(badArgument);
+    assertThat(app.status).isEqualTo(1);
+    assertThat(systemErrRule.getLog()).isEqualTo("Unknown arguments: badArgument\n");
   }
 
   @Test
   public void testBadCommitSize() {
-    thrown.expect(MessageException.class);
-
     String[] badArgument = {
       "-urlSrc", "jdbc:h2:mem:StartAppTest_Source_Version_2_DB;DB_CLOSE_ON_EXIT=-1;",
       "-userSrc", "sonar",
@@ -203,19 +156,26 @@ public class StartAppTest {
       "-pwdDest", "sonar",
       "-commitSize", "notAnInteger"
     };
-    StartApp.main(badArgument);
-    fail();
+    app.parseArgsAndRunMigration(badArgument);
+    assertThat(app.status).isEqualTo(1);
+    assertThat(systemErrRule.getLog()).isEqualTo("The value of -commitSize must be a valid integer, got 'notAnInteger'\n");
   }
 
   @After
   public void tearDown() {
     Closer closer = new Closer("startAppTesttearDown");
-    closer.closeConnection(connectionSourceToption);
-    closer.closeConnection(connectionDestToption);
     closer.closeConnection(connectionSourceV1);
     closer.closeConnection(connectionDestV1);
     closer.closeConnection(connectionSourceV2);
     closer.closeConnection(connectiondestV3);
   }
 
+  private static class StartAppTester extends StartApp {
+    int status = 0;
+
+    @Override
+    void exit(int status) {
+      this.status = status;
+    }
+  }
 }
