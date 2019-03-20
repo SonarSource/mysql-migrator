@@ -70,14 +70,14 @@ public class CharacteristicsRelatedToEditorTest {
 
   @Test
   public void testGiveDriverWithUrlFromUser() {
-    assertEquals("com.mysql.jdbc.Driver", CharacteristicsRelatedToEditor.giveDriverWithUrlFromUser("jdbc:my"));
-    assertEquals("oracle.jdbc.OracleDriver", CharacteristicsRelatedToEditor.giveDriverWithUrlFromUser("jdbc:or"));
-    assertEquals("org.h2.Driver",         CharacteristicsRelatedToEditor.giveDriverWithUrlFromUser("jdbc:h2"));
-    assertEquals("org.postgresql.Driver", CharacteristicsRelatedToEditor.giveDriverWithUrlFromUser("jdbc:po"));
-    assertEquals("com.microsoft.sqlserver.jdbc.SQLServerDriver", CharacteristicsRelatedToEditor.giveDriverWithUrlFromUser("jdbc:sq"));
+    assertEquals("com.mysql.jdbc.Driver", CharacteristicsRelatedToEditor.detectDriverNameFromJdbcUrl("jdbc:my"));
+    assertEquals("oracle.jdbc.OracleDriver", CharacteristicsRelatedToEditor.detectDriverNameFromJdbcUrl("jdbc:or"));
+    assertEquals("org.h2.Driver",         CharacteristicsRelatedToEditor.detectDriverNameFromJdbcUrl("jdbc:h2"));
+    assertEquals("org.postgresql.Driver", CharacteristicsRelatedToEditor.detectDriverNameFromJdbcUrl("jdbc:po"));
+    assertEquals("com.microsoft.sqlserver.jdbc.SQLServerDriver", CharacteristicsRelatedToEditor.detectDriverNameFromJdbcUrl("jdbc:sq"));
 
     try {
-      CharacteristicsRelatedToEditor.giveDriverWithUrlFromUser("wrongUrl");
+      CharacteristicsRelatedToEditor.detectDriverNameFromJdbcUrl("wrongUrl");
       fail();
     } catch (Exception e) {
       Assertions.assertThat(e).isInstanceOf(MessageException.class).hasMessage("Url wrongUrl does not correspond to a correct format to get the good jdbc driver.");
