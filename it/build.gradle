@@ -1,0 +1,65 @@
+buildscript {
+    dependencies {
+        classpath "gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:0.14.0"
+    }
+}
+
+plugins {
+    id 'java'
+}
+
+apply plugin: 'java'
+apply plugin: 'com.github.hierynomus.license'
+
+group = 'org.sonarsource.sqdbmigrator.it'
+version = '1.0-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.google.code.findbugs:jsr305:1.3.9'
+
+    testImplementation 'org.sonarsource.orchestrator:sonar-orchestrator:3.21.0.1721'
+    testImplementation 'org.sonarsource.sonarqube:sonar-ws:6.7'
+
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.assertj:assertj-core:3.12.2'
+    testImplementation 'com.tngtech.java:junit-dataprovider:1.10.0'
+    testImplementation 'org.mockito:mockito-all:1.10.19'
+    testImplementation 'org.slf4j:slf4j-api:1.7.26'
+
+    runtime 'org.postgresql:postgresql:42.2.5',
+            'mysql:mysql-connector-java:5.1.47',
+            // FIXME artifact not in maven central? probably need to get from repox
+            // 'com.oracle.jdbc:ojdbc8:12.2.0.1.0',
+            'com.microsoft.sqlserver:mssql-jdbc:6.2.2.jre8',
+            'com.h2database:h2:1.4.197'
+}
+
+license {
+    header = rootProject.file('HEADER')
+    strictCheck true
+    mapping {
+        java = 'SLASHSTAR_STYLE'
+        js = 'SLASHSTAR_STYLE'
+        ts = 'SLASHSTAR_STYLE'
+        tsx = 'SLASHSTAR_STYLE'
+        css = 'SLASHSTAR_STYLE'
+    }
+    includes(['**/*.java'])
+}
+
+task integrationTest(type: Test, dependsOn: testClasses) {
+    systemProperty 'orchestrator.configUrl.source', System.getProperty('orchestrator.configUrl.source')
+    systemProperty 'orchestrator.configUrl.target', System.getProperty('orchestrator.configUrl.target')
+    systemProperty 'sonar.runtimeVersion', System.getProperty('orchestrator.configUrl.target')
+
+    testLogging {
+        events "skipped", "failed" // verbose log for failed and skipped tests (by default the name of the tests are not logged)
+        exceptionFormat 'full' // log the full stack trace (default is the 1st line of the stack trace)
+    }
+}
+
