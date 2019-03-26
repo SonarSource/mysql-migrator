@@ -1,0 +1,17 @@
+HELP.md
+.gradle
+/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+/out/
+
+### VS Code ###
+.vscode/
+
+### Maven (used by ITs)
+target
