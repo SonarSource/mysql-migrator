@@ -27,6 +27,7 @@ import org.sonarsource.sqdbmigrator.migrator.before.PreMigrationChecks.PreMigrat
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
 public class PreMigrationChecksTest {
@@ -41,8 +42,8 @@ public class PreMigrationChecksTest {
     TableListValidator tableListValidator = mock(TableListValidator.class);
 
     new PreMigrationChecks(versionValidator, tableListValidator).execute(source, target, tableListProvider);
-    versionValidator.execute(source, target);
-    tableListValidator.execute(source, target, tableListProvider);
+    verify(versionValidator).execute(source, target);
+    verify(tableListValidator).execute(source, target, tableListProvider);
   }
 
   @Test
