@@ -19,37 +19,37 @@
  */
 package org.sonarsource.sqdbmigrator.migrator;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
+import org.sonarsource.sqdbmigrator.migrator.before.PreMigrationChecks;
 
 public class Migrator {
 
-  private final System2 system2;
   private final ConnectionConfig sourceConfig;
   private final ConnectionConfig targetConfig;
+  private final TableListProvider tableListProvider;
+  private final PreMigrationChecks preMigrationChecks;
+  private final ContentCopier contentCopier;
 
-  public Migrator(System2 system2, ConnectionConfig sourceConfig, ConnectionConfig targetConfig) {
-    this.system2 = system2;
+  public Migrator(ConnectionConfig sourceConfig, ConnectionConfig targetConfig,
+    TableListProvider tableListProvider, PreMigrationChecks preMigrationChecks, ContentCopier contentCopier) {
     this.sourceConfig = sourceConfig;
     this.targetConfig = targetConfig;
+    this.tableListProvider = tableListProvider;
+    this.preMigrationChecks = preMigrationChecks;
+    this.contentCopier = contentCopier;
   }
 
   public void execute() throws SQLException {
-    execute(sourceConfig);
-    execute(targetConfig);
+    try (Database source = Database.create(sourceConfig); Database target = Database.create(targetConfig)) {
+      preMigrationChecks.execute(source, target, tableListProvider);
+      contentCopier.execute(source, target, tableListProvider, 5000);
+      // TODO print stats, see issue #8
+    }
   }
 
-  private void execute(ConnectionConfig config) throws SQLException {
-    Properties properties = new Properties();
-    properties.setProperty("user", config.username);
-    properties.setProperty("password", config.password);
-    try (Connection unused = DriverManager.getConnection(config.url, properties)) {
-      system2.printlnOut("Connection test successful!");
-    } catch (SQLException e) {
-      system2.printlnErr("Connection test failed!");
-      throw e;
+  static class MigrationException extends RuntimeException {
+    MigrationException(String format, Object... args) {
+      super(String.format(format, args));
     }
   }
 }
