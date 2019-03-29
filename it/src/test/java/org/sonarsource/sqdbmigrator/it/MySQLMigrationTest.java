@@ -103,57 +103,43 @@ public class MySQLMigrationTest {
 
     WsClient sourceWsClient = newWsClient(source);
 
-    assertThat(sourceWsClient
-      .issues()
-      .search(new SearchWsRequest())
-      .getTotal()).isZero();
+    // no issues at first
+    assertThat(getIssueCount(sourceWsClient)).isZero();
 
-    // First analysis
+    // analyze project, creating issues
     source.executeBuildQuietly(
       MavenBuild.create()
         .setPom(PROJECT_PATH.resolve("1/pom.xml").toFile())
         .setCleanPackageSonarGoals());
 
-    long sourceInitialIssues = sourceWsClient
-      .issues()
-      .search(new SearchWsRequest())
-      .getTotal();
+    long sourceIssuesAfter1stAnalysis = getIssueCount(sourceWsClient);
 
-    // Check that issues exist
-    assertThat(sourceInitialIssues).isGreaterThan(0);
+    assertThat(sourceIssuesAfter1stAnalysis).isGreaterThan(0);
 
-    // Second analysis, should close one issue
+    // analyze again, adding one issue
     source.executeBuildQuietly(
       MavenBuild.create()
         .setPom(PROJECT_PATH.resolve("2/pom.xml").toFile())
         .setCleanPackageSonarGoals());
 
-    long sourceFinalIssues = sourceWsClient
-      .issues()
-      .search(new SearchWsRequest())
-      .getTotal();
+    long sourceIssuesAfter2ndAnalysis = getIssueCount(sourceWsClient);
 
-    // Check that issues exist
-    assertThat(sourceFinalIssues).isGreaterThan(sourceInitialIssues);
+    assertThat(sourceIssuesAfter2ndAnalysis).isGreaterThan(sourceIssuesAfter1stAnalysis);
 
     source.stop();
-
-    // Start target SQ
     target.start();
 
-    // Check no issues in destination
     WsClient targetWsClient = newWsClient(target);
 
-    assertThat(targetWsClient
-      .issues()
-      .search(new SearchWsRequest())
-      .getTotal()).isZero();
+    // target starts with no issues
+    assertThat(getIssueCount(targetWsClient)).isZero();
 
-    // ... and stop it, to execute migration offline
+    // stop target to execute migration offline
     target.stop();
 
     assertThat(runMigration()).isZero();
 
+    // verify matching stats
     Stats sourceStats = computeStats(source);
     Stats targetStats = computeStats(target);
     assertThat(targetStats.projects).isEqualTo(sourceStats.projects);
@@ -161,37 +147,34 @@ public class MySQLMigrationTest {
     assertThat(targetStats.issues).isEqualTo(sourceStats.issues);
     assertThat(targetStats.users).isEqualTo(sourceStats.users);
 
-    // Re-start target SQ
     target = newTargetOrchestratorBuilder()
       .setOrchestratorProperty("orchestrator.keepDatabase", "true")
       .build();
     target.start();
 
-    // Check one issue in destination
-    targetWsClient = newWsClient(target);
+    // verify matching issues using SQ WS too
+    long targetIssuesAfterMigration = getIssueCount(targetWsClient);
 
-    long destinationInitialIssues = targetWsClient
-      .issues()
-      .search(new SearchWsRequest())
-      .getTotal();
+    assertThat(targetIssuesAfterMigration).isEqualTo(sourceIssuesAfter2ndAnalysis);
 
-    // Check that issues exist
-    assertThat(destinationInitialIssues).isEqualTo(sourceFinalIssues);
-
-      // Perform an analysis on the target to check DB state
-    // Second analysis, should close one additional issue
+    // analyze same project and verify new issues are successfully added
     target.executeBuildQuietly(
       MavenBuild.create()
         .setPom(PROJECT_PATH.resolve("3/pom.xml").toFile())
         .setCleanPackageSonarGoals());
 
-    long destinationFinalIssues = targetWsClient
-      .issues()
-      .search(new SearchWsRequest())
-      .getTotal();
+    long targetIssuesAfterAnalysis = getIssueCount(targetWsClient);
 
-    // Check that issues have been created
-    assertThat(destinationFinalIssues).isGreaterThan(destinationInitialIssues);
+    assertThat(targetIssuesAfterAnalysis).isGreaterThan(targetIssuesAfterMigration);
+
+    // analyze another project and verify new project and new issues are successfully added
+    target.executeBuildQuietly(
+      MavenBuild.create()
+        .setProperties("sonar.projectKey", "project2")
+        .setPom(PROJECT_PATH.resolve("3/pom.xml").toFile())
+        .setCleanPackageSonarGoals());
+
+    assertThat(getIssueCount(targetWsClient)).isEqualTo(2 * targetIssuesAfterAnalysis);
   }
 
   @Test
@@ -224,6 +207,13 @@ public class MySQLMigrationTest {
     database.closeQuietly(connection);
 
     assertThat(runMigration()).isGreaterThan(0);
+  }
+
+  private long getIssueCount(WsClient wsClient) {
+    return wsClient
+      .issues()
+      .search(new SearchWsRequest())
+      .getTotal();
   }
 
   private void ensureEmptyDatabase(Orchestrator source) {
