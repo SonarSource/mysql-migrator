@@ -79,7 +79,7 @@ public abstract class Database implements AutoCloseable {
       return PostgresqlDatabase::new;
     }
 
-    if (config.url.startsWith("jdbc:mssql:")) {
+    if (config.url.startsWith("jdbc:sqlserver:")) {
       return MssqlDatabase::new;
     }
 
