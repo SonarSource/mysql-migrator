@@ -197,14 +197,7 @@ public class MySQLMigrationTest {
     ensureInitialSonarQubeDatabase(target);
 
     // delete versions to cause a mismatch
-    DefaultDatabase database = new DefaultDatabase(target.getConfiguration());
-    database.getClient().setDropAndCreate(false);
-    database.start();
-    Connection connection = database.openConnection();
-    try (PreparedStatement statement = connection.prepareStatement("delete from schema_migrations where version != '1'")) {
-      statement.executeUpdate();
-    }
-    database.closeQuietly(connection);
+    runStatementsOnDatabase(target.getConfiguration(), "delete from schema_migrations where version != '1'");
 
     assertThat(runMigration()).isGreaterThan(0);
   }
@@ -254,6 +247,33 @@ public class MySQLMigrationTest {
     assertThat(runMigration()).isGreaterThan(0);
   }
 
+  @Test
+  public void fail_migration_if_source_has_duplicate_project_kee_on_mysql() throws SQLException, IOException, InterruptedException {
+    ensureInitialSonarQubeDatabase(source);
+    ensureInitialSonarQubeDatabase(target);
+
+    // create duplicate projects.kee values
+    String dropIndexSql = "drop index projects_kee on projects";
+    String insertDummyKeeSql = "insert into projects (kee, uuid, project_uuid, root_uuid, uuid_path, organization_uuid, private) " +
+      "values ('kee1', 'uuid1', 'project_uuid1', 'root_uuid1', 'uuid_path1', 'organization_uuid1', false)";
+    runStatementsOnDatabase(source.getConfiguration(), dropIndexSql, insertDummyKeeSql, insertDummyKeeSql);
+
+    assertThat(runMigration()).isGreaterThan(0);
+  }
+
+  private void runStatementsOnDatabase(Configuration configuration, String... sqls) throws SQLException {
+    DefaultDatabase database = new DefaultDatabase(configuration);
+    database.getClient().setDropAndCreate(false);
+    database.start();
+    Connection connection = database.openConnection();
+    for (String sql : sqls) {
+      try (PreparedStatement statement = connection.prepareStatement(sql)) {
+        statement.executeUpdate();
+      }
+    }
+    database.closeQuietly(connection);
+  }
+
   private long getIssueCount(WsClient wsClient) {
     return wsClient
       .issues()
@@ -293,12 +313,11 @@ public class MySQLMigrationTest {
   private String newConfigFile(Configuration configuration) throws IOException {
     Path targetPath = temporaryFolder.newFile().toPath();
     String content = String.format("sonar.jdbc.url = %s\n" +
-        "sonar.jdbc.username = %s\n" +
-        "sonar.jdbc.password = %s\n",
+      "sonar.jdbc.username = %s\n" +
+      "sonar.jdbc.password = %s\n",
       configuration.getString("sonar.jdbc.url"),
       configuration.getString("sonar.jdbc.username"),
-      configuration.getString("sonar.jdbc.password")
-    );
+      configuration.getString("sonar.jdbc.password"));
     Files.write(targetPath, content.getBytes());
     return targetPath.toString();
   }

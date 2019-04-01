@@ -248,7 +248,7 @@ public abstract class Database implements AutoCloseable {
     return queryForLong(String.format("select count(*) from %s", tableName));
   }
 
-  long queryForLong(String sql) throws SQLException {
+  public long queryForLong(String sql) throws SQLException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(sql); ResultSet rs = preparedStatement.executeQuery()) {
       return rs.next() ? rs.getLong(1) : 0;
     }

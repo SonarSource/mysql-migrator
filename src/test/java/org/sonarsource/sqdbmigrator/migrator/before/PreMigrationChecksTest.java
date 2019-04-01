@@ -42,12 +42,14 @@ public class PreMigrationChecksTest {
     TableListValidator tableListValidator = mock(TableListValidator.class);
     BlankTargetValidator blankTargetValidator = mock(BlankTargetValidator.class);
     NonBlankSourceValidator nonBlankSourceValidator = mock(NonBlankSourceValidator.class);
+    UniqueProjectKeeValidator uniqueProjectKeeValidator = mock(UniqueProjectKeeValidator.class);
 
-    new PreMigrationChecks(versionValidator, tableListValidator, blankTargetValidator, nonBlankSourceValidator).execute(source, target, tableListProvider);
+    new PreMigrationChecks(versionValidator, tableListValidator, blankTargetValidator, nonBlankSourceValidator, uniqueProjectKeeValidator).execute(source, target, tableListProvider);
     verify(versionValidator).execute(source, target);
     verify(tableListValidator).execute(source, target, tableListProvider);
     verify(blankTargetValidator).execute(target);
     verify(nonBlankSourceValidator).execute(source);
+    verify(uniqueProjectKeeValidator).execute(source);
   }
 
   @Test
@@ -62,7 +64,7 @@ public class PreMigrationChecksTest {
     TableListValidator tableListValidator = mock(TableListValidator.class);
 
     try {
-      new PreMigrationChecks(failingVersionValidator, tableListValidator, null, null).execute(source, target, tableListProvider);
+      new PreMigrationChecks(failingVersionValidator, tableListValidator, null, null, null).execute(source, target, tableListProvider);
       fail("expected to throw");
     } catch (PreMigrationException ignored) {
       // nothing to do
