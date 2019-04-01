@@ -247,6 +247,13 @@ public class MySQLMigrationTest {
     assertThat(runMigration()).isGreaterThan(0);
   }
 
+  @Test
+  public void fail_migration_if_source_database_looks_blank() throws IOException, InterruptedException {
+    ensureInitialSonarQubeDatabase(source);
+    ensureInitialSonarQubeDatabase(target);
+    assertThat(runMigration()).isGreaterThan(0);
+  }
+
   private long getIssueCount(WsClient wsClient) {
     return wsClient
       .issues()
