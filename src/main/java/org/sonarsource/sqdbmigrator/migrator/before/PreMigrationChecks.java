@@ -28,12 +28,14 @@ public class PreMigrationChecks {
   private final TableListValidator tableListValidator;
   private final BlankTargetValidator blankTargetValidator;
   private final NonBlankSourceValidator nonBlankSourceValidator;
+  private final UniqueProjectKeeValidator uniqueProjectKeeValidator;
 
-  public PreMigrationChecks(VersionValidator versionValidator, TableListValidator tableListValidator, BlankTargetValidator blankTargetValidator, NonBlankSourceValidator nonBlankSourceValidator) {
+  public PreMigrationChecks(VersionValidator versionValidator, TableListValidator tableListValidator, BlankTargetValidator blankTargetValidator, NonBlankSourceValidator nonBlankSourceValidator, UniqueProjectKeeValidator uniqueProjectKeeValidator) {
     this.versionValidator = versionValidator;
     this.tableListValidator = tableListValidator;
     this.blankTargetValidator = blankTargetValidator;
     this.nonBlankSourceValidator = nonBlankSourceValidator;
+    this.uniqueProjectKeeValidator = uniqueProjectKeeValidator;
   }
 
   public void execute(Database source, Database target, TableListProvider tableListProvider) {
@@ -45,7 +47,7 @@ public class PreMigrationChecks {
 
     nonBlankSourceValidator.execute(source);
 
-    // TODO See issue #4: Fail if duplicate values are found in projects.kee of the source (print duplicates)
+    uniqueProjectKeeValidator.execute(source);
   }
 
   static class PreMigrationException extends RuntimeException {

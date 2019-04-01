@@ -43,6 +43,7 @@ import org.sonarsource.sqdbmigrator.migrator.before.BlankTargetValidator;
 import org.sonarsource.sqdbmigrator.migrator.before.NonBlankSourceValidator;
 import org.sonarsource.sqdbmigrator.migrator.before.PreMigrationChecks;
 import org.sonarsource.sqdbmigrator.migrator.before.TableListValidator;
+import org.sonarsource.sqdbmigrator.migrator.before.UniqueProjectKeeValidator;
 import org.sonarsource.sqdbmigrator.migrator.before.VersionValidator;
 
 import static java.util.Collections.singleton;
@@ -61,7 +62,7 @@ public class MySQLMigrator {
   private MySQLMigrator() {
     this(new System2(), (sys, sourceConfig, targetConfig) -> {
       PreMigrationChecks preMigrationChecks = new PreMigrationChecks(new VersionValidator(), new TableListValidator(),
-        new BlankTargetValidator(), new NonBlankSourceValidator());
+        new BlankTargetValidator(), new NonBlankSourceValidator(), new UniqueProjectKeeValidator());
       Migrator migrator = new Migrator(sys, sourceConfig, targetConfig, new TableListProvider(),
         preMigrationChecks, new ContentCopier(), new StatsRecorder());
       migrator.execute();
