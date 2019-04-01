@@ -27,11 +27,13 @@ public class PreMigrationChecks {
   private final VersionValidator versionValidator;
   private final TableListValidator tableListValidator;
   private final BlankTargetValidator blankTargetValidator;
+  private final NonBlankSourceValidator nonBlankSourceValidator;
 
-  public PreMigrationChecks(VersionValidator versionValidator, TableListValidator tableListValidator, BlankTargetValidator blankTargetValidator) {
+  public PreMigrationChecks(VersionValidator versionValidator, TableListValidator tableListValidator, BlankTargetValidator blankTargetValidator, NonBlankSourceValidator nonBlankSourceValidator) {
     this.versionValidator = versionValidator;
     this.tableListValidator = tableListValidator;
     this.blankTargetValidator = blankTargetValidator;
+    this.nonBlankSourceValidator = nonBlankSourceValidator;
   }
 
   public void execute(Database source, Database target, TableListProvider tableListProvider) {
@@ -41,7 +43,7 @@ public class PreMigrationChecks {
 
     blankTargetValidator.execute(target);
 
-    // TODO See issue #4: Fail if source doesn't have projects, issues, or unexpected users
+    nonBlankSourceValidator.execute(source);
 
     // TODO See issue #4: Fail if duplicate values are found in projects.kee of the source (print duplicates)
   }
