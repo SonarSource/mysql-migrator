@@ -209,7 +209,7 @@ public abstract class Database implements AutoCloseable {
     }
   }
 
-  void executeUpdate(String sql) throws SQLException {
+  public void executeUpdate(String sql) throws SQLException {
     try (Statement statement = connection.createStatement()) {
       statement.executeUpdate(sql);
     }
@@ -244,7 +244,7 @@ public abstract class Database implements AutoCloseable {
     }
   }
 
-  long countRows(String tableName) throws SQLException {
+  public long countRows(String tableName) throws SQLException {
     return queryForLong(String.format("select count(*) from %s", tableName));
   }
 

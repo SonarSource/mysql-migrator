@@ -39,6 +39,7 @@ import org.sonarsource.sqdbmigrator.migrator.Migrator;
 import org.sonarsource.sqdbmigrator.migrator.StatsRecorder;
 import org.sonarsource.sqdbmigrator.migrator.System2;
 import org.sonarsource.sqdbmigrator.migrator.TableListProvider;
+import org.sonarsource.sqdbmigrator.migrator.before.BlankTargetValidator;
 import org.sonarsource.sqdbmigrator.migrator.before.PreMigrationChecks;
 import org.sonarsource.sqdbmigrator.migrator.before.TableListValidator;
 import org.sonarsource.sqdbmigrator.migrator.before.VersionValidator;
@@ -58,8 +59,10 @@ public class MySQLMigrator {
 
   private MySQLMigrator() {
     this(new System2(), (sys, sourceConfig, targetConfig) -> {
+      PreMigrationChecks preMigrationChecks = new PreMigrationChecks(new VersionValidator(), new TableListValidator(),
+        new BlankTargetValidator());
       Migrator migrator = new Migrator(sys, sourceConfig, targetConfig, new TableListProvider(),
-        new PreMigrationChecks(new VersionValidator(), new TableListValidator()), new ContentCopier(), new StatsRecorder());
+        preMigrationChecks, new ContentCopier(), new StatsRecorder());
       migrator.execute();
     });
   }
