@@ -209,6 +209,44 @@ public class MySQLMigrationTest {
     assertThat(runMigration()).isGreaterThan(0);
   }
 
+  @Test
+  public void fail_migration_if_projects_exist_in_target() throws IOException, InterruptedException {
+    source.start();
+
+    WsClient sourceWsClient = newWsClient(source);
+
+    // analyze project, creating issues
+    source.executeBuildQuietly(
+      MavenBuild.create()
+        .setPom(PROJECT_PATH.resolve("1/pom.xml").toFile())
+        .setCleanPackageSonarGoals());
+
+    long sourceIssues = getIssueCount(sourceWsClient);
+
+    assertThat(sourceIssues).isGreaterThan(0);
+
+    source.stop();
+    target.start();
+
+    WsClient targetWsClient = newWsClient(target);
+
+    // analyze project, creating issues
+    target.executeBuildQuietly(
+      MavenBuild.create()
+        .setPom(PROJECT_PATH.resolve("1/pom.xml").toFile())
+        .setCleanPackageSonarGoals());
+
+    long targetIssues = getIssueCount(targetWsClient);
+
+    assertThat(targetIssues).isGreaterThan(0);
+
+    // stop target to execute migration offline
+    target.stop();
+
+    // migration fails because target is not empty
+    assertThat(runMigration()).isGreaterThan(0);
+  }
+
   private long getIssueCount(WsClient wsClient) {
     return wsClient
       .issues()

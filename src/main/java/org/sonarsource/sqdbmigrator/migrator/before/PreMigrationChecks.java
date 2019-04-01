@@ -26,10 +26,12 @@ public class PreMigrationChecks {
 
   private final VersionValidator versionValidator;
   private final TableListValidator tableListValidator;
+  private final BlankTargetValidator blankTargetValidator;
 
-  public PreMigrationChecks(VersionValidator versionValidator, TableListValidator tableListValidator) {
+  public PreMigrationChecks(VersionValidator versionValidator, TableListValidator tableListValidator, BlankTargetValidator blankTargetValidator) {
     this.versionValidator = versionValidator;
     this.tableListValidator = tableListValidator;
+    this.blankTargetValidator = blankTargetValidator;
   }
 
   public void execute(Database source, Database target, TableListProvider tableListProvider) {
@@ -37,7 +39,7 @@ public class PreMigrationChecks {
 
     tableListValidator.execute(source, target, tableListProvider);
 
-    // TODO See issue #4: Fail if target has projects, issues, or unexpected users
+    blankTargetValidator.execute(target);
 
     // TODO See issue #4: Fail if source doesn't have projects, issues, or unexpected users
 
