@@ -1,0 +1,39 @@
+# content of service-account-credentials.json, used to access to Google Cloud Platform
+gcp_credentials: ENCRYPTED[6d7dee6b9f0914c40dbe97787ecac3d423b8df47d14ad8b9cd7046f53839dc5d0276194fbf5627908712fa577a2ad150]
+
+env:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.jvmargs="-XX:+PrintFlagsFinal -XshowSettings:vm -XX:+HeapDumpOnOutOfMemoryError -XX:+UnlockExperimentalVMOptions -Djava.security.egd=file:/dev/./urandom -Dfile.encoding=UTF8 -Duser.language=en -Duser.country=US"
+  # to be replaced by other credentials
+  ARTIFACTORY_PRIVATE_USERNAME: ENCRYPTED[9f1b8aa6706584b28943eb216e29b645d4fee69214cd22477727bd3a1b3ce4e6085ebb2808a9b85a5a06e3aafb9c070b]
+  ARTIFACTORY_PRIVATE_PASSWORD: ENCRYPTED[98542c3932bc3120f3de63941d6a19c6df3fe4d5c665bd080efb10804c9e3bdf097cd19cec29a36827608f1df67f75d3]
+  ARTIFACTORY_DEPLOY_USERNAME: public-qa-deployer
+  ARTIFACTORY_DEPLOY_PASSWORD: ENCRYPTED[20c832074e813c8825ace4d875847071faf9fb2476ea768925d2ea9a95206394868fbede9502d525d560ac645431343c]
+  ARTIFACTORY_DEPLOY_USERNAME_PRIVATE: private-qa-deployer
+  ARTIFACTORY_DEPLOY_PASSWORD_PRIVATE: ENCRYPTED[da4b47043cef89ca78d4d02c61b58e556ed15730c84f8311a7a801c6cefbfd8126c0f57503049bb55df095c45030b80e]
+  # analysis on sonarcloud.io
+  SONARCLOUD_TOKEN: ENCRYPTED[71964ce09784bc948b47b9e83ecf5e791c03d4a631bcbb5dbbdd7b910e0a1bb13e6a30f2224a8ab928d1c25bd8395997]
+  # complete authorization header to obtain build ids from Cirrus
+  CURL_CIRRUS_BUILD_ID_AUTH: ENCRYPTED[046e8806d695796956456217d1613f0717a11ad2ccd25480e3c365ed7ba3b390a5fa1e8dfc494e800d40be9e1141f2d8]
+
+auto_cancellation: $CIRRUS_BRANCH != 'master' && $CIRRUS_BRANCH !=~ 'branch.*'
+
+build_task:
+  timeout_in: 90m
+  gke_container:
+    dockerfile: docker/Dockerfile-build
+    builder_image_project: ci-cd-215716
+    builder_image_name: docker-builder-v1
+    cluster_name: cirrus-euw3a-cluster
+    zone: europe-west3-a
+    namespace: default
+    cpu: 3
+    memory: 10Gb
+  gradle_cache:
+    folder: ~/.gradle/caches
+  script:
+    - ./cirrus/cirrus-build.sh
+  cleanup_before_cache_script:
+    - ./cirrus/cleanup-gradle-cache.sh
+  on_failure:
+    reports_artifacts:
+      path: "**/build/reports/**/*"
