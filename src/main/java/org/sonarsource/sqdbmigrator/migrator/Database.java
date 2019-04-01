@@ -80,7 +80,7 @@ public abstract class Database implements AutoCloseable {
     }
 
     if (config.url.startsWith("jdbc:sqlserver:")) {
-      return MssqlDatabase::new;
+      return SqlServerDatabase::new;
     }
 
     if (config.url.startsWith("jdbc:oracle:")) {
@@ -134,8 +134,8 @@ public abstract class Database implements AutoCloseable {
     }
   }
 
-  private static class MssqlDatabase extends Database {
-    private MssqlDatabase(Connection connection) {
+  private static class SqlServerDatabase extends Database {
+    private SqlServerDatabase(Connection connection) {
       super(connection);
     }
 
@@ -147,7 +147,7 @@ public abstract class Database implements AutoCloseable {
 
     @Override
     public void setIdentityInsert(String tableName, boolean value) throws SQLException {
-      String sql = String.format("SET IDENTITY_INSERT %s %s", tableName, value);
+      String sql = String.format("SET IDENTITY_INSERT %s %s", tableName, value ? "ON" : "OFF");
       executeUpdate(sql);
     }
   }
