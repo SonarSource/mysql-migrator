@@ -43,7 +43,7 @@ public class TableListValidator {
     }
   }
 
-  private List<String> findMissingTables(Database database, String label, List<String> tables) {
+  private static List<String> findMissingTables(Database database, String label, List<String> tables) {
     try {
       Set<String> databaseTables = new HashSet<>(database.getTables());
       return tables.stream().filter(name -> !databaseTables.contains(name)).collect(Collectors.toList());

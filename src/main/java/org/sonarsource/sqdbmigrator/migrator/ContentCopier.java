@@ -95,21 +95,21 @@ public class ContentCopier {
     }
   }
 
-  private void copyColumns(ResultSet rs, PreparedStatement insertStatement) throws SQLException {
+  private static void copyColumns(ResultSet rs, PreparedStatement insertStatement) throws SQLException {
     int columnCount = rs.getMetaData().getColumnCount();
     for (int index = 1; index <= columnCount; index++) {
       insertStatement.setObject(index, rs.getObject(index));
     }
   }
 
-  private String formatPlaceholders(int count) {
+  private static String formatPlaceholders(int count) {
     StringBuilder sb = new StringBuilder(count * 2 - 1);
     sb.append("?");
     IntStream.range(1, count).forEach(i -> sb.append(",?"));
     return sb.toString();
   }
 
-  private void resetSequence(Database database, String tableName) {
+  private static void resetSequence(Database database, String tableName) {
     try {
       long maxIdPlusOne = 1 + database.selectMaxId(tableName);
       database.resetSequence(tableName, maxIdPlusOne);
@@ -118,7 +118,7 @@ public class ContentCopier {
     }
   }
 
-  private void ensureRowCountsMatch(Database source, Database target, String tableName) throws SQLException {
+  private static void ensureRowCountsMatch(Database source, Database target, String tableName) throws SQLException {
     long rowCountInSource = source.countRows(tableName);
     long rowCountInTarget = target.countRows(tableName);
     if (rowCountInSource != rowCountInTarget) {
