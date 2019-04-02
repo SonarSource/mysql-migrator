@@ -4,6 +4,7 @@ set -euo pipefail
 
 # generic environment variables used by Gradle build
 export ARTIFACTORY_DEPLOY_REPO=sonarsource-public-qa
+export ARTIFACTORY_DEPLOY_REPO_PRIVATE=sonarsource-private-qa
 export ARTIFACTORY_URL=https://repox.jfrog.io/repox
 export GIT_SHA1=$CIRRUS_CHANGE_IN_REPO
 export GITHUB_BASE_BRANCH=${CIRRUS_BASE_BRANCH:-}
