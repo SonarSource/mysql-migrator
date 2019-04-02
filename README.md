@@ -3,18 +3,16 @@ SonarQube MySQL Database Migrator
 
 Copy SonarQube database from MySQL to non-MySQL.
 
-### Building
+### Using
 
-    ./gradlew install
+Download the latest release and unzip it. Run with `-help` to get usage instructions.
 
-This creates runnable scripts in `./build/install/mysql-migrator/bin`.
+Required parameters:
 
-### Running
+- `-source PATH` where `PATH` is the path to the configuration file of the source database.
+- `-target PATH` where `PATH` is the path to the configuration file of the target database.
 
-    ./build/install/mysql-migrator/bin/mysql-migrator -help
-    ./build/install/mysql-migrator/bin/mysql-migrator -source path/to/config -target path/to/config
-
-The configuration files support configuring database connection in the same format as `sonar.properties` file in a SonarQube installation, for example:
+The configuration files use the same format as `sonar.properties` file in a SonarQube installation, for example:
 
     sonar.jdbc.url = jdbc:mysql://localhost:3306/sonar? useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance&useSSL=false
     sonar.jdbc.username = sonar
@@ -24,9 +22,12 @@ You could even use directly the path to a `sonar.properties` file of a SonarQube
 
 **Warning:** do not run the migration on live SonarQube instances.
 
-### Shipping
+The source database must be a MySQL database, and the target database must be a non-MySQL database.
 
-    ./gradlew distZip
-    unzip build/distributions/mysql-migrator-1.0-SNAPSHOT.zip
-    ./mysql-migrator-0.0.1-SNAPSHOT/bin/mysql-migrator -help
-    ./mysql-migrator-0.0.1-SNAPSHOT/bin/mysql-migrator -source path/to/config -target path/to/config
+The program performs various sanity checks before copying data, and prints diagnostics about its progress. It stops on the first error. Read the error messages carefully.
+
+### Using with Oracle target
+
+The Oracle database driver is not included in the distribution, you must provide it yourself.
+
+TODO
