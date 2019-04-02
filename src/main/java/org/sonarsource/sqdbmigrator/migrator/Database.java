@@ -54,6 +54,10 @@ public abstract class Database implements AutoCloseable {
     // noop in general; MSSQL-only feature
   }
 
+  /**
+   * Create a new connection, and wrap it in a Database instance.
+   * Call this using try-with-resources, to ensure the wrapped connection will get closed.
+   */
   static Database create(ConnectionConfig config) throws SQLException {
     Function<Connection, Database> factory = computeDatabaseFactory(config);
 
@@ -214,6 +218,17 @@ public abstract class Database implements AutoCloseable {
     }
 
     return tables;
+  }
+
+  public List<String> getColumnNames(String tableName) throws SQLException {
+    String schema = connection.getSchema();
+    try (ResultSet rs = connection.getMetaData().getColumns(null, schema, canonicalTableName(tableName), "%")) {
+      List<String> columnNames = new ArrayList<>();
+      while (rs.next()) {
+        columnNames.add(rs.getString("COLUMN_NAME"));
+      }
+      return columnNames;
+    }
   }
 
   long countRows(String tableName) throws SQLException {

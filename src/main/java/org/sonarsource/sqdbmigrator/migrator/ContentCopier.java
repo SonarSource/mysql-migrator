@@ -21,8 +21,11 @@ package org.sonarsource.sqdbmigrator.migrator;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
+import java.util.List;
 import java.util.stream.IntStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,13 +69,16 @@ public class ContentCopier {
   }
 
   private void copyTable(Database source, Database target, String tableName, int batchSize) throws SQLException {
-    String selectSql = String.format("select * from %s", tableName);
+    List<String> columnNames = source.getColumnNames(tableName);
+    String columnNamesCsv = String.join(", ", columnNames);
+    String selectSql = String.format("select %s from %s", columnNamesCsv, tableName);
+
     try (Statement preparedStatement = source.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
       ResultSet rs = preparedStatement.executeQuery(selectSql)) {
 
-      int columnCount = rs.getMetaData().getColumnCount();
+      int columnCount = columnNames.size();
 
-      String insertSql = String.format("insert into %s values (%s)", tableName, formatPlaceholders(columnCount));
+      String insertSql = String.format("insert into %s (%s) values (%s)", tableName, columnNamesCsv, formatPlaceholders(columnCount));
       int count = 0;
       try (PreparedStatement insertStatement = target.getConnection().prepareStatement(insertSql)) {
         while (rs.next()) {
@@ -96,9 +102,15 @@ public class ContentCopier {
   }
 
   private static void copyColumns(ResultSet rs, PreparedStatement insertStatement) throws SQLException {
-    int columnCount = rs.getMetaData().getColumnCount();
+    ResultSetMetaData rsMetaData = rs.getMetaData();
+    int columnCount = rsMetaData.getColumnCount();
     for (int index = 1; index <= columnCount; index++) {
-      insertStatement.setObject(index, rs.getObject(index));
+      if (rsMetaData.getColumnType(index) == Types.LONGVARBINARY) {
+        // special treatment for MySQL:longblob -> SqlServer:varbinary
+        insertStatement.setBytes(index, rs.getBytes(index));
+      } else {
+        insertStatement.setObject(index, rs.getObject(index));
+      }
     }
   }
 

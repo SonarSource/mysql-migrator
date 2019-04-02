@@ -176,6 +176,35 @@ public class ContentCopierTest {
     assertThat(targetTester.queryForInt(selectMaxIdSql)).isEqualTo(5);
   }
 
+  @Test
+  public void copy_correctly_even_when_column_order_doesnt_match() throws SQLException {
+    String tableName = "foo";
+    String createSourceTableSql = String.format("create table %s (name1 varchar, name2 varchar)", tableName);
+    String createTargetTableSql = String.format("create table %s (name2 varchar, name1 varchar)", tableName);
+
+    sourceTester.createTable(createSourceTableSql)
+      .addRow(tableName, Arrays.asList("foo1", "foo2"))
+      .addRow(tableName, Arrays.asList("bar1", "bar2"));
+
+    targetTester.createTable(createTargetTableSql);
+
+    underTest.execute(sourceTester.getDatabase(), targetTester.getDatabase(), newTableListProvider(tableName));
+
+    assertThat(sourceTester.getDatabase().countRows(tableName))
+      .isEqualTo(2)
+      .isEqualTo(targetTester.getDatabase().countRows(tableName));
+
+    String selectName1Sql = String.format("select name1 from %s", tableName);
+    assertThat(sourceTester.queryForStrings(selectName1Sql))
+      .isEqualTo(Arrays.asList("foo1", "bar1"))
+      .isEqualTo(targetTester.queryForStrings(selectName1Sql));
+
+    String selectName2Sql = String.format("select name2 from %s", tableName);
+    assertThat(sourceTester.queryForStrings(selectName2Sql))
+      .isEqualTo(Arrays.asList("foo2", "bar2"))
+      .isEqualTo(targetTester.queryForStrings(selectName2Sql));
+  }
+
   private TableListProvider newTableListProvider(String tableName) {
     return new TableListProvider() {
       @Override

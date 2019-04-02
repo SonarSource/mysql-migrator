@@ -28,6 +28,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.postgresql.util.PSQLException;
 import org.sonarsource.sqdbmigrator.migrator.Database.DatabaseException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,6 +48,44 @@ public class DatabaseTest {
     expectedException.expect(DatabaseException.class);
     expectedException.expectMessage("Unsupported database: jdbc:foo:bar");
     Database.create(new ConnectionConfig("jdbc:foo:bar", null, null));
+  }
+
+  @Test
+  @UseDataProvider("validUrlsAndExpectedExceptions")
+  public void create_attempts_connection_using_supported_drivers(String url, Class<? extends Exception> exceptionType, String expectedMessage) throws SQLException {
+    expectedException.expect(exceptionType);
+    expectedException.expectMessage(expectedMessage);
+    Database.create(new ConnectionConfig(url, null, null));
+  }
+
+  @DataProvider
+  public static Object[][] validUrlsAndExpectedExceptions() {
+    return new Object[][] {
+      {"jdbc:mysql://nonexistent/nonexistent", SQLException.class, "Communications link failure"},
+      {"jdbc:postgresql://nonexistent/nonexistent", PSQLException.class, "The connection attempt failed"},
+      // FIXME slow test
+      // {"jdbc:sqlserver://nonexistent/nonexistent", SQLServerException.class, "The TCP/IP connection to the host nonexistent/nonexistent, port 1433 has failed"},
+    };
+  }
+
+  @Test
+  @UseDataProvider("usernamePasswordNullAndNonNullCombinations")
+  public void create_database_with_or_without_credentials(String username, String password) throws SQLException {
+    String url = "jdbc:h2:mem:foo";
+    ConnectionConfig config = new ConnectionConfig(url, username, password);
+    try (Database unused = Database.create(config)) {
+      // nothing to do
+    }
+  }
+
+  @DataProvider
+  public static Object[][] usernamePasswordNullAndNonNullCombinations() {
+    return new Object[][] {
+      {null, null},
+      {"foo", null},
+      {null, "bar"},
+      {"foo", "bar"},
+    };
   }
 
   @Test
