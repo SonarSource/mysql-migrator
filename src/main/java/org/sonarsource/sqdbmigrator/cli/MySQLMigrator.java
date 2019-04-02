@@ -19,9 +19,11 @@
  */
 package org.sonarsource.sqdbmigrator.cli;
 
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Properties;
@@ -103,8 +105,8 @@ public class MySQLMigrator {
     }
   }
 
-  private Properties loadProperties(String configPath) throws IOException {
-    try (Reader reader = new FileReader(configPath)) {
+  private static Properties loadProperties(String configPath) throws IOException {
+    try (Reader reader = new InputStreamReader(new FileInputStream(configPath), StandardCharsets.UTF_8)) {
       Properties properties = new Properties();
       properties.load(reader);
       return properties;
