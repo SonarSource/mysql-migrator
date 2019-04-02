@@ -40,7 +40,7 @@ public class GlobalValidators {
   }
 
   private static String pluralize(String name, int count) {
-    return count == 1 ? name : name + "s";
+    return count == 1 ? name : (name + "s");
   }
 
   public static void fail(String message) {
