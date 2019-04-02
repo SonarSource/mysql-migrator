@@ -30,7 +30,9 @@ public class PreMigrationChecks {
   private final NonBlankSourceValidator nonBlankSourceValidator;
   private final UniqueProjectKeeValidator uniqueProjectKeeValidator;
 
-  public PreMigrationChecks(VersionValidator versionValidator, TableListValidator tableListValidator, BlankTargetValidator blankTargetValidator, NonBlankSourceValidator nonBlankSourceValidator, UniqueProjectKeeValidator uniqueProjectKeeValidator) {
+  public PreMigrationChecks(VersionValidator versionValidator, TableListValidator tableListValidator,
+    BlankTargetValidator blankTargetValidator, NonBlankSourceValidator nonBlankSourceValidator,
+    UniqueProjectKeeValidator uniqueProjectKeeValidator) {
     this.versionValidator = versionValidator;
     this.tableListValidator = tableListValidator;
     this.blankTargetValidator = blankTargetValidator;

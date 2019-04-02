@@ -31,7 +31,7 @@ public class BlankTargetValidator {
     verifyRecordCount(database, "users", 1);
   }
 
-  private void verifyRecordCount(Database database, String tableName, long expectedRecordCount) {
+  private static void verifyRecordCount(Database database, String tableName, long expectedRecordCount) {
     try {
       long recordCount = database.countRows(tableName);
       if (recordCount != expectedRecordCount) {

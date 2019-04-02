@@ -19,10 +19,8 @@
  */
 package org.sonarsource.sqdbmigrator.migrator.before;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import org.sonarsource.sqdbmigrator.migrator.Database;
+import org.sonarsource.sqdbmigrator.migrator.Database.DatabaseException;
 import org.sonarsource.sqdbmigrator.migrator.before.PreMigrationChecks.PreMigrationException;
 
 public class VersionValidator {
@@ -36,27 +34,10 @@ public class VersionValidator {
   }
 
   int selectVersion(Database database, String label) {
-    String sql = "select version from schema_migrations";
-    String versionString = null;
-    int version = -1;
-
-    try (PreparedStatement statement = database.getConnection().prepareStatement(sql);
-         ResultSet rs = statement.executeQuery()) {
-      // note: for lack of a standard way to sort int-valued strings, manually computing max value
-      while (rs.next()) {
-        versionString = rs.getString(1);
-        version = Math.max(version, Integer.parseInt(versionString));
-      }
-    } catch (SQLException e) {
+    try {
+      return database.getSchemaVersion();
+    } catch (DatabaseException e) {
       throw new PreMigrationException("Could not determine SonarQube version of the %s database. %s", label, e.getMessage());
-    } catch (NumberFormatException e) {
-      throw new PreMigrationException("Malformed version: '%s'; expected integer value", versionString);
     }
-
-    if (version < 0) {
-      throw new PreMigrationException("schema_migrations table must not be empty in %s database", label);
-    }
-
-    return version;
   }
 }

@@ -56,7 +56,7 @@ public class VersionValidatorTest {
     Database target = targetTester.createSchemaMigrations().addVersion(123).getDatabase();
 
     expectedException.expect(PreMigrationException.class);
-    expectedException.expectMessage("Could not determine SonarQube version of the source database. Table \"SCHEMA_MIGRATIONS\" not found");
+    expectedException.expectMessage("Could not determine SonarQube version of the source database. Could not select version from schema_migrations. Table \"SCHEMA_MIGRATIONS\" not found");
     underTest.execute(source, target);
   }
 
@@ -66,7 +66,7 @@ public class VersionValidatorTest {
     Database target = targetTester.getDatabase();
 
     expectedException.expect(PreMigrationException.class);
-    expectedException.expectMessage("Could not determine SonarQube version of the target database. Table \"SCHEMA_MIGRATIONS\" not found");
+    expectedException.expectMessage("Could not determine SonarQube version of the target database. Could not select version from schema_migrations. Table \"SCHEMA_MIGRATIONS\" not found");
     underTest.execute(source, target);
   }
 
@@ -76,7 +76,7 @@ public class VersionValidatorTest {
     Database target = targetTester.createSchemaMigrations().addVersion(123).getDatabase();
 
     expectedException.expect(PreMigrationException.class);
-    expectedException.expectMessage("schema_migrations table must not be empty in source database");
+    expectedException.expectMessage("Could not determine SonarQube version of the source database. The schema_migrations table must not be empty");
     underTest.execute(source, target);
   }
 
@@ -86,7 +86,7 @@ public class VersionValidatorTest {
     Database target = targetTester.createSchemaMigrations().getDatabase();
 
     expectedException.expect(PreMigrationException.class);
-    expectedException.expectMessage("schema_migrations table must not be empty in target database");
+    expectedException.expectMessage("Could not determine SonarQube version of the target database. The schema_migrations table must not be empty");
     underTest.execute(source, target);
   }
 

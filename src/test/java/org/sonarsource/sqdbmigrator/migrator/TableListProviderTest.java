@@ -19,16 +19,21 @@
  */
 package org.sonarsource.sqdbmigrator.migrator;
 
+import com.tngtech.java.junit.dataprovider.DataProvider;
+import com.tngtech.java.junit.dataprovider.DataProviderRunner;
+import com.tngtech.java.junit.dataprovider.UseDataProvider;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.sonarsource.sqdbmigrator.migrator.Migrator.MigrationException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.sqdbmigrator.migrator.DatabaseTester.newTester;
+import static org.sonarsource.sqdbmigrator.migrator.TablesAndVersionRegistry.TABLES_PER_VERSION;
 
+@RunWith(DataProviderRunner.class)
 public class TableListProviderTest {
 
   @Rule
@@ -40,18 +45,44 @@ public class TableListProviderTest {
   private final TableListProvider underTest = new TableListProvider();
 
   @Test
-  public void throw_if_there_are_no_tables_to_migrate() {
-    expectedException.expect(IllegalStateException.class);
-    expectedException.expectMessage("Could not find any tables. Expected a non-empty list to migrate.");
+  @UseDataProvider("unknownVersionSamples")
+  public void fail_if_database_version_is_not_in_the_known_list(int unknownVersion) throws SQLException {
+    databaseTester
+      .createSchemaMigrations()
+      .addVersion(1)
+      .addVersion(unknownVersion);
+
+    expectedException.expect(MigrationException.class);
+    expectedException.expectMessage("Unknown schema version; cannot match to a SonarQube release: " + unknownVersion);
     underTest.get(databaseTester.getDatabase());
   }
 
+  @DataProvider
+  public static Object[][] unknownVersionSamples() {
+    return new Object[][] {
+      {2},
+      {1836},
+      {1838},
+    };
+  }
+
   @Test
-  public void get_tables_in_the_database() throws SQLException {
-    List<String> tableNames = Arrays.asList("foo", "bar", "baz");
-    for (String tableName : tableNames) {
-      databaseTester.createTable(String.format("create table %s (name varchar)", tableName));
-    }
-    assertThat(underTest.get(databaseTester.getDatabase())).containsExactlyInAnyOrderElementsOf(tableNames);
+  @UseDataProvider("knownVersions")
+  public void find_list_if_tables_when_version_is_in_the_known_list(int knownVersion) throws SQLException {
+    databaseTester
+      .createSchemaMigrations()
+      .addVersion(1)
+      .addVersion(knownVersion);
+
+    assertThat(underTest.get(databaseTester.getDatabase()))
+      .hasSizeGreaterThan(1)
+      .contains("projects");
+  }
+
+  @DataProvider
+  public static Object[][] knownVersions() {
+    return TABLES_PER_VERSION.keySet().stream()
+      .map(k -> new Object[] {k})
+      .toArray(Object[][]::new);
   }
 }

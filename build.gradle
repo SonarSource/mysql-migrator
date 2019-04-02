@@ -76,6 +76,8 @@ license {
     includes(['**/*.java'])
 }
 
+sourceSets.main.java.srcDirs += "src/generated/java"
+
 artifacts { archives distZip }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
