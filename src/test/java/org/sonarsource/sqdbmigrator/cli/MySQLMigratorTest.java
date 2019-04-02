@@ -48,10 +48,10 @@ public class MySQLMigratorTest {
     "\n" +
     "Options:\n" +
     "\n" +
-    "-source path/to/config\n" +
-    "  Path to config.properties file of the source database\n" +
-    "-target path/to/config\n" +
-    "  Path to config.properties file of the target database\n" +
+    "-source path/to/source/sonar.properties\n" +
+    "  Path to sonar.properties of the source SonarQube instance\n" +
+    "-target path/to/target/sonar.properties\n" +
+    "  Path to sonar.properties of the target SonarQube instance\n" +
     "-help\n" +
     "  Print this help\n";
 
