@@ -204,37 +204,8 @@ public class MySQLMigrationTest {
 
   @Test
   public void fail_migration_if_projects_exist_in_target() throws IOException, InterruptedException {
-    source.start();
-
-    WsClient sourceWsClient = newWsClient(source);
-
-    // analyze project, creating issues
-    source.executeBuildQuietly(
-      MavenBuild.create()
-        .setPom(PROJECT_PATH.resolve("1/pom.xml").toFile())
-        .setCleanPackageSonarGoals());
-
-    long sourceIssues = getIssueCount(sourceWsClient);
-
-    assertThat(sourceIssues).isGreaterThan(0);
-
-    source.stop();
-    target.start();
-
-    WsClient targetWsClient = newWsClient(target);
-
-    // analyze project, creating issues
-    target.executeBuildQuietly(
-      MavenBuild.create()
-        .setPom(PROJECT_PATH.resolve("1/pom.xml").toFile())
-        .setCleanPackageSonarGoals());
-
-    long targetIssues = getIssueCount(targetWsClient);
-
-    assertThat(targetIssues).isGreaterThan(0);
-
-    // stop target to execute migration offline
-    target.stop();
+    analyzeProjectAndStopServer(source);
+    analyzeProjectAndStopServer(target);
 
     // migration fails because target is not empty
     assertThat(runMigration()).isGreaterThan(0);
@@ -259,6 +230,35 @@ public class MySQLMigrationTest {
     runStatementsOnDatabase(source.getConfiguration(), dropIndexSql, insertDummyKeeSql, insertDummyKeeSql);
 
     assertThat(runMigration()).isGreaterThan(0);
+  }
+
+  @Test
+  public void fail_migration_if_target_has_unknown_schema_version() throws IOException, InterruptedException, SQLException {
+    analyzeProjectAndStopServer(source);
+
+    ensureInitialSonarQubeDatabase(target);
+    runStatementsOnDatabase(target.getConfiguration(), "insert into schema_migrations values ('999999')");
+
+    // migration fails because target is not empty
+    assertThat(runMigration()).isGreaterThan(0);
+  }
+
+  private void analyzeProjectAndStopServer(Orchestrator orchestrator) {
+    orchestrator.start();
+
+    WsClient sourceWsClient = newWsClient(orchestrator);
+
+    // analyze project, creating issues
+    orchestrator.executeBuildQuietly(
+      MavenBuild.create()
+        .setPom(PROJECT_PATH.resolve("1/pom.xml").toFile())
+        .setCleanPackageSonarGoals());
+
+    long sourceIssues = getIssueCount(sourceWsClient);
+
+    assertThat(sourceIssues).isGreaterThan(0);
+
+    orchestrator.stop();
   }
 
   private void runStatementsOnDatabase(Configuration configuration, String... sqls) throws SQLException {

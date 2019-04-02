@@ -19,21 +19,19 @@
  */
 package org.sonarsource.sqdbmigrator.migrator;
 
-import java.sql.SQLException;
 import java.util.List;
 import org.sonarsource.sqdbmigrator.migrator.Migrator.MigrationException;
 
-public class TableListProvider {
-  public List<String> get(Database database) {
-    List<String> tables;
-    try {
-      tables = database.getTables();
-    } catch (SQLException e) {
-      throw new MigrationException("Could not determine list of tables to copy: %s", e.getMessage());
-    }
+import static org.sonarsource.sqdbmigrator.migrator.TablesAndVersionRegistry.TABLES_PER_VERSION;
 
-    if (tables.isEmpty()) {
-      throw new IllegalStateException("Could not find any tables. Expected a non-empty list to migrate.");
+public class TableListProvider {
+
+  public List<String> get(Database database) {
+    int schemaVersion = database.getSchemaVersion();
+
+    List<String> tables = TABLES_PER_VERSION.get(schemaVersion);
+    if (tables == null) {
+      throw new MigrationException("Unknown schema version; cannot match to a SonarQube release: " + schemaVersion);
     }
 
     return tables;

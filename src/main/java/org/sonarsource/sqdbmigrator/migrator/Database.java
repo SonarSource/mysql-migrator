@@ -269,6 +269,31 @@ public abstract class Database implements AutoCloseable {
     return queryForLong(String.format("select max(id) from %s", tableName));
   }
 
+  public int getSchemaVersion() {
+    String sql = "select version from schema_migrations";
+    String versionString = null;
+    int version = -1;
+
+    try (PreparedStatement statement = connection.prepareStatement(sql);
+         ResultSet rs = statement.executeQuery()) {
+      // note: for lack of a standard way to sort int-valued strings, manually computing max value
+      while (rs.next()) {
+        versionString = rs.getString(1);
+        version = Math.max(version, Integer.parseInt(versionString));
+      }
+    } catch (SQLException e) {
+      throw new DatabaseException("Could not select version from schema_migrations. %s", e.getMessage());
+    } catch (NumberFormatException e) {
+      throw new DatabaseException("Malformed version: '%s'; expected integer value", versionString);
+    }
+
+    if (version < 0) {
+      throw new DatabaseException("The schema_migrations table must not be empty");
+    }
+
+    return version;
+  }
+
   @Override
   public void close() throws SQLException {
     this.connection.close();

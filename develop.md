@@ -61,7 +61,7 @@ Set password for the root user:
     sudo -u postgres psql
     \password postgres
 
-Running the ITs targeting a local postgres database takes about 5 minutes.
+Running the ITs targeting a local postgres database takes about 15 minutes.
 
 ### SQL Server
 
@@ -74,7 +74,7 @@ Example configuration file:
     sonar.jdbc.rootUsername = admin
     sonar.jdbc.rootPassword = adminsonar
 
-Running the ITs targeting a SQL Server database on the local network takes about 25 minutes.
+Running the ITs targeting a SQL Server database on the local network takes about 50 minutes.
 
 ### Oracle
 
@@ -90,7 +90,7 @@ Example configuration file:
 
 The `sonar.jdbc.driverFile` is required at the moment, by Orchestrator. (It would be great to eliminate this need...)
 
-Running the ITs targeting a Oracle database on the local network takes about 20 minutes.
+Running the ITs targeting a Oracle database on the local network takes about 35 minutes.
 
 ## Shipping
 
