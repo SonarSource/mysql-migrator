@@ -22,8 +22,8 @@ To copy your SonarQube database from MySQL to a non-MySQL database, follow these
 
 Required parameters:
 
-- `-source PATH` where `PATH` is the path to the configuration file of the source database.
-- `-target PATH` where `PATH` is the path to the configuration file of the target database.
+- `-source PATH` where `PATH` is the path to the configuration file of your SonarQube instance running MySQL.
+- `-target PATH` where `PATH` is the path to the configuration file of your SonarQube instance running a non-MySQL database.
 
 **Note:** The source database must be a MySQL database, and the target database must be a non-MySQL database.
 
