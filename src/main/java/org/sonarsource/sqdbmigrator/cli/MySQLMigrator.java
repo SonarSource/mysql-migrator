@@ -113,7 +113,7 @@ public class MySQLMigrator {
     }
   }
 
-  private ConnectionConfig configFromPath(String path, String label, Set<String> supportedDrivers) {
+  private static ConnectionConfig configFromPath(String path, String label, Set<String> supportedDrivers) {
     Properties properties;
     try {
       properties = loadProperties(path);

@@ -36,7 +36,7 @@ public class TableListValidator {
     ensureTablesExist(target, "target", tables);
   }
 
-  private void ensureTablesExist(Database database, String label, List<String> tables) {
+  private static void ensureTablesExist(Database database, String label, List<String> tables) {
     List<String> missing = findMissingTables(database, label, tables);
     if (!missing.isEmpty()) {
       throw new PreMigrationException("Some expected tables are missing in %s database: %s", label, String.join(", ", missing));

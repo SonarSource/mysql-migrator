@@ -68,7 +68,7 @@ public class ContentCopier {
     });
   }
 
-  private void copyTable(Database source, Database target, String tableName, int batchSize) throws SQLException {
+  private static void copyTable(Database source, Database target, String tableName, int batchSize) throws SQLException {
     List<String> columnNames = source.getColumnNames(tableName);
     String columnNamesCsv = String.join(", ", columnNames);
     String selectSql = String.format("select %s from %s", columnNamesCsv, tableName);
