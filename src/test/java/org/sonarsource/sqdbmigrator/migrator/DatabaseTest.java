@@ -24,6 +24,8 @@ import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.Locale;
+import javax.annotation.Nullable;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -31,6 +33,7 @@ import org.junit.runner.RunWith;
 import org.postgresql.util.PSQLException;
 import org.sonarsource.sqdbmigrator.migrator.Database.DatabaseException;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.sqdbmigrator.migrator.DatabaseTester.newTester;
 
@@ -109,14 +112,47 @@ public class DatabaseTest {
       {"create table foo (foo varchar, id varchar primary key, baz varchar)", true},
       {"create table foo (foo varchar, id varchar, baz varchar)", false},
       {"create table foo (foo varchar, bar varchar, baz varchar)", false},
+      {"create table foo (foo varchar, bar varchar primary key, baz varchar)", false},
     };
   }
 
   @Test
-  public void queryForLong_returns_0_for_null_value() throws SQLException {
+  public void queryForLong_returns_0_for_no_results() throws SQLException {
     Database database = databaseTester.createTable("create table foo (id int)")
-      .addRow("foo", Collections.singletonList(null))
       .getDatabase();
     assertThat(database.queryForLong("select id from foo")).isZero();
+  }
+
+  @Test
+  @UseDataProvider("nullOrZero")
+  public void queryForLong_returns_0_for_null_or_zero_value(@Nullable Integer value) throws SQLException {
+    Database database = databaseTester.createTable("create table foo (id int)")
+      .addRow("foo", Collections.singletonList(value))
+      .getDatabase();
+    assertThat(database.queryForLong("select id from foo")).isZero();
+  }
+
+  @DataProvider
+  public static Object[][] nullOrZero() {
+    return new Object[][] {
+      {null},
+      {0},
+    };
+  }
+
+  @Test
+  @UseDataProvider("mixedCaseFoo")
+  public void canonicalTableName_uses_uppercase_by_default(String tableName) {
+    assertThat(databaseTester.getDatabase().canonicalTableName(tableName)).isEqualTo("FOO");
+  }
+
+  @DataProvider
+  public static Object[][] mixedCaseFoo() {
+    return new Object[][] {
+      {"foo"},
+      {"FOO"},
+      {"fOO"},
+      {"Foo"},
+    };
   }
 }
