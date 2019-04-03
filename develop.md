@@ -5,7 +5,7 @@ This document is for developers, see the README.md for end-users.
 
 ## Building
 
-    ./gradlew install
+    ./gradlew build install
 
 This creates runnable scripts in `./build/install/mysql-migrator/bin`.
 
@@ -52,9 +52,9 @@ Example configuration file:
     sonar.jdbc.url = jdbc:postgresql://localhost/sonar
     sonar.jdbc.username = sonar
     sonar.jdbc.password = sonar
-    sonar.jdbc.rootUsername=postgres
-    sonar.jdbc.rootPassword=rootsonar
-    sonar.jdbc.rootUrl=jdbc:postgresql://localhost/postgres
+    sonar.jdbc.rootUrl = jdbc:postgresql://localhost/postgres
+    sonar.jdbc.rootUsername = postgres
+    sonar.jdbc.rootPassword = rootsonar
 
 Set password for the root user:
 
@@ -70,11 +70,27 @@ Example configuration file:
     sonar.jdbc.url = jdbc:sqlserver://server:port;databaseName=sonar;SelectMethod=Cursor
     sonar.jdbc.username = sonar
     sonar.jdbc.password = sonar
+    sonar.jdbc.rootUrl = jdbc:sqlserver://server:port;SelectMethod=Cursor
     sonar.jdbc.rootUsername = admin
     sonar.jdbc.rootPassword = adminsonar
-    sonar.jdbc.rootUrl = jdbc:sqlserver://server:port;SelectMethod=Cursor
 
 Running the ITs targeting a SQL Server database on the local network takes about 25 minutes.
+
+### Oracle
+
+Example configuration file:
+
+    sonar.jdbc.url = jdbc:oracle:thin:server:port/db
+    sonar.jdbc.username = sonar
+    sonar.jdbc.password = sonar
+    sonar.jdbc.rootUrl = jdbc:oracle:thin:server:port/db
+    sonar.jdbc.rootUsername = system
+    sonar.jdbc.rootPassword = systemsonar
+    sonar.jdbc.driverFile = /tmp/ojdbc8-12.2.0.1.0.jar
+
+The `sonar.jdbc.driverFile` is required at the moment, by Orchestrator. (It would be great to eliminate this need...)
+
+Running the ITs targeting a Oracle database on the local network takes about 20 minutes.
 
 ## Shipping
 
