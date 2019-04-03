@@ -68,10 +68,23 @@ public abstract class Database implements AutoCloseable {
     if (config.password != null) {
       properties.setProperty("password", config.password);
     }
-    Connection connection = DriverManager.getConnection(config.url, properties);
+    Connection connection = createConnection(config.url, properties);
     connection.setAutoCommit(false);
 
     return factory.apply(connection);
+  }
+
+  private static Connection createConnection(String url, Properties properties) throws SQLException {
+    if (!url.startsWith("jdbc:oracle:")) {
+      return DriverManager.getConnection(url, properties);
+    }
+    try {
+      return DriverManager.getConnection(url, properties);
+    } catch (SQLException e) {
+      String message = e.getMessage();
+      String additionalMessage = "Make sure the JDBC Oracle driver is copied to the lib folder. The file must be named 'oracle.jar'";
+      throw new DatabaseException(message + "\n" + additionalMessage);
+    }
   }
 
   private static Function<Connection, Database> computeDatabaseFactory(ConnectionConfig config) {

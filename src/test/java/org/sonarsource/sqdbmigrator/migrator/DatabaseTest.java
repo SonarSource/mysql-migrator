@@ -69,6 +69,14 @@ public class DatabaseTest {
   }
 
   @Test
+  public void create_throws_with_additional_help_about_oracle_driver_installation() throws SQLException {
+    expectedException.expect(DatabaseException.class);
+    expectedException.expectMessage("No suitable driver found for jdbc:oracle:bar\n" +
+      "Make sure the JDBC Oracle driver is copied to the lib folder. The file must be named 'oracle.jar'");
+    Database.create(new ConnectionConfig("jdbc:oracle:bar", null, null));
+  }
+
+  @Test
   @UseDataProvider("usernamePasswordNullAndNonNullCombinations")
   public void create_database_with_or_without_credentials(String username, String password) throws SQLException {
     String url = "jdbc:h2:mem:foo";
