@@ -272,7 +272,7 @@ public class MySQLMigratorTest {
   @Test
   public void exit_with_error_when_execution_fails() throws Exception {
     String message = "failed because...";
-    doThrow(new Exception(message)).when(mainExecutor).execute(same(system2), any(), any());
+    doThrow(new RuntimeException(message)).when(mainExecutor).execute(same(system2), any(), any());
 
     underTest.run(new String[]{"-source", newValidSourcePath(), "-target", newValidTargetPath()});
 
