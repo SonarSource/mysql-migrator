@@ -52,7 +52,6 @@ application {
 }
 
 ext {
-    release = project.hasProperty('release') && project.getProperty('release')
     buildNumber = System.getProperty("buildNumber")
 }
 // Replaces the version defined in sources, usually x.y-SNAPSHOT, by a version identifying the build.
@@ -76,11 +75,49 @@ license {
 
 artifacts { archives distZip }
 
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
             artifact distZip
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom {
+                name = projectTitle
+                description = project.description
+                url = 'http://www.sonarqube.org/'
+                organization {
+                    name = 'SonarSource'
+                    url = 'http://www.sonarsource.com'
+                }
+                licenses {
+                    license {
+                        name = 'GNU LGPL 3'
+                        url = 'http://www.gnu.org/licenses/lgpl.txt'
+                        distribution = 'repo'
+                    }
+                }
+                scm {
+                    url = 'https://github.com/SonarSource/mysql-migrator'
+                }
+                developers {
+                    developer {
+                        id = 'sonarsource-team'
+                        name = 'SonarSource Team'
+                    }
+                }
+            }
         }
     }
 }
