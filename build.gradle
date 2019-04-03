@@ -45,6 +45,8 @@ dependencies {
             'org.postgresql:postgresql:42.2.5',
             'mysql:mysql-connector-java:5.1.47',
             'com.microsoft.sqlserver:mssql-jdbc:6.2.2.jre8'
+
+    runtimeClasspath files('oracle.jar')
 }
 
 application {
