@@ -53,11 +53,13 @@ if [[ $ARTIFACTS ]]; then
   URLS=$(createArtifactsURLS "$ARTIFACTS")
 fi
 
+BURGR_URL="http://62ff4a6d.ngrok.io"
 BURGR_FILE=promote.burgr
 cat > "$BURGR_FILE" <<EOF
 {
   "version":"$PROJECT_VERSION",
-  "url":"$URLS"
+  "url":"$URLS",
+  "buildNumber":"$BUILD_NUMBER"
 }
 EOF
 
