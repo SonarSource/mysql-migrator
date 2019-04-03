@@ -17,6 +17,9 @@ sourceCompatibility = '1.8'
 
 repositories {
     mavenCentral()
+    maven {
+        url "https://repox.jfrog.io/repox/sonarsource-qa"
+    }
 }
 
 dependencies {
@@ -34,7 +37,8 @@ dependencies {
     runtime 'org.postgresql:postgresql:42.2.5',
             'mysql:mysql-connector-java:5.1.47',
             'com.microsoft.sqlserver:mssql-jdbc:6.2.2.jre8',
-            'com.h2database:h2:1.4.197'
+            'com.h2database:h2:1.4.197',
+            'com.oracle.jdbc:ojdbc8:12.2.0.1.0'
 }
 
 license {
