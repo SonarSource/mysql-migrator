@@ -4,7 +4,6 @@ set -euo pipefail
 
 # generic environment variables used by Gradle build
 export ARTIFACTORY_DEPLOY_REPO=sonarsource-public-qa
-export ARTIFACTORY_DEPLOY_REPO_PRIVATE=sonarsource-private-qa
 export ARTIFACTORY_URL=https://repox.jfrog.io/repox
 export GIT_SHA1=$CIRRUS_CHANGE_IN_REPO
 export GITHUB_BASE_BRANCH=${CIRRUS_BASE_BRANCH:-}
@@ -16,7 +15,7 @@ export LANG=C.UTF-8
 
 FUNCTION_URL=https://us-central1-ci-cd-215716.cloudfunctions.net
 cirrusBuildNumber() {
-  curl -s --retry 5 --retry-max-time 60 -H "$CURL_CIRRUS_BUILD_ID_AUTH" "$FUNCTION_URL/cirrusBuildNumber/$CIRRUS_REPO_FULL_NAME/$CIRRUS_BUILD_ID" "$@"
+  curl -s --retry 5 --retry-max-time 60 -H "$CURL_BUILD_NUMBER_AUTH" "$FUNCTION_URL/cirrusBuildNumber/$CIRRUS_REPO_FULL_NAME/$CIRRUS_BUILD_ID" "$@"
 }
 
 TASK_TYPE=$1

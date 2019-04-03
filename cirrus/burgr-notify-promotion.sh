@@ -62,7 +62,6 @@ cat > "$BURGR_FILE" <<EOF
 }
 EOF
 
-set -x
 HTTP_CODE=$(curl -s -o /dev/null -w %{http_code} -X POST -d @"$BURGR_FILE" -H "Content-Type:application/json" -u"${BURGR_USERNAME}:${BURGR_PASSWORD}" "${BURGR_URL}/api/promote/${CIRRUS_REPO_OWNER}/${CIRRUS_REPO_NAME}/${CIRRUS_BUILD_ID}")
 if [[ "$HTTP_CODE" != "200" ]]; then
   echo "Cannot notify BURGR ($HTTP_CODE)"

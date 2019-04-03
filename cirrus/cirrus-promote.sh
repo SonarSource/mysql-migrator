@@ -16,7 +16,15 @@ fi
 
 if [[ "${STATUS:-}" ]]; then
   echo "Promoting build $CIRRUS_REPO_NAME#$BUILD_NUMBER"
-  HTTP_CODE=$(curl -s -o /dev/null -w %{http_code} -H "X-JFrog-Art-Api:${ARTIFACTORY_API_KEY}" "$ARTIFACTORY_URL/api/plugins/execute/multiRepoPromote?params=buildName=$CIRRUS_REPO_NAME;buildNumber=$BUILD_NUMBER;src1=$ARTIFACTORY_DEPLOY_REPO_PRIVATE;target1=$PRIVATE_TARGET_REPO;src2=$ARTIFACTORY_DEPLOY_REPO;target2=$PUBLIC_TARGET_REPO;status=$STATUS")
+  json_payload='{
+      "status": "'"$STATUS"'",
+      "targetRepo": "'"$PUBLIC_TARGET_REPO"'"
+    }'
+  HTTP_CODE=$(curl -s -o /dev/null -w %{http_code} \
+      -H "X-JFrog-Art-Api:${ARTIFACTORY_API_KEY}" \
+      -H "Content-type: application/json" \
+      "$ARTIFACTORY_URL/api/build/promote/$CIRRUS_REPO_NAME/$BUILD_NUMBER" \
+      -d "$json_payload")
   if [[ "$HTTP_CODE" != "200" ]]; then
     echo "Cannot promote build $CIRRUS_REPO_NAME#$BUILD_NUMBER: ($HTTP_CODE)"
     exit 1
