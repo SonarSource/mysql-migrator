@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Properties;
@@ -150,6 +151,6 @@ public class MySQLMigrator {
   }
 
   interface MainExecutor {
-    void execute(System2 system2, ConnectionConfig sourceConfig, ConnectionConfig targetConfig) throws Exception;
+    void execute(System2 system2, ConnectionConfig sourceConfig, ConnectionConfig targetConfig) throws SQLException;
   }
 }
