@@ -30,7 +30,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.postgresql.util.PSQLException;
 import org.sonarsource.sqdbmigrator.migrator.Database.DatabaseException;
 
 import static org.assertj.core.api.Assertions.*;
@@ -54,20 +53,19 @@ public class DatabaseTest {
   }
 
   @Test
-  @UseDataProvider("validUrlsAndExpectedExceptions")
-  public void create_attempts_connection_using_supported_drivers(String url, Class<? extends Exception> exceptionType, String expectedMessage) throws SQLException {
-    expectedException.expect(exceptionType);
-    expectedException.expectMessage(expectedMessage);
+  @UseDataProvider("defunctUrlsWithSupportedDrivers")
+  public void create_attempts_connection_using_supported_drivers(String url) throws SQLException {
+    expectedException.expect(SQLException.class);
+    expectedException.expectMessage("No suitable driver found");
     Database.create(new ConnectionConfig(url, null, null));
   }
 
   @DataProvider
-  public static Object[][] validUrlsAndExpectedExceptions() {
+  public static Object[][] defunctUrlsWithSupportedDrivers() {
     return new Object[][] {
-      {"jdbc:mysql://nonexistent/nonexistent", SQLException.class, "Communications link failure"},
-      {"jdbc:postgresql://nonexistent/nonexistent", PSQLException.class, "The connection attempt failed"},
-      // FIXME slow test
-      // {"jdbc:sqlserver://nonexistent/nonexistent", SQLServerException.class, "The TCP/IP connection to the host nonexistent/nonexistent, port 1433 has failed"},
+      {"jdbc:mysql:nonexistent"},
+      {"jdbc:postgresql://nonexistent"},
+      {"jdbc:sqlserver:nonexistent"},
     };
   }
 
