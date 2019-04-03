@@ -35,8 +35,13 @@ The configuration files use the same format as `sonar.properties` file in a Sona
 
 The migrator performs various sanity checks before copying data and prints diagnostics about its progress. It stops on the first error. Read the error messages carefully.
 
-### Using with Oracle target
+### Migrating with an Oracle target
 
-The Oracle database driver is not included in the distribution, you must provide it yourself.
+The Oracle database driver is not included in the distribution, so you must provide it yourself.
 
-TODO
+Please download the [JDBC driver for Oracle][oracle-driver] and copy it to the `mysql-migrator/lib`
+directory in the unzipped folder of the migration tool. The file must be named `oracle.jar` exactly.
+
+With the Java driver in place, follow the steps above to migrate just like any other database.
+
+[oracle-driver]: https://www.oracle.com/technetwork/database/features/jdbc/jdbc-ucp-122-3110062.html
