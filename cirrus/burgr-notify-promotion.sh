@@ -53,7 +53,6 @@ if [[ $ARTIFACTS ]]; then
   URLS=$(createArtifactsURLS "$ARTIFACTS")
 fi
 
-BURGR_URL="http://62ff4a6d.ngrok.io"
 BURGR_FILE=promote.burgr
 cat > "$BURGR_FILE" <<EOF
 {
@@ -62,8 +61,6 @@ cat > "$BURGR_FILE" <<EOF
   "buildNumber":"$BUILD_NUMBER"
 }
 EOF
-
-cat "$BURGR_FILE"
 
 set -x
 HTTP_CODE=$(curl -s -o /dev/null -w %{http_code} -X POST -d @"$BURGR_FILE" -H "Content-Type:application/json" -u"${BURGR_USERNAME}:${BURGR_PASSWORD}" "${BURGR_URL}/api/promote/${CIRRUS_REPO_OWNER}/${CIRRUS_REPO_NAME}/${CIRRUS_BUILD_ID}")
