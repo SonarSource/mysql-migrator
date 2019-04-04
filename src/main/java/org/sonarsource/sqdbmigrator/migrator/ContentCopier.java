@@ -25,6 +25,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.IntStream;
 import org.slf4j.Logger;
@@ -37,15 +38,17 @@ public class ContentCopier {
 
   private static final int DEFAULT_BATCH_SIZE = 5000;
 
-  void execute(Database source, Database target, TableListProvider tableListProvider) {
-    execute(source, target, tableListProvider, DEFAULT_BATCH_SIZE);
+  void execute(Database source, Database target, TableListProvider tableListProvider, StatsRecorder statsRecorder) {
+    execute(source, target, tableListProvider, statsRecorder, DEFAULT_BATCH_SIZE);
   }
 
-  void execute(Database source, Database target, TableListProvider tableListProvider, int batchSize) {
+  void execute(Database source, Database target, TableListProvider tableListProvider, StatsRecorder statsRecorder, int batchSize) {
     tableListProvider.get(source).forEach(tableName -> {
       LOG.info("copying table {} ...", tableName);
 
       try {
+        long started = new Date().getTime();
+
         target.truncateTable(tableName);
 
         boolean tableHasIdColumn = source.tableHasIdColumn(tableName);
@@ -61,7 +64,9 @@ public class ContentCopier {
           resetSequence(target, tableName);
         }
 
-        ensureRowCountsMatch(source, target, tableName);
+        long recordsCopied = ensureRowCountsMatch(source, target, tableName);
+
+        statsRecorder.add(tableName, recordsCopied, started, new Date().getTime());
       } catch (SQLException e) {
         throw new MigrationException("Error while copying rows of table '%s': %s", tableName, e.getMessage());
       }
@@ -130,12 +135,13 @@ public class ContentCopier {
     }
   }
 
-  private static void ensureRowCountsMatch(Database source, Database target, String tableName) throws SQLException {
+  private static long ensureRowCountsMatch(Database source, Database target, String tableName) throws SQLException {
     long rowCountInSource = source.countRows(tableName);
     long rowCountInTarget = target.countRows(tableName);
     if (rowCountInSource != rowCountInTarget) {
       throw new MigrationException("Row counts don't match in source and target: %s != %s",
         tableName, rowCountInSource, rowCountInTarget);
     }
+    return rowCountInTarget;
   }
 }

@@ -37,29 +37,33 @@ public class MigratorTest {
 
   @Test
   public void execute_all_steps() throws SQLException {
+    System2 system2 = mock(System2.class);
     ConnectionConfig sourceConfig = new ConnectionConfig("jdbc:h2:mem:source", null, null);
     ConnectionConfig targetConfig = new ConnectionConfig("jdbc:h2:mem:target", null, null);
     TableListProvider tableListProvider = mock(TableListProvider.class);
     PreMigrationChecks preMigrationChecks = mock(PreMigrationChecks.class);
     ContentCopier contentCopier = mock(ContentCopier.class);
+    StatsRecorder statsRecorder = mock(StatsRecorder.class);
 
-    new Migrator(sourceConfig, targetConfig, tableListProvider, preMigrationChecks, contentCopier).execute();
+    new Migrator(system2, sourceConfig, targetConfig, tableListProvider, preMigrationChecks, contentCopier, statsRecorder).execute();
 
     verify(preMigrationChecks).execute(any(), any(), same(tableListProvider));
-    verify(contentCopier).execute(any(), any(), same(tableListProvider), anyInt());
+    verify(contentCopier).execute(any(), any(), same(tableListProvider), any(), anyInt());
   }
 
   @Test
   public void do_not_reach_contentCopier_if_pre_migration_checks_failed() throws SQLException {
+    System2 system2 = mock(System2.class);
     ConnectionConfig sourceConfig = new ConnectionConfig("jdbc:h2:mem:source", null, null);
     ConnectionConfig targetConfig = new ConnectionConfig("jdbc:h2:mem:target", null, null);
     TableListProvider tableListProvider = mock(TableListProvider.class);
     PreMigrationChecks failingPreMigrationChecks = mock(PreMigrationChecks.class);
     doThrow(new MigrationException("something went wrong")).when(failingPreMigrationChecks).execute(any(), any(), same(tableListProvider));
     ContentCopier contentCopier = mock(ContentCopier.class);
+    StatsRecorder statsRecorder = mock(StatsRecorder.class);
 
     try {
-      new Migrator(sourceConfig, targetConfig, tableListProvider, failingPreMigrationChecks, contentCopier).execute();
+      new Migrator(system2, sourceConfig, targetConfig, tableListProvider, failingPreMigrationChecks, contentCopier, statsRecorder).execute();
       fail("expected to throw");
     } catch (MigrationException ignored) {
       // nothing to do
