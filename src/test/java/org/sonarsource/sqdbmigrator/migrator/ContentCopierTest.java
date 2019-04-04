@@ -35,6 +35,7 @@ import org.junit.runner.RunWith;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.sonarsource.sqdbmigrator.migrator.DatabaseTester.newTester;
 
 @RunWith(DataProviderRunner.class)
@@ -47,6 +48,7 @@ public class ContentCopierTest {
   public final DatabaseTester targetTester = newTester();
 
   private final ContentCopier underTest = new ContentCopier();
+  private final StatsRecorder statsRecorder = mock(StatsRecorder.class);
 
   @Test
   @UseDataProvider("batchSizesAround5")
@@ -63,7 +65,7 @@ public class ContentCopierTest {
 
     targetTester.createTable(createTableSql);
 
-    underTest.execute(sourceTester.getDatabase(), targetTester.getDatabase(), newTableListProvider(tableName), batchSize);
+    underTest.execute(sourceTester.getDatabase(), targetTester.getDatabase(), newTableListProvider(tableName), statsRecorder, batchSize);
 
     assertThat(sourceTester.getDatabase().countRows(tableName))
       .isEqualTo(5)
@@ -117,7 +119,7 @@ public class ContentCopierTest {
 
     targetTester.createTable(createTableSql);
 
-    underTest.execute(sourceTester.getDatabase(), targetTester.getDatabase(), newTableListProvider(tableName));
+    underTest.execute(sourceTester.getDatabase(), targetTester.getDatabase(), newTableListProvider(tableName), statsRecorder);
 
     assertThat(sourceTester.getDatabase().countRows(tableName))
       .isEqualTo(2)
@@ -164,7 +166,7 @@ public class ContentCopierTest {
 
     targetTester.createTable(createTableSql);
 
-    underTest.execute(sourceTester.getDatabase(), targetTester.getDatabase(), newTableListProvider(tableName));
+    underTest.execute(sourceTester.getDatabase(), targetTester.getDatabase(), newTableListProvider(tableName), statsRecorder);
 
     targetTester
       .addRow(tableName, singletonList("name"), singletonList("foo2"))
@@ -188,7 +190,7 @@ public class ContentCopierTest {
 
     targetTester.createTable(createTargetTableSql);
 
-    underTest.execute(sourceTester.getDatabase(), targetTester.getDatabase(), newTableListProvider(tableName));
+    underTest.execute(sourceTester.getDatabase(), targetTester.getDatabase(), newTableListProvider(tableName), statsRecorder);
 
     assertThat(sourceTester.getDatabase().countRows(tableName))
       .isEqualTo(2)
