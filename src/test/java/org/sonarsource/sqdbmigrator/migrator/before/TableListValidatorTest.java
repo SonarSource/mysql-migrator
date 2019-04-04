@@ -31,6 +31,8 @@ import org.sonarsource.sqdbmigrator.migrator.TableListProvider;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Fail.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.sonarsource.sqdbmigrator.migrator.DatabaseTester.newTester;
 
 public class TableListValidatorTest {
@@ -88,6 +90,30 @@ public class TableListValidatorTest {
 
     expectedException.expect(PreMigrationChecks.PreMigrationException.class);
     expectedException.expectMessage("Some expected tables are missing in source database: bar, baz");
+    underTest.execute(source, target, tableListProvider);
+  }
+
+  @Test
+  public void throw_when_cannot_get_tables_from_source() throws SQLException {
+    Database source = mock(Database.class);
+    when(source.getTables()).thenThrow(SQLException.class);
+    Database target = createTables(targetTester, singletonList("foo"));
+    TableListProvider tableListProvider = mock(TableListProvider.class);
+
+    expectedException.expect(PreMigrationChecks.PreMigrationException.class);
+    expectedException.expectMessage("Could not get list of tables from source database:");
+    underTest.execute(source, target, tableListProvider);
+  }
+
+  @Test
+  public void throw_when_cannot_get_tables_from_target() throws SQLException {
+    Database source = createTables(sourceTester, singletonList("foo"));
+    Database target = mock(Database.class);
+    when(target.getTables()).thenThrow(SQLException.class);
+    TableListProvider tableListProvider = mock(TableListProvider.class);
+
+    expectedException.expect(PreMigrationChecks.PreMigrationException.class);
+    expectedException.expectMessage("Could not get list of tables from target database:");
     underTest.execute(source, target, tableListProvider);
   }
 
