@@ -31,15 +31,22 @@ import java.util.Date;
 import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.sonarsource.sqdbmigrator.migrator.Migrator.MigrationException;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.sonarsource.sqdbmigrator.migrator.DatabaseTester.newTester;
 
 @RunWith(DataProviderRunner.class)
 public class ContentCopierTest {
+
+  @Rule
+  public ExpectedException expectedException = ExpectedException.none();
 
   @Rule
   public final DatabaseTester sourceTester = newTester();
@@ -205,6 +212,15 @@ public class ContentCopierTest {
     assertThat(sourceTester.queryForStrings(selectName2Sql))
       .isEqualTo(Arrays.asList("foo2", "bar2"))
       .isEqualTo(targetTester.queryForStrings(selectName2Sql));
+  }
+
+  @Test
+  public void throw_if_something_goes_wrong_during_copy() throws SQLException {
+    Database target = mock(Database.class);
+    doThrow(SQLException.class).when(target).truncateTable(anyString());
+
+    expectedException.expect(MigrationException.class);
+    underTest.execute(mock(Database.class), target, newTableListProvider("foo"), statsRecorder);
   }
 
   private TableListProvider newTableListProvider(String tableName) {
