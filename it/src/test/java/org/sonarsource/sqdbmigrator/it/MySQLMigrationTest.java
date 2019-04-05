@@ -157,6 +157,9 @@ public class MySQLMigrationTest {
       .build();
     target.start();
 
+    // recreate target WS client (port number has changed after restart)
+    targetWsClient = newWsClient(target);
+
     // verify matching issues using SQ WS too
     long targetIssuesAfterMigration = getIssueCount(targetWsClient);
 
