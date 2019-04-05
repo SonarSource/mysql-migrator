@@ -48,6 +48,10 @@ dependencies {
             'mysql:mysql-connector-java:5.1.47',
             'com.microsoft.sqlserver:mssql-jdbc:6.2.2.jre8'
 
+    if (System.env.'EMBED_ORACLE_DRIVER') {
+        runtime 'com.oracle.jdbc:ojdbc8:12.2.0.1.0'
+    }
+
     runtimeClasspath files('oracle.jar')
 }
 
