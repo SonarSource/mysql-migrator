@@ -85,9 +85,9 @@ public class MySQLMigrator {
     ArgumentsParser parser = ArgumentsParser.newBuilder()
       .setUsageLine("Usage: mysql-migrator [-help] [OPTIONS...]")
       .addOption("-source", "path/to/source/sonar.properties",
-        "Path to sonar.properties of the source SonarQube instance", sourceConfigValidator)
+        "Path to sonar.properties of the source MySQL SonarQube instance", sourceConfigValidator)
       .addOption("-target", "path/to/target/sonar.properties",
-        "Path to sonar.properties of the target SonarQube instance", targetConfigValidator)
+        "Path to sonar.properties of the target non-MySQL SonarQube instance", targetConfigValidator)
       .addGlobalValidator(GlobalValidators.allPresent("-source", "-target"))
       .build();
 

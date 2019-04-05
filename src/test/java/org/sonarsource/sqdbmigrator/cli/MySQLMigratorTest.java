@@ -51,9 +51,9 @@ public class MySQLMigratorTest {
     "Options:\n" +
     "\n" +
     "-source path/to/source/sonar.properties\n" +
-    "  Path to sonar.properties of the source SonarQube instance\n" +
+    "  Path to sonar.properties of the source MySQL SonarQube instance\n" +
     "-target path/to/target/sonar.properties\n" +
-    "  Path to sonar.properties of the target SonarQube instance\n" +
+    "  Path to sonar.properties of the target non-MySQL SonarQube instance\n" +
     "-help\n" +
     "  Print this help\n";
 
