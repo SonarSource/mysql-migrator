@@ -137,7 +137,12 @@ public class MySQLMigrationTest {
     // stop target to execute migration offline
     target.stop();
 
-    assertThat(runMigration()).isZero();
+    assertThat(runMigration().exitStatus).isZero();
+
+    // migration won't run again: projects exist in target
+    ProcessResult processResult = runMigration();
+    assertThat(processResult.exitStatus).isGreaterThan(0);
+    assertThat(processResult.output).contains("Unexpected record count in target table 'projects'");
 
     // verify matching stats
     Stats sourceStats = computeStats(source);
@@ -178,69 +183,58 @@ public class MySQLMigrationTest {
   }
 
   @Test
-  public void fail_migration_if_cannot_determine_version_in_source() throws IOException, InterruptedException {
+  public void fail_migration_when_sanity_checks_fail() throws IOException, InterruptedException, SQLException {
     ensureEmptyDatabase(source);
-    ensureInitialSonarQubeDatabase(target);
-    assertThat(runMigration()).isGreaterThan(0);
-  }
-
-  @Test
-  public void fail_migration_if_cannot_determine_version_in_target() throws IOException, InterruptedException {
     ensureEmptyDatabase(target);
-    ensureInitialSonarQubeDatabase(source);
-    assertThat(runMigration()).isGreaterThan(0);
-  }
 
-  @Test
-  public void fail_migration_if_version_in_target_doesnt_match_version_in_source() throws IOException, InterruptedException, SQLException {
+    // fail when source is empty
+    ProcessResult processResult = runMigration();
+    assertThat(processResult.exitStatus).isGreaterThan(0);
+    assertThat(processResult.output).contains("Could not determine SonarQube version of the source database");
+
+    // fail when target is empty
     ensureInitialSonarQubeDatabase(source);
+    processResult = runMigration();
+    assertThat(processResult.exitStatus).isGreaterThan(0);
+    assertThat(processResult.output).contains("Could not determine SonarQube version of the target database");
+
+    // fail when schema versions are same but invalid
     ensureInitialSonarQubeDatabase(target);
+    String insertInvalidVersionSql = "insert into schema_migrations values ('999999')";
+    runStatementsOnDatabase(source.getConfiguration(), insertInvalidVersionSql);
+    runStatementsOnDatabase(target.getConfiguration(), insertInvalidVersionSql);
+    processResult = runMigration();
+    assertThat(processResult.exitStatus).isGreaterThan(0);
+    assertThat(processResult.output).contains("Unknown schema version; cannot match to a SonarQube release: 999999");
 
-    // delete versions to cause a mismatch
-    runStatementsOnDatabase(target.getConfiguration(), "delete from schema_migrations where version != '1'");
+    // fail when schema versions are different
+    String deleteInvalidVersionSql = "delete from schema_migrations where version = '999999'";
+    runStatementsOnDatabase(source.getConfiguration(), deleteInvalidVersionSql);
+    processResult = runMigration();
+    assertThat(processResult.exitStatus).isGreaterThan(0);
+    assertThat(processResult.output).contains("Versions in source and target database don't match");
 
-    assertThat(runMigration()).isGreaterThan(0);
-  }
+    // fail if versions match, and valid, but no projects in source
+    runStatementsOnDatabase(target.getConfiguration(), deleteInvalidVersionSql);
+    processResult = runMigration();
+    assertThat(processResult.exitStatus).isGreaterThan(0);
+    assertThat(processResult.output).contains("There are no records in the projects table of the source database.");
 
-  @Test
-  public void fail_migration_if_projects_exist_in_target() throws IOException, InterruptedException {
+    // fail if duplicate keys exist in source
     analyzeProjectAndStopServer(source);
-    analyzeProjectAndStopServer(target);
-
-    // migration fails because target is not empty
-    assertThat(runMigration()).isGreaterThan(0);
-  }
-
-  @Test
-  public void fail_migration_if_source_database_looks_blank() throws IOException, InterruptedException {
-    ensureInitialSonarQubeDatabase(source);
-    ensureInitialSonarQubeDatabase(target);
-    assertThat(runMigration()).isGreaterThan(0);
-  }
-
-  @Test
-  public void fail_migration_if_source_has_duplicate_project_kee_on_mysql() throws SQLException, IOException, InterruptedException {
-    ensureInitialSonarQubeDatabase(source);
-    ensureInitialSonarQubeDatabase(target);
-
     // create duplicate projects.kee values
     String dropIndexSql = "drop index projects_kee on projects";
     String insertDummyKeeSql = "insert into projects (kee, uuid, project_uuid, root_uuid, uuid_path, organization_uuid, private) " +
       "values ('kee1', 'uuid1', 'project_uuid1', 'root_uuid1', 'uuid_path1', 'organization_uuid1', false)";
     runStatementsOnDatabase(source.getConfiguration(), dropIndexSql, insertDummyKeeSql, insertDummyKeeSql);
 
-    assertThat(runMigration()).isGreaterThan(0);
-  }
+    processResult = runMigration();
+    assertThat(processResult.exitStatus).isGreaterThan(0);
+    assertThat(processResult.output).contains("Duplicate kee values detected in projects table.");
 
-  @Test
-  public void fail_migration_if_target_has_unknown_schema_version() throws IOException, InterruptedException, SQLException {
-    analyzeProjectAndStopServer(source);
-
-    ensureInitialSonarQubeDatabase(target);
-    runStatementsOnDatabase(target.getConfiguration(), "insert into schema_migrations values ('999999')");
-
-    // migration fails because target is not empty
-    assertThat(runMigration()).isGreaterThan(0);
+    // cleanup; all good, migration succeeds
+    runStatementsOnDatabase(source.getConfiguration(), "delete from projects where kee = 'kee1'");
+    assertThat(runMigration().exitStatus).isZero();
   }
 
   private void analyzeProjectAndStopServer(Orchestrator orchestrator) {
@@ -290,24 +284,40 @@ public class MySQLMigrationTest {
     orchestrator.stop();
   }
 
-  private int runMigration() throws IOException, InterruptedException {
-    String program = "../build/install/mysql-migrator/bin/mysql-migrator";
-    Process process = new ProcessBuilder().command(program,
+  private ProcessResult runMigration() throws IOException, InterruptedException {
+    return ProcessResult.run("../build/install/mysql-migrator/bin/mysql-migrator",
       "-source", newConfigFile(source.getConfiguration()),
-      "-target", newConfigFile(target.getConfiguration()))
-      .redirectErrorStream(true)
-      .start();
+      "-target", newConfigFile(target.getConfiguration()));
+  }
 
-    try (BufferedReader stdOut = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-      do {
-        String line = stdOut.readLine();
-        if (line != null) {
-          LOG.info(line);
-        }
-      } while (process.isAlive());
+  private static class ProcessResult {
+    private final int exitStatus;
+    private final String output;
+
+    private ProcessResult(int exitStatus, String output) {
+      this.exitStatus = exitStatus;
+      this.output = output;
     }
 
-    return process.waitFor();
+    static ProcessResult run(String... args) throws IOException, InterruptedException {
+      Process process = new ProcessBuilder().command(args)
+        .redirectErrorStream(true)
+        .start();
+
+      StringBuilder sb = new StringBuilder();
+      try (BufferedReader stdOut = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+        do {
+          String line = stdOut.readLine();
+          if (line != null) {
+            LOG.info(line);
+            sb.append(line).append("\n");
+          }
+        } while (process.isAlive());
+      }
+
+      int exitStatus = process.waitFor();
+      return new ProcessResult(exitStatus, sb.toString());
+    }
   }
 
   private String newConfigFile(Configuration configuration) throws IOException {
