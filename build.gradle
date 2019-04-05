@@ -14,6 +14,7 @@ plugins {
 sonarqube {
     properties {
         property 'sonar.projectName', projectTitle
+        property 'sonar.exclusions', 'src/generated/**'
     }
 }
 

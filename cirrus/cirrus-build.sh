@@ -15,7 +15,6 @@ gradle_common_params=(
     "-Dsonar.analysis.pipeline=$CIRRUS_BUILD_ID"
     "-Dsonar.analysis.repository=$GITHUB_REPO"
     "-Dsonar.analysis.sha1=$GIT_SHA1"
-    "-Dsonar.exclusions=src/generated/**"
     )
 
 gradle_additional_params=()
