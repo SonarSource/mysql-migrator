@@ -12,7 +12,7 @@ fi
 source_config=file://$CIRRUS_WORKING_DIR/it/config/mysql57.properties
 target_config=file://$CIRRUS_WORKING_DIR/it/config/$target_db.properties
 
-gradle --no-daemon --info --console plain build install
+EMBED_ORACLE_DRIVER=1 gradle --no-daemon --info --console plain build install
 
 cd it
 gradle --no-daemon --info --console plain integrationTest \
