@@ -34,6 +34,7 @@ import org.sonarsource.sqdbmigrator.migrator.Database.DatabaseException;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.sonarsource.sqdbmigrator.migrator.DatabaseTester.newTester;
 
 @RunWith(DataProviderRunner.class)
@@ -71,10 +72,20 @@ public class DatabaseTest {
 
   @Test
   public void create_throws_with_additional_help_about_oracle_driver_installation() throws SQLException {
+    assumeThat(isOracleDriverAvailable()).isFalse();
     expectedException.expect(DatabaseException.class);
     expectedException.expectMessage("No suitable driver found for jdbc:oracle:bar\n" +
       "Make sure the JDBC Oracle driver is copied to the lib folder. The file must be named 'oracle.jar'");
     Database.create(new ConnectionConfig("jdbc:oracle:bar", null, null));
+  }
+
+  private boolean isOracleDriverAvailable() {
+    try {
+      Class.forName("oracle.jdbc.driver.OracleDriver");
+      return true;
+    } catch (ClassNotFoundException e) {
+      return false;
+    }
   }
 
   @Test

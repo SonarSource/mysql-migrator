@@ -27,7 +27,9 @@ apply plugin: 'maven-publish'
 sourceCompatibility = '1.8'
 
 repositories {
-    mavenCentral()
+    maven {
+        url "https://repox.jfrog.io/repox/sonarsource-qa"
+    }
 }
 
 dependencies {
@@ -47,6 +49,10 @@ dependencies {
             'org.postgresql:postgresql:42.2.5',
             'mysql:mysql-connector-java:5.1.47',
             'com.microsoft.sqlserver:mssql-jdbc:6.2.2.jre8'
+
+    if (System.env.'EMBED_ORACLE_DRIVER') {
+        runtime 'com.oracle.jdbc:ojdbc8:12.2.0.1.0'
+    }
 
     runtimeClasspath files('oracle.jar')
 }
