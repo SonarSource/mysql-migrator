@@ -11,10 +11,20 @@ plugins {
     id 'application'
 }
 
+ext {
+    buildNumber = System.getProperty("buildNumber")
+}
+// Replaces the version defined in sources, usually x.y-SNAPSHOT, by a version identifying the build.
+if (version.endsWith('-SNAPSHOT') && ext.buildNumber != null) {
+    def versionSuffix = (version.toString().count('.') == 1 ? ".0.${ext.buildNumber}" : ".${ext.buildNumber}")
+    version = version.replace('-SNAPSHOT', versionSuffix)
+}
+
 sonarqube {
     properties {
         property 'sonar.projectName', projectTitle
         property 'sonar.exclusions', 'src/generated/**'
+        property 'sonar.buildString', version
     }
 }
 
@@ -59,15 +69,6 @@ dependencies {
 
 application {
     mainClassName = 'org.sonarsource.sqdbmigrator.cli.MySQLMigrator'
-}
-
-ext {
-    buildNumber = System.getProperty("buildNumber")
-}
-// Replaces the version defined in sources, usually x.y-SNAPSHOT, by a version identifying the build.
-if (version.endsWith('-SNAPSHOT') && ext.buildNumber != null) {
-    def versionSuffix = (version.toString().count('.') == 1 ? ".0.${ext.buildNumber}" : ".${ext.buildNumber}")
-    version = version.replace('-SNAPSHOT', versionSuffix)
 }
 
 license {
