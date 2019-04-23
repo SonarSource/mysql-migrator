@@ -98,3 +98,37 @@ Running the ITs targeting a Oracle database on the local network takes about 15 
     unzip build/distributions/mysql-migrator-1.0-SNAPSHOT.zip
     ./mysql-migrator-1.0-SNAPSHOT/bin/mysql-migrator -help
     ./mysql-migrator-1.0-SNAPSHOT/bin/mysql-migrator -source path/to/config -target path/to/config
+
+## Adding support for SonarQube patch versions
+
+One of the sanity checks before copying a database is to verify if the
+source and target databases have the expected tables for the given SonarQube version.
+The expected tables per version are hardcoded in TableListProvider.
+
+When a patch version is released, for example 7.x.y for a base version 7.x,
+that version becomes the new recommended version for the 7.x series,
+and therefore the hardcoded version and table lists must be updated,
+*if the patch has added new database migrations*.
+
+Example steps, for adding 6.7.7:
+
+    tag=6.7.7
+
+    # cd to a clone of sonarqube or sonar-enterprise that has $tag
+
+    # run the extract-tables-and-version.sh helper script
+    ~/dev/mysql-migrator/scripts/extract-tables-and-version.sh $tag
+
+    # add the generated .version and .tables files to version control
+
+    # run the helper script to generate the java code for the version and tables
+    ./scripts/tables-and-version/gen-java.sh
+
+    # copy-paste the relevant lines into TablesAndVersionRegistry and reformat nicely
+
+    # create a configuration in .cirrus.yml to run ITs on the added version
+    # (this may be a temporary change, for a one-time test in a PR)
+
+    # verify in local test
+    ./gradlew clean build install
+    SQ_RUNTIME=$tag ./it/localrun.sh tmp/mysql.properties tmp/postgresql.properties
