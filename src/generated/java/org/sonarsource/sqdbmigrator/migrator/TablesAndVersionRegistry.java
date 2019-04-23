@@ -31,6 +31,15 @@ public class TablesAndVersionRegistry {
   static final Map<Integer, List<String>> TABLES_PER_VERSION = new HashMap<>();
 
   static {
+    // SonarQube 6.7.7
+    TABLES_PER_VERSION.put(1838, Arrays.asList(
+      "organizations", "organization_members", "groups_users", "rules_parameters", "rules_profiles", "org_qprofiles", "default_qprofiles", "project_qprofiles",
+      "qprofile_edit_users", "qprofile_edit_groups", "groups", "snapshots", "group_roles", "rule_repositories", "rules", "rules_metadata", "events", "quality_gates",
+      "quality_gate_conditions", "properties", "project_links", "duplications_index", "project_measures", "internal_properties", "projects", "manual_measures", "active_rules",
+      "notifications", "user_roles", "active_rule_parameters", "users", "metrics", "loaded_templates", "issues", "issue_changes", "permission_templates",
+      "perm_tpl_characteristics", "perm_templates_users", "perm_templates_groups", "qprofile_changes", "file_sources", "ce_queue", "ce_activity", "ce_task_characteristics",
+      "ce_task_input", "ce_scanner_context", "user_tokens", "webhook_deliveries", "es_queue", "plugins", "project_branches", "analysis_properties"));
+
     // SonarQube 6.7
     TABLES_PER_VERSION.put(1837, Arrays.asList(
       "organizations", "organization_members", "groups_users", "rules_parameters", "rules_profiles", "org_qprofiles", "default_qprofiles", "project_qprofiles",
