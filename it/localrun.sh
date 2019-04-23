@@ -27,8 +27,12 @@ echoAndRun() {
     "$@"
 }
 
+if [[ -z ${SQ_RUNTIME+x} ]]; then
+    SQ_RUNTIME=LATEST_RELEASE
+fi
+
 echoAndRun ./gradlew --no-daemon --info integrationTest \
-    -Dsonar.runtimeVersion=DEV \
+    -Dsonar.runtimeVersion="$SQ_RUNTIME" \
     -Dorchestrator.configUrl.source="file://$sourcePath" \
     -Dorchestrator.configUrl.target="file://$targetPath" \
     "$@"

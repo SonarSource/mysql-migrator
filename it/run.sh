@@ -4,13 +4,15 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 
-# TODO provision (in Docker) and verify
 source=mysql56
-# TODO all axes: "postgresql93", "mysql56", "mssql2014", "mssql2016", "oracle12c"
 target=postgresql93
 
+if [[ -z ${SQ_RUNTIME+x} ]]; then
+    SQ_RUNTIME=LATEST_RELEASE
+fi
+
 ./gradlew --no-daemon --info integrationTest \
-    -Dsonar.runtimeVersion=DEV \
+    -Dsonar.runtimeVersion="$SQ_RUNTIME" \
     -Dorchestrator.configUrl.source="$ARTIFACTORY_URL/orchestrator.properties/orch-$source.properties" \
     -Dorchestrator.configUrl.target="$ARTIFACTORY_URL/orchestrator.properties/orch-$target.properties" \
     "$@"
