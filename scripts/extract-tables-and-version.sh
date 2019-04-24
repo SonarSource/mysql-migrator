@@ -30,10 +30,14 @@ extractTables() {
 }
 
 extractVersion() {
-    local sqVersion=$1
-    sqVersion=${sqVersion//./}
+    local dbVersion=$1
 
-    local dbMigrationPath=$dbMigrationsBasedir/v$sqVersion/DbVersion$sqVersion.java
+    if [[ "$dbVersion" == *.*.* ]]; then
+        dbVersion=${dbVersion%.*}
+    fi
+    dbVersion=${dbVersion//./}
+
+    local dbMigrationPath=$dbMigrationsBasedir/v$dbVersion/DbVersion$dbVersion.java
     [[ -f "$dbMigrationPath" ]] || error "db migration definition source code does not exist: $dbMigrationPath"
 
     local version=$(awk -F'[(,]' '/^[ \t]+\.add/ { version = $2 } END { print version }' < "$dbMigrationPath")
@@ -45,13 +49,14 @@ extractTablesAndVersion() {
     local sqVersion=$1
     git checkout "$sqVersion"
 
+    local versionFile=$targetDir/$sqVersion.version
+    echo "extracting latest migration version to $versionFile ..."
+    schemaMigrationVersion=$(extractVersion "$sqVersion")
+    echo "$schemaMigrationVersion" > "$versionFile"
+
     local tablesFile=$targetDir/$sqVersion.tables
     echo "extracting tables to $tablesFile ..."
     extractTables > "$tablesFile"
-
-    local versionFile=$targetDir/$sqVersion.version
-    echo "extracting latest migration version to $versionFile ..."
-    extractVersion "$sqVersion" > "$versionFile"
 }
 
 ensureCorrectGitRepo

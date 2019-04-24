@@ -61,8 +61,8 @@ public class TableListProviderTest {
   public static Object[][] unknownVersionSamples() {
     return new Object[][] {
       {2},
-      {1836},
-      {1838},
+      {1922},
+      {1924},
     };
   }
 

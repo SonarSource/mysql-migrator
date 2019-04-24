@@ -13,14 +13,14 @@ error() {
     exit 1
 }
 
-echo 'private static final Map<Integer, List<String>> tablesPerVersion = new HashMap<>();'
+echo 'private static final Map<Integer, List<String>> TABLES_PER_VERSION = new HashMap<>();'
 echo 'static {';
 
 for versionFile in *.version; do
     sqVersion=${versionFile%.version}
     version=$(cat "$versionFile")
     echo "// SonarQube $sqVersion"
-    echo "tablesPerVersion.put($version, Arrays.asList("
+    echo "TABLES_PER_VERSION.put($version, Arrays.asList("
     mapfile -t tables < "$sqVersion.tables"
     for ((i = 0; i < ${#tables[@]}; i++)); do
         tables[$i]=\"${tables[i]}\"
