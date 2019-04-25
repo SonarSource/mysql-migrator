@@ -78,8 +78,8 @@ public class ContentCopier {
     String columnNamesCsv = String.join(", ", columnNames);
     String selectSql = String.format("select %s from %s", columnNamesCsv, tableName);
 
-    try (Statement preparedStatement = source.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-      ResultSet rs = preparedStatement.executeQuery(selectSql)) {
+    try (Statement statement = createStatement(source);
+         ResultSet rs = statement.executeQuery(selectSql)) {
 
       int columnCount = columnNames.size();
 
@@ -104,6 +104,12 @@ public class ContentCopier {
         }
       }
     }
+  }
+
+  private static Statement createStatement(Database source) throws SQLException {
+    Statement statement = source.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+    statement.setFetchSize(source.getFetchSize());
+    return statement;
   }
 
   private static void copyColumns(ResultSet rs, PreparedStatement insertStatement) throws SQLException {
