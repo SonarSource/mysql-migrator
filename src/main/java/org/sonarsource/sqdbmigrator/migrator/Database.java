@@ -38,6 +38,8 @@ import java.util.function.Function;
  */
 public abstract class Database implements AutoCloseable {
 
+  private static final int DEFAULT_FETCH_SIZE = 10;
+
   final Connection connection;
 
   protected Database(Connection connection) {
@@ -52,6 +54,10 @@ public abstract class Database implements AutoCloseable {
 
   public void setIdentityInsert(String tableName, boolean value) throws SQLException {
     // noop in general; MSSQL-only feature
+  }
+
+  int getFetchSize() {
+    return DEFAULT_FETCH_SIZE;
   }
 
   /**
@@ -124,6 +130,13 @@ public abstract class Database implements AutoCloseable {
     protected void resetSequence(String tableName, long value) throws SQLException {
       String sql = String.format("ALTER TABLE %s AUTO_INCREMENT = %s", tableName, value);
       executeUpdate(sql);
+    }
+
+    @Override
+    int getFetchSize() {
+      // Without this, MySQL driver would load all records at once
+      // See also https://stackoverflow.com/questions/26046234/is-there-a-mysql-jdbc-that-will-respect-fetchsize
+      return Integer.MIN_VALUE;
     }
   }
 
