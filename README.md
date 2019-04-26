@@ -14,7 +14,7 @@ You can use the SonarQube MySQL Database Migrator to copy your SonarQube databas
 
 To copy your SonarQube database from MySQL to a non-MySQL database, follow these steps: 
 
-1. [Download](https://binaries.sonarsource.com/Distribution/mysql-migrator/mysql-migrator-1.0.1.102.zip) the latest release of the migrator and unzip it. 
+1. [Download][download-zip] the latest release of the migrator and unzip it. 
 
 2. Start then stop your SonarQube version on your non-MySQL database (for example, if you're currently using SonarQube 7.3, run then stop SonarQube 7.3 on your non-MySQL database).
 
@@ -47,3 +47,4 @@ directory in the unzipped folder of the migration tool. The file must be named `
 With the Java driver in place, follow the steps above to migrate just like any other database.
 
 [oracle-driver]: https://www.oracle.com/technetwork/database/features/jdbc/jdbc-ucp-122-3110062.html
+[download-zip]: https://binaries.sonarsource.com/Distribution/mysql-migrator/mysql-migrator-1.0.2.108.zip
