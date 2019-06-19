@@ -24,6 +24,8 @@ Beware: the configuration files for ITs require more than just the migration.
 Orchestrator needs permission to drop and create databases and users.
 For this purpose, depending on the database type, you may need to specify additional properties.
 
+Please note that if you're using $HOME/.sonar/orchestrator.properties, you should comment all properties about database configuration, otherwise it will override all other configuration.
+
 ### MySQL
 
 Example configuration file:
@@ -45,6 +47,10 @@ This was tricky on Ubuntu 2018:
     select * from user where user = 'root';
     ALTER USER 'root'@'localhost' IDENTIFIED BY 'rootsonar';
     flush privileges;
+
+If you're using vagrant image, you may need to specify the shema by adding this parameter (update the value to the schema you're using):
+
+    sonar.jdbc.schema = sonar
 
 ### Postgresql
 
