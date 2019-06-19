@@ -28,7 +28,7 @@ For this purpose, depending on the database type, you may need to specify additi
 
 Example configuration file:
 
-    sonar.jdbc.url = jdbc:mysql://localhost:3306/sonar? useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance&useSSL=false
+    sonar.jdbc.url = jdbc:mysql://localhost:3306/sonar?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance&useSSL=false
     sonar.jdbc.username = sonar
     sonar.jdbc.password = sonar
     sonar.jdbc.rootUsername = root
@@ -115,7 +115,7 @@ Example steps, for adding 7.8:
     tag=7.8
 
     # baseline check before implementation: observe that in local tests that ITs are failing
-    ./gradlew clean build install
+    ./gradlew clean install
     SQ_RUNTIME=$tag ./it/localrun.sh tmp/mysql.properties tmp/postgresql.properties
 
     # cd to a clone of sonarqube or sonar-enterprise that has $tag
