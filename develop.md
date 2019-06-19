@@ -26,6 +26,8 @@ For this purpose, depending on the database type, you may need to specify additi
 
 ### MySQL
 
+// TODO
+
 Example configuration file:
 
     sonar.jdbc.url = jdbc:mysql://localhost:3306/sonar?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance&useSSL=false
