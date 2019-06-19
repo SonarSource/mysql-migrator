@@ -72,6 +72,10 @@ public class MySQLMigrationTest {
   private static OrchestratorBuilder newOrchestratorBuilder() {
     return Orchestrator.builderEnv()
       .setSonarVersion(System.getProperty("sonar.runtimeVersion", SONAR_RUNTIME_VERSION))
+      // ES bootstrap checks need to be disable in order to run on dockers images on Cirrus.
+      // It will prevent such error at 7.8+ startup : "max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]".
+      // See SONAR-11264 for more details on the checks.
+      .setServerProperty("sonar.es.bootstrap.checks.disable", "true")
       .addPlugin(MavenLocation.of("org.sonarsource.java", "sonar-java-plugin", "LATEST_RELEASE"));
   }
 
