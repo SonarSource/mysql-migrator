@@ -47,4 +47,4 @@ directory in the unzipped folder of the migration tool. The file must be named `
 With the Java driver in place, follow the steps above to migrate just like any other database.
 
 [oracle-driver]: https://www.oracle.com/technetwork/database/features/jdbc/jdbc-ucp-122-3110062.html
-[download-zip]: https://binaries.sonarsource.com/Distribution/mysql-migrator/mysql-migrator-1.0.2.108.zip
+[download-zip]: https://binaries.sonarsource.com/Distribution/mysql-migrator/mysql-migrator-1.1.0.119.zip
