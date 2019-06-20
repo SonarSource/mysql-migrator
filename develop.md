@@ -40,8 +40,9 @@ You also need to enable password authentication for the `root` user of the datab
 This was tricky on Ubuntu 2018:
 
     sudo mysql
+    use mysql
     update user set plugin='mysql_native_password' where user='root' and host='localhost';
-    flush privileges;
+    select * from user where user = 'root';
     ALTER USER 'root'@'localhost' IDENTIFIED BY 'rootsonar';
     flush privileges;
 
