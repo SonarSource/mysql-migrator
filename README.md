@@ -13,13 +13,13 @@ You can use the SonarQube MySQL Database Migrator to copy your SonarQube databas
 
 **Warning:** do not run migration on live SonarQube instances.
 
-To copy your SonarQube database from MySQL to a non-MySQL database, follow these steps: 
+To copy your SonarQube database from your source database to the target database, follow these steps: 
 
 1. [Download][download-zip] the latest release of the migrator and unzip it. 
 
-2. Start then stop the version of SonarQube that you're running on your source database on your target database. For example, if you're running SonarQube 7.3 on your source database, run then stop SonarQube 7.3 on your target database..
+2. Start then stop the same version of SonarQube that you're running on your source database on your target database. For example, if you're running SonarQube 7.3 on your source database, run then stop SonarQube 7.3 on your target database.
 
-3. Delete the Elasticsearch data folder in the non-MySQL SonarQube instance: `data/es5` on SonarQube 6.7-7.6 and `data/es6` on SonarQube 7.7 and above.
+3. Delete the Elasticsearch data folder in the target SonarQube instance: `data/es5` on SonarQube 6.7-7.6 and `data/es6` on SonarQube 7.7 and above.
 
 4. Run the migrator with `-help` to get usage instructions.
 
