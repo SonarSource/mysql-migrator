@@ -18,8 +18,6 @@ env:
   BURGR_USERNAME: ENCRYPTED[af365756ca7265f67e4d1999f5cf2d7f2249aadb47fc5a71e1ad657e0ef0e20f900e27681707b1f8a8ccdcc3104a2f68]
   BURGR_PASSWORD: ENCRYPTED[218cb20174dcd17109819426fa1132be3106d73d06ccd90cf230b0b0f253d3678dd21497f4b9ccace5b9faf6f8e41bf5]
 
-auto_cancellation: $CIRRUS_BRANCH != 'master' && $CIRRUS_BRANCH !=~ 'branch.*'
-
 build_task:
   timeout_in: 90m
   gke_container:
