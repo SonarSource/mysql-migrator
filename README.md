@@ -32,7 +32,7 @@ Required parameters:
 
 The configuration files use the same format as `sonar.properties` file in a SonarQube installation, and you can even directly use the path to a `sonar.properties` file of a SonarQube instance. Your configuration files should be formatted as follows:
 
-    sonar.jdbc.url = jdbc:mysql://localhost:3306/sonar? useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance&useSSL=false
+    sonar.jdbc.url = jdbc:mysql://localhost:3306/sonar?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance&useSSL=false
     sonar.jdbc.username = sonar
     sonar.jdbc.password = sonar
 
