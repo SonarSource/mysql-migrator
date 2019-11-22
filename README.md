@@ -38,6 +38,10 @@ The configuration files use the same format as `sonar.properties` file in a Sona
 
 The migrator performs various sanity checks before copying data and prints diagnostics about its progress. It stops on the first error. Read the error messages carefully.
 
+### Migrating with a Microsoft SQL Server target
+
+Java 8 must be installed on the machine executing the migration, and the `JAVA_HOME` environment variable should be set to its location. 
+
 ### Migrating with an Oracle target
 
 The Oracle database driver is not included in the distribution, so you must provide it yourself.
