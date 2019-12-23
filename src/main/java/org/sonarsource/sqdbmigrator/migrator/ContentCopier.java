@@ -27,6 +27,7 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,14 @@ public class ContentCopier {
   }
 
   void execute(Database source, Database target, TableListProvider tableListProvider, StatsRecorder statsRecorder, int batchSize) {
+    String sourceCatalog = null;
+    try {
+      sourceCatalog = source.getConnection().getCatalog();
+    } catch (SQLException e) {
+      throw new MigrationException("Error while getting catalog name from source: %s", e.getMessage());
+    }
+    final String mySqlCatalogName = sourceCatalog;
+    
     tableListProvider.get(source).forEach(tableName -> {
       LOG.info("copying table {} ...", tableName);
 
@@ -57,14 +66,14 @@ public class ContentCopier {
           target.setIdentityInsert(tableName, true);
         }
 
-        copyTable(source, target, tableName, batchSize);
+        copyTable(source, target, mySqlCatalogName, tableName, batchSize);
 
         if (tableHasIdColumn) {
           target.setIdentityInsert(tableName, false);
           resetSequence(target, tableName);
         }
 
-        long recordsCopied = ensureRowCountsMatch(source, target, tableName);
+        long recordsCopied = ensureRowCountsMatch(source, target, mySqlCatalogName, tableName);
 
         statsRecorder.add(tableName, recordsCopied, started, new Date().getTime());
       } catch (SQLException e) {
@@ -73,10 +82,14 @@ public class ContentCopier {
     });
   }
 
-  private static void copyTable(Database source, Database target, String tableName, int batchSize) throws SQLException {
+  private static void copyTable(Database source, Database target, String sourceCatalog, String tableName, int batchSize) throws SQLException {
     List<String> columnNames = source.getColumnNames(tableName);
+    List<String> mySqlColumnNames = columnNames.stream()
+      .map(columnName -> "`" + columnName + "`")
+      .collect(Collectors.toList());
     String columnNamesCsv = String.join(", ", columnNames);
-    String selectSql = String.format("select %s from %s", columnNamesCsv, tableName);
+    String mySqlColumnNamesCsv = String.join(", ", mySqlColumnNames);
+    String selectSql = String.format("select %s from %s", mySqlColumnNamesCsv, sourceCatalog + "." + tableName);
 
     try (Statement statement = createStatement(source);
          ResultSet rs = statement.executeQuery(selectSql)) {
@@ -141,8 +154,8 @@ public class ContentCopier {
     }
   }
 
-  private static long ensureRowCountsMatch(Database source, Database target, String tableName) throws SQLException {
-    long rowCountInSource = source.countRows(tableName);
+  private static long ensureRowCountsMatch(Database source, Database target, String sourceCatalog, String tableName) throws SQLException {
+    long rowCountInSource = source.countRows(sourceCatalog + "." + tableName);
     long rowCountInTarget = target.countRows(tableName);
     if (rowCountInSource != rowCountInTarget) {
       throw new MigrationException("Row counts don't match in source and target: %s != %s",
