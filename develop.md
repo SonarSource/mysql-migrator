@@ -149,3 +149,4 @@ and therefore the hardcoded version and table lists must be updated,
 *if the patch has added new database migrations*.
 
 Follow the same steps as when adding a new 7.x release (see previous section).
+
