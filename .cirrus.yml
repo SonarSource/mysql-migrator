@@ -39,7 +39,7 @@ build_task:
     reports_artifacts:
       path: "**/build/reports/**/*"
 
-postgresql106_task:
+postgresql121_task:
   depends_on: build
   gke_container:
     dockerfile: docker/Dockerfile-build
@@ -62,7 +62,7 @@ postgresql106_task:
           MYSQL_USER: sonar
           MYSQL_PASSWORD: sonar
       - name: postgres
-        image: postgres:10.6
+        image: postgres:12.1
         port: 5432
         cpu: 1
         memory: 1Gb
@@ -76,7 +76,7 @@ postgresql106_task:
   gradle_cache:
     folder: ~/.gradle/caches
   script:
-    - ./cirrus/cirrus-qa.sh postgres106
+    - ./cirrus/cirrus-qa.sh postgres121
   cleanup_before_cache_script:
     - ./cirrus/cleanup-gradle-cache.sh
   on_failure:
@@ -174,7 +174,7 @@ mssql2017_task:
 promote_task:
   depends_on:
     - build
-    - postgresql106
+    - postgresql121
     - oracle12
     - mssql2017
   gke_container:
