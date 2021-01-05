@@ -1,6 +1,6 @@
 /*
  * SonarQube MySQL Database Migrator
- * Copyright (C) 2019-2019 SonarSource SA
+ * Copyright (C) 2019-2021 SonarSource SA
  * mailto:info AT sonarsource DOT com
  *
  * This program is free software; you can redistribute it and/or
