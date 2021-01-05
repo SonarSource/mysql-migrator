@@ -21,16 +21,16 @@ package org.sonarsource.sqdbmigrator.it;
 
 import com.sonar.orchestrator.Orchestrator;
 import com.sonar.orchestrator.OrchestratorBuilder;
-import com.sonar.orchestrator.build.MavenBuild;
+import com.sonar.orchestrator.build.SonarScanner;
 import com.sonar.orchestrator.config.Configuration;
 import com.sonar.orchestrator.db.DefaultDatabase;
 import com.sonar.orchestrator.locator.MavenLocation;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -58,7 +58,7 @@ public class MySQLMigrationTest {
   private static final String SOURCE_ORCHESTRATOR_CONFIG = getSystemPropertyOrFail("orchestrator.configUrl.source");
   private static final String TARGET_ORCHESTRATOR_CONFIG = getSystemPropertyOrFail("orchestrator.configUrl.target");
 
-  private static final Path PROJECT_PATH = Paths.get("projects/java-sample");
+  private static final String PROJECT_PATH = "projects/xoo-sample";
 
   @Rule
   public TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -76,7 +76,7 @@ public class MySQLMigrationTest {
       // It will prevent such error at 7.8+ startup : "max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]".
       // See SONAR-11264 for more details on the checks.
       .setServerProperty("sonar.es.bootstrap.checks.disable", "true")
-      .addPlugin(MavenLocation.of("org.sonarsource.java", "sonar-java-plugin", "LATEST_RELEASE"));
+      .addPlugin(MavenLocation.of("org.sonarsource.sonarqube", "sonar-xoo-plugin", SONAR_RUNTIME_VERSION));
   }
 
   private static OrchestratorBuilder newTargetOrchestratorBuilder() {
@@ -112,9 +112,7 @@ public class MySQLMigrationTest {
 
     // analyze project, creating issues
     source.executeBuildQuietly(
-      MavenBuild.create()
-        .setPom(PROJECT_PATH.resolve("1/pom.xml").toFile())
-        .setCleanPackageSonarGoals());
+      SonarScanner.create(new File(PROJECT_PATH + "/1")));
 
     long sourceIssuesAfter1stAnalysis = getIssueCount(sourceWsClient);
 
@@ -122,9 +120,7 @@ public class MySQLMigrationTest {
 
     // analyze again, adding one issue
     source.executeBuildQuietly(
-      MavenBuild.create()
-        .setPom(PROJECT_PATH.resolve("2/pom.xml").toFile())
-        .setCleanPackageSonarGoals());
+      SonarScanner.create(new File(PROJECT_PATH + "/2")));
 
     long sourceIssuesAfter2ndAnalysis = getIssueCount(sourceWsClient);
 
@@ -171,9 +167,7 @@ public class MySQLMigrationTest {
 
     // analyze same project and verify new issues are successfully added
     target.executeBuildQuietly(
-      MavenBuild.create()
-        .setPom(PROJECT_PATH.resolve("3/pom.xml").toFile())
-        .setCleanPackageSonarGoals());
+      SonarScanner.create(new File(PROJECT_PATH + "/3")));
 
     long targetIssuesAfterAnalysis = getIssueCount(targetWsClient);
 
@@ -181,11 +175,8 @@ public class MySQLMigrationTest {
 
     // analyze another project and verify new project and new issues are successfully added
     target.executeBuildQuietly(
-      MavenBuild.create()
-        .setProperties("sonar.projectKey", "project2")
-        .setPom(PROJECT_PATH.resolve("3/pom.xml").toFile())
-        .setCleanPackageSonarGoals());
-
+      SonarScanner.create(new File(PROJECT_PATH + "/3"))
+        .setProperties("sonar.projectKey", "project2"));
     assertThat(getIssueCount(targetWsClient)).isEqualTo(2 * targetIssuesAfterAnalysis);
   }
 
@@ -251,9 +242,7 @@ public class MySQLMigrationTest {
 
     // analyze project, creating issues
     orchestrator.executeBuildQuietly(
-      MavenBuild.create()
-        .setPom(PROJECT_PATH.resolve("1/pom.xml").toFile())
-        .setCleanPackageSonarGoals());
+      SonarScanner.create(new File(PROJECT_PATH + "/1")));
 
     long sourceIssues = getIssueCount(sourceWsClient);
 

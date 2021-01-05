@@ -2,17 +2,14 @@ package sample;
 
 public class Sample {
 
+  // Has Tag: xoo !!!
   public Sample(int i) {
     int j = i++;
   }
 
-  // TODO Raise an issue here!
+  // Has Tag: xoo !!!
   private String myMethod() {
     return "hello";
   }
-
-  // TODO This method raises 3 new issues (TODO, unused, empty block)
-  private void unusedAndEmpty() {
-
-  }
 }
+

@@ -1,0 +1,20 @@
+package sample;
+
+public class Sample {
+
+  // Has Tag: xoo !!!
+  public Sample(int i) {
+    int j = i++;
+  }
+
+  // Has Tag: xoo !!!
+  private String myMethod() {
+    return "hello";
+  }
+
+  // Has Tag: xoo !!!
+  private void unusedAndEmpty() {
+    // Has Tag: xoo !!!
+    // Has Tag: xoo !!!
+  }
+}
