@@ -9,6 +9,22 @@ You can use the SonarQube MySQL Database Migrator to copy your SonarQube databas
    **Note:** Your source and target databases must be using the same version of SonarQube.
 - Currently using MySQL
 
+### Supported Target Databases
+| Database                                                    |                                                                                                                                                                                                                                                                   |
+| ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [PostgreSQL](http://www.postgresql.org/)                    | ![](/images/check.svg) 10                                                                                                                                                                                                                                         |
+|                                                             | ![](/images/check.svg) 9.3 - 9.6                                                                                                                                                                                                                                         |
+| [Microsoft SQL Server](http://www.microsoft.com/sqlserver/) | ![](/images/check.svg) 2017 (MSSQL Server 14.0) with bundled Microsoft JDBC driver. Express Edition is supported.                                                                                                                                                 |
+|                                                             | ![](/images/check.svg) 2016 (MSSQL Server 13.0) with bundled Microsoft JDBC driver. Express Edition is supported.                                                                                                                                                 |
+|                                                             | ![](/images/check.svg) 2014 (MSSQL Server 12.0) with bundled Microsoft JDBC driver. Express Edition is supported.                                                                                                                                                 |
+| [Oracle](http://www.oracle.com/database/)                   | ![](/images/check.svg) 19C                                                                                                                                                                                                                                        |
+|                                                             | ![](/images/check.svg) 18C                                                                                                                                                                                                                                        |
+|                                                             | ![](/images/check.svg) 12C                                                                                                                                                                                                                                        |
+|                                                             | ![](/images/check.svg) 11G                                                                                                                                                                                                                                        |
+|                                                             | ![](/images/check.svg) XE Editions                                                                                                                                                                                                                                |
+
+
+
 ### Migrating your database
 
 **Warning:** do not run migration on live SonarQube instances.
