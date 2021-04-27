@@ -98,7 +98,7 @@ oracle12_task:
           MYSQL_USER: sonar
           MYSQL_PASSWORD: sonar
       - name: oracle
-        image: gcr.io/ci-cd-215716/oracle12:0.0.1 # see https://github.com/SonarSource/vms/blob/master/docker/README.md#oracle-12c to build it
+        image: us.gcr.io/sonarqube-team/oracle12:0.0.1 # see https://github.com/SonarSource/vms/blob/master/docker/README.md#oracle-12c to build it
         port: 1521
         cpu: 1.7
         memory: 5Gb
