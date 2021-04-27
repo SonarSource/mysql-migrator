@@ -1,5 +1,5 @@
 # content of service-account-credentials.json, used to access to Google Cloud Platform
-gcp_credentials: ENCRYPTED[6d7dee6b9f0914c40dbe97787ecac3d423b8df47d14ad8b9cd7046f53839dc5d0276194fbf5627908712fa577a2ad150]
+gcp_credentials: ENCRYPTED[!e5f7207bd8d02d383733bef47e18296ac32e3b7d22eb480354e8dd8fdc0004be45a8a4e72c797bd66ee94eb3340fa363!]
 
 env:
   GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.jvmargs="-XX:+PrintFlagsFinal -XshowSettings:vm -XX:+HeapDumpOnOutOfMemoryError -XX:+UnlockExperimentalVMOptions -Djava.security.egd=file:/dev/./urandom -Dfile.encoding=UTF8 -Duser.language=en -Duser.country=US"
@@ -18,15 +18,19 @@ env:
   BURGR_USERNAME: ENCRYPTED[af365756ca7265f67e4d1999f5cf2d7f2249aadb47fc5a71e1ad657e0ef0e20f900e27681707b1f8a8ccdcc3104a2f68]
   BURGR_PASSWORD: ENCRYPTED[218cb20174dcd17109819426fa1132be3106d73d06ccd90cf230b0b0f253d3678dd21497f4b9ccace5b9faf6f8e41bf5]
 
+gke_container:
+  dockerfile: docker/Dockerfile-build
+  builder_image_project: sonarqube-team
+  builder_image_name: docker-builder-v20200915
+  cluster_name: cirrus-ci-cluster
+  zone: us-central1-a
+  namespace: default
+  cpu: 1
+  memory: 1Gb
+
 build_task:
   timeout_in: 90m
   gke_container:
-    dockerfile: docker/Dockerfile-build
-    builder_image_project: ci-cd-215716
-    builder_image_name: docker-builder-v1
-    cluster_name: cirrus-uscentral1a-cluster
-    zone: us-central1-a
-    namespace: default
     cpu: 3
     memory: 10Gb
   gradle_cache:
@@ -42,12 +46,6 @@ build_task:
 postgresql106_task:
   depends_on: build
   gke_container:
-    dockerfile: docker/Dockerfile-build
-    builder_image_project: ci-cd-215716
-    builder_image_name: docker-builder-v1
-    cluster_name: cirrus-uscentral1a-cluster
-    zone: us-central1-a
-    namespace: default
     cpu: 1
     memory: 3Gb
     additional_containers:
@@ -86,12 +84,6 @@ postgresql106_task:
 oracle12_task:
   depends_on: build
   gke_container:
-    dockerfile: docker/Dockerfile-build
-    builder_image_project: ci-cd-215716
-    builder_image_name: docker-builder-v1
-    cluster_name: cirrus-uscentral1a-cluster
-    zone: us-central1-a
-    namespace: default
     cpu: 1
     memory: 3Gb
     additional_containers:
@@ -129,12 +121,6 @@ oracle12_task:
 mssql2017_task:
   depends_on: build
   gke_container:
-    dockerfile: docker/Dockerfile-build
-    builder_image_project: ci-cd-215716
-    builder_image_name: docker-builder-v1
-    cluster_name: cirrus-uscentral1a-cluster
-    zone: us-central1-a
-    namespace: default
     cpu: 1
     memory: 3Gb
     additional_containers:
@@ -177,14 +163,5 @@ promote_task:
     - postgresql106
     - oracle12
     - mssql2017
-  gke_container:
-    dockerfile: docker/Dockerfile-build
-    builder_image_project: ci-cd-215716
-    builder_image_name: docker-builder-v1
-    cluster_name: cirrus-uscentral1a-cluster
-    zone: us-central1-a
-    namespace: default
-    cpu: 1
-    memory: 1Gb
   script:
     - ./cirrus/cirrus-promote.sh
