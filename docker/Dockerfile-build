@@ -17,7 +17,7 @@ FROM us.gcr.io/sonarqube-team/base:j11-latest
 USER root
 
 # Avoiding JVM Delays Caused by Random Number Generation (https://docs.oracle.com/cd/E13209_01/wlcp/wlss30/configwlss/jvmrand.html)
-RUN sed -i 's|securerandom.source=file:/dev/random|securerandom.source=file:/dev/urandom|g' $JAVA_HOME/jre/lib/security/java.security
+#RUN sed -i 's|securerandom.source=file:/dev/random|securerandom.source=file:/dev/urandom|g' $JAVA_HOME/jre/lib/security/java.security
 
 RUN apt-get update && apt-get -y install xvfb
 
